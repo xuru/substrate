@@ -49,13 +49,12 @@ class NoseExclude(Plugin):
         super(NoseExclude, self).configure(options, conf)
 
         self.exclude_dirs = {}
-        
-        print "++Exclude++", options.exclude_dirs
+
         # preload directories from file
         if options.exclude_dir_file:
             if not options.exclude_dirs:
                 options.exclude_dirs = []
-    
+
             new_dirs = self._load_from_file(options.exclude_dir_file)
             options.exclude_dirs.extend(new_dirs)
 
@@ -77,9 +76,6 @@ class NoseExclude(Plugin):
 
     def wantDirectory(self, dirname):
         """Check if directory is eligible for test discovery"""
-        self.exclude_dirs = ["lib"]
-        print "x" * 10
-        print dirname
         if dirname in self.exclude_dirs:
             log.debug("excluded: %s" % dirname)
             return False

@@ -18,5 +18,10 @@ os.environ['NOSE_ALL_MODULES'] = "false"
 #main(plugins=[NoseGAE(), NoseExclude()], config=Config(exclude=(re.compile(r".*lib.*"),)))
 #main(plugins=[NoseGAE(), NoseExclude()], config=Config(exclude=r".*lib.*"))
 #main(plugins=[NoseGAE()])
+
+# Run the test on the current directory
+import sys
+sys.argv[1] = "."
+
 main(plugins=[NoseGAE(), NoseExclude()])
 
