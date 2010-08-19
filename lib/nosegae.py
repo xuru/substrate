@@ -30,7 +30,7 @@ class NoseGAE(Plugin):
             help='Set the path to the root directory of the Google '
             'Application Engine installation')
         parser.add_option(
-            '--gae-application', default=None, action='store', dest='gae_app',
+            '--gae-application', default=os.environ.get('APPLICATION_ID', None), action='store', dest='gae_app',
             help='Set the path to the GAE application '
             'under test. Default is the nose `where` '
             'directory (generally the pwd)')
@@ -66,9 +66,12 @@ class NoseGAE(Plugin):
             self._data_path = os.path.join(tempfile.gettempdir(),
                                            'nosegae.datastore')
             self._temp_data = True
+        print "Pathhhhh", self._path
         
         self.sandbox_enabled = options.sandbox_enabled 
         
+        """
+        """
         try:
             if 'google' in sys.modules:
                 # make sure an egg (e.g. protobuf) is not cached 
