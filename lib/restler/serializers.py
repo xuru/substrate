@@ -24,15 +24,20 @@ class ModelMapping(object):
             if isinstance(mappings, ModelMapping):
                 self.mappings = mappings.to_dict()
             else:
-                self.mappings = mappings
+                self.mappings = dict(mappings.items())
+
+        def _new_mapping(self, other_dict):
+            maps = dict(self.mappings.items())
+            maps.update(other_dict)
+            return self.__class__(maps)
 
         def __add__(self, mapping):
             if isinstance(mapping, dict):
-                self.mappings.update(mapping)
+                return self._new_mapping(mapping)
             elif isinstance(mapping, self.__class__):
-                self.mappings.update(mapping.mappings)
+                return self._new_mapping(mapping.mappings)
             elif isinstance(mapping, ModelMapping):
-                self.mappings.update(mapping.to_dict())
+                return self._new_mapping(mapping.to_dict())
             else:
                 raise ValueError("Cannot add type: %s" % type(mapping))
             return self
@@ -75,7 +80,7 @@ def to_json(thing, strategy={}):
         strategy = strategy.to_dict()
     elif isinstance(strategy, ModelMappings):
         strategy = strategy.mappings
-    elif not isinstance(strategy, (dict):
+    elif not isinstance(strategy, dict):
         raise ValueError("Serialization strategy must be a ModelMapping, ModelMappings or dict")
     class AEEncoder(simplejson.JSONEncoder):
         def default(self, obj):
@@ -110,24 +115,24 @@ def to_json(thing, strategy={}):
             if isinstance(obj, db.Model):
                 # User the model's properties
                 if strategy is None:
-                    fields = obj.properties().keys() 
+                    fields = obj.properties().keys()
                 else:
                     # Load the customized mappings
-                    fields = ( strategy.get(obj.__class__, {}) 
+                    fields = ( strategy.get(obj.__class__, {})
                             or obj.properties().keys() )
                 # catch the case where there's just one property (and it's not in a list/tuple)
-                if not isinstance(fields, (tuple, list)): 
+                if not isinstance(fields, (tuple, list)):
                     fields = [fields]
                 # if any fields use the "-" to exclude a field from 'all' properties
                 if any([f.startswith("-") for f in fields if isinstance(f, str)]):
                     obj_fields = obj.properties().keys()
                     for f in fields:
-                        if isinstance(f, str) and f.startswith("-") and len(f) > 1: 
+                        if isinstance(f, str) and f.startswith("-") and len(f) > 1:
                             try:
                                 obj_fields.remove(f[1:])
                             except ValueError:
-                                raise ValueError( "'%s' can't be excluded. " 
-                                        + "It isn't a valid property of %s" 
+                                raise ValueError( "'%s' can't be excluded. "
+                                        + "It isn't a valid property of %s"
                                         % (f[1:], obj.__class__.__name__))
                         elif f not in obj_fields:
                             obj_fields.append(f)
