@@ -27,12 +27,6 @@ from google.appengine.ext.webapp import util
 from restler import serializers
 from restler.webapp import RestlerApp
 
-
-class MainHandler(webapp.RequestHandler):
-    def get(self):
-        self.response.out.write('Hello world!')
-
-
 from models import Model1
 
 V1_SERVICE_STRATEGY = serializers.ModelStrategy(Model1)
