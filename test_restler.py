@@ -1,38 +1,71 @@
 
 import unittest
+from datetime import datetime
 from google.appengine.ext import db
+from google.appengine.api import users
 
 from restler import serializers
-from models import MyModel
+from models import Model1, Model2
+
 
 key = lambda cls, obj: str(obj.key())
-myprop = lambda cls, obj: "this and %s" % obj.prop1
+myprop = lambda cls, obj: "this and %s" % obj.string
 
 serialization = {
-        MyModel: (
-            "prop1", 
+        Model1: (
+            "string", 
             ("myprop", myprop), 
             ("key", key)
         ), 
 }
-fields = ("prop1", 
-         ("myprop", myprop), 
-         ("key", key))
 
 class RestlerTest(unittest.TestCase):
 
     def setUp(self):
-        for m in MyModel.all(): m.delete()
-        m = MyModel()
-        m.prop1 = "this"
+        for m in Model1.all(): m.delete()
+        m = Model1()
+        m.string = "this"
         m.put()
-        m = MyModel()
-        m.prop1 = "that"
+        m = Model1()
+        m.string = "that"
         m.put()
 
+    def test_serializers(self):
+        ref = Model1()
+        ref.put()
+        m = Model1()
+        m2 = Model2()
+        m2.put()
+        m.string = "string"
+        m.bytestring = "\00\0x" 
+        m.boolean = True 
+        m.integer = 123
+        m.float_ = 22.0 
+        m.datetime = datetime.now() 
+        m.date = datetime.now().date() 
+        m.time = datetime.now().time() 
+        m.list_ = [1,2,3]
+        m.stringlist = ["one", "two", "three"] 
+        #m.reference = m2
+        #m.selfreference = ref
+        #m.blobreference = None # Todo
+        m.user = users.get_current_user() 
+        m.blob = "binary data" # Todo
+        m.text = "text"
+        m.category = "category"
+        m.link = "http://www.yahoo.com" 
+        m.email = "joe@yahoo.com" 
+        m.geopt = "1.0, 2.0"
+        m.im = "http://aim.com/ joe@yahoo.com" 
+        m.phonenumber = "612-292-4339" 
+        m.postaladdress = "234 Shady Oak Rd., Eden Prairie, MN, 55218" 
+        m.rating = 23 
+        m.put()
+        print serializers.to_json(m)
+
     def test_simple(self):
-        self.assertEqual(serializers.to_json(MyModel().all(), serialization), 
-               """[{"prop1": "this", "key": "agZyZXN0bGVyDgsSB015TW9kZWwYtwEM", "myprop": "this and this"}, {"prop1": "that", "key": "agZyZXN0bGVyDgsSB015TW9kZWwYuAEM", "myprop": "this and that"}]""")
+        self.assertEqual(serializers.to_json(Model1().all(), serialization), 
+               """[{"string": "this", "key": "agZyZXN0bGVyDgsSB015TW9kZWwYtwEM", "myprop": "this and this"}, {"string": "that", "key": "agZyZXN0bGVyDgsSB015TW9kZWwYuAEM", "myprop": "this and that"}]""")
 
     def test_simple_properties(self):
         self.assertTrue(True)
