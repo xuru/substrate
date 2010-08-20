@@ -8,8 +8,9 @@ from restler import serializers
 from models import Model1, Model2
 
 
-key = lambda cls, obj: str(obj.key())
-myprop = lambda cls, obj: "this and %s" % obj.string
+key = lambda obj: str(obj.key())
+keys = lambda obj: [(str(o.key()) for o in obj)]
+myprop = lambda obj: "this and %s" % obj.string
 
 serialization = {
         Model1: (
@@ -46,9 +47,9 @@ class RestlerTest(unittest.TestCase):
         m.time = datetime.now().time() 
         m.list_ = [1,2,3]
         m.stringlist = ["one", "two", "three"] 
-        #m.reference = m2
-        #m.selfreference = ref
-        #m.blobreference = None # Todo
+        m.reference = m2
+        m.selfreference = ref
+        m.blobreference = None # Todo
         m.user = users.get_current_user() 
         m.blob = "binary data" # Todo
         m.text = "text"
@@ -61,7 +62,7 @@ class RestlerTest(unittest.TestCase):
         m.postaladdress = "234 Shady Oak Rd., Eden Prairie, MN, 55218" 
         m.rating = 23 
         m.put()
-        print serializers.to_json(m)
+        print serializers.to_json(m, {Model1: ("-selfreference", "-blobreference")})
 
     def test_simple(self):
         self.assertEqual(serializers.to_json(Model1().all(), serialization), 

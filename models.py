@@ -4,7 +4,7 @@ from google.appengine.ext import blobstore
 
 class Model2(db.Model):
 
-    string2 = db.StringProperty()
+    model2_prop = db.StringProperty()
 
 class Model1(db.Model):
 

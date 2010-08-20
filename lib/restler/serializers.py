@@ -3,6 +3,7 @@ import datetime
 import decimal
 import types
 
+from google.appengine.ext import blobstore
 from google.appengine.ext import db
 from google.appengine.api import users
 from django.utils import simplejson
@@ -26,7 +27,9 @@ TIME_FORMAT = "%H:%M:%S"
             return super(DjangoJSONEncoder, self).default(o)
 """
 
-def to_json(thing, serialization_mapper={}):
+def to_json(thing, strategy={}):
+    if not isinstance(strategy, dict):
+        raise ValueError("Serialization strategy must be a dictionary")
     class AEEncoder(simplejson.JSONEncoder):
         def default(self, obj):
             # Load objects from the datastore (could be done in parallel)
@@ -56,14 +59,16 @@ def to_json(thing, serialization_mapper={}):
                 return "%s %s" % (obj.protocol, obj.address)
             if isinstance(obj, users.User):
                 return user_id() or obj.email()
-            ret = {}
+            if isinstance(obj, blobstore.BlobInfo):
+                return str(obj.key()) # TODO is this correct?
+            ret = {} # What we're most likely going to return (populated, of course)
             if isinstance(obj, db.Model):
                 # User the model's properties
-                if serialization_mapper is None:
+                if strategy is None:
                     fields = obj.properties().keys() 
                 else:
                     # Load the customized mappings
-                    fields = ( serialization_mapper.get(obj.__class__, {}) 
+                    fields = ( strategy.get(obj.__class__, {}) 
                             or obj.properties().keys() )
                 # catch the case where there's just one property (and it's not in a list/tuple)
                 if not isinstance(fields, (tuple, list)): 
@@ -72,7 +77,7 @@ def to_json(thing, serialization_mapper={}):
                 if any([f.startswith("-") for f in fields if isinstance(f, str)]):
                     obj_fields = obj.properties().keys()
                     for f in fields:
-                        if f.startswith("-") and len(f) > 1: 
+                        if isinstance(f, str) and f.startswith("-") and len(f) > 1: 
                             try:
                                 obj_fields.remove(f[1:])
                             except ValueError:
@@ -96,7 +101,7 @@ def to_json(thing, serialization_mapper={}):
                                     or getattr(obj.__class__, field_name, None) )
                         if callable(attr): callable_ = attr
                     if callable_:
-                        ret[field_name] = callable_(obj.__class__, obj)
+                        ret[field_name] = callable_(obj)
                     else:
                         ret[field_name] = getattr(obj, field_name) 
             return ret
