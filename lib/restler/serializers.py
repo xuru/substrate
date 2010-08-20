@@ -14,14 +14,14 @@ import datetime_safe
 DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M:%S"
 
-class ModelMapping(object):
+class ModelStrategy(object):
     """ Defines how to serialize an AppEngine model i.e. which fields to include,
         exclude or map to a callable.  """
 
-    class ModelMappings(object):
+    class SerializationStrategy(object):
         """ A container for multiple mappings (shouldn't be used directly)"""
         def __init__(self, mappings={}):
-            if isinstance(mappings, ModelMapping):
+            if isinstance(mappings, ModelStrategy):
                 self.mappings = mappings.to_dict()
             else:
                 self.mappings = dict(mappings.items())
@@ -36,7 +36,7 @@ class ModelMapping(object):
                 return self._new_mapping(mapping)
             elif isinstance(mapping, self.__class__):
                 return self._new_mapping(mapping.mappings)
-            elif isinstance(mapping, ModelMapping):
+            elif isinstance(mapping, ModelStrategy):
                 return self._new_mapping(mapping.to_dict())
             else:
                 raise ValueError("Cannot add type: %s" % type(mapping))
@@ -47,7 +47,31 @@ class ModelMapping(object):
 
     def __init__(self, model, fields = []):
         self.model = model
-        self.fields = fields
+        self.fields = fields[:]
+
+    def add_field(self, field):
+        self.add(field)
+        return self
+
+    def exclude_field(self, field):
+        self.add("-" + field)
+        return self
+
+    def add_fields(self, fields):
+        if isinstance(fields, str):
+            raise ValueError("list or tuple required.")
+        self.add(fields)
+        return self
+
+    def exclude_fields(self, fields):
+        if isinstance(fields, str):
+            raise ValueError("list or tuple required.")
+        self.add(["-%s"%f for f in fields])
+        return self
+
+    def add_property(self, prop):
+        self.add(prop)
+        return self
 
     def add(self, field, with_=None):
         if isinstance(field, (tuple, list)):
@@ -66,9 +90,11 @@ class ModelMapping(object):
 
     def __add__(self, other):
         if isinstance(other, self.__class__):
-            return self.ModelMappings(self) + other
-        elif isinstance(other, self.ModelMappings):
+            return self.SerializationStrategy(self) + other
+        elif isinstance(other, self.SerializationStrategy):
             return other + self
+        elif isinstance(other, (list, tuple, str)):
+            return self.add(other)
         else:
             raise ValueError("Cannot add type %s" % type(other))
 
@@ -76,12 +102,12 @@ class ModelMapping(object):
         return pprint.pformat(self.to_dict())
 
 def to_json(thing, strategy={}):
-    if isinstance(strategy, ModelMapping):
+    if isinstance(strategy, ModelStrategy):
         strategy = strategy.to_dict()
-    elif isinstance(strategy, ModelMappings):
+    elif isinstance(strategy, ModelStrategy.SerializationStrategy):
         strategy = strategy.mappings
     elif not isinstance(strategy, dict):
-        raise ValueError("Serialization strategy must be a ModelMapping, ModelMappings or dict")
+        raise ValueError("Serialization strategy must be a ModelStrategy, SerializationStrategy or dict")
     class AEEncoder(simplejson.JSONEncoder):
         def default(self, obj):
             # Load objects from the datastore (could be done in parallel)
