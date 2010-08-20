@@ -1,6 +1,7 @@
 
 import datetime
 import decimal
+import pprint
 import types
 
 from google.appengine.ext import blobstore
@@ -8,43 +9,87 @@ from google.appengine.ext import db
 from google.appengine.api import users
 from django.utils import simplejson
 
+import datetime_safe
+
 DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M:%S"
 
-"""
-    def default(self, o):
-        if isinstance(o, datetime.datetime):
-            d = datetime_safe.new_datetime(o)
-            return d.strftime("%s %s" % (self.DATE_FORMAT, self.TIME_FORMAT))
-        elif isinstance(o, datetime.date):
-            d = datetime_safe.new_date(o)
-            return d.strftime(self.DATE_FORMAT)
-        elif isinstance(o, datetime.time):
-            return o.strftime(self.TIME_FORMAT)
-        elif isinstance(o, decimal.Decimal):
-            return str(o)
+class ModelMapping(object):
+    """ Defines how to serialize an AppEngine model i.e. which fields to include,
+        exclude or map to a callable.  """
+
+    class ModelMappings(object):
+        """ A container for multiple mappings (shouldn't be used directly)"""
+        def __init__(self, mappings={}):
+            if isinstance(mappings, ModelMapping):
+                self.mappings = mappings.to_dict()
+            else:
+                self.mappings = mappings
+
+        def __add__(self, mapping):
+            if isinstance(mapping, dict):
+                self.mappings.update(mapping)
+            elif isinstance(mapping, self.__class__):
+                self.mappings.update(mapping.mappings)
+            elif isinstance(mapping, ModelMapping):
+                self.mappings.update(mapping.to_dict())
+            else:
+                raise ValueError("Cannot add type: %s" % type(mapping))
+            return self
+
+        def __repr__(self):
+            return pprint.pformat(self.mappings)
+
+    def __init__(self, model, fields = []):
+        self.model = model
+        self.fields = fields
+
+    def add(self, field, with_=None):
+        if isinstance(field, (tuple, list)):
+            self.fields.extend([f for f in field if f not in self.fields])
+        elif isinstance(field, dict):
+            self.fields.extend([(f, with_) for f, with_ in field if (f, with_) not in self.fields])
+        elif with_ is None: 
+            if field not in self.fields: 
+                self.fields.append(field)
+        elif field not in self.fields:
+            self.fields.append((field, with_))
+        return self
+
+    def to_dict(self): 
+        return {self.model: list(self.fields)}
+
+    def __add__(self, other):
+        if isinstance(other, self.__class__):
+            return self.ModelMappings(self) + other
+        elif isinstance(other, self.ModelMappings):
+            return other + self
         else:
-            return super(DjangoJSONEncoder, self).default(o)
-"""
+            raise ValueError("Cannot add type %s" % type(other))
+
+    def __repr__(self):
+        return pprint.pformat(self.to_dict())
 
 def to_json(thing, strategy={}):
-    if not isinstance(strategy, dict):
-        raise ValueError("Serialization strategy must be a dictionary")
+    if isinstance(strategy, ModelMapping):
+        strategy = strategy.to_dict()
+    elif isinstance(strategy, ModelMappings):
+        strategy = strategy.mappings
+    elif not isinstance(strategy, (dict):
+        raise ValueError("Serialization strategy must be a ModelMapping, ModelMappings or dict")
     class AEEncoder(simplejson.JSONEncoder):
         def default(self, obj):
             # Load objects from the datastore (could be done in parallel)
             if isinstance(obj, db.Query):
                 return [o for o in obj]
-            """
             if isinstance(obj, datetime.datetime):
                 d = datetime_safe.new_datetime(obj)
-                return d.strftime("%s %s" % (self.DATE_FORMAT, self.TIME_FORMAT))
+                return d.strftime("%s %s" % (DATE_FORMAT, TIME_FORMAT))
             elif isinstance(obj, datetime.date):
                 d = datetime_safe.new_date(obj)
-                return d.strftime(self.DATE_FORMAT)
+                return d.strftime(DATE_FORMAT)
             elif isinstance(obj, datetime.time):
-                return obj.strftime(self.TIME_FORMAT)
-            """
+                return obj.strftime(TIME_FORMAT)
             if isinstance(obj, datetime.datetime):
                 return obj.strftime("%s %s" % (DATE_FORMAT, TIME_FORMAT))
             elif isinstance(obj, datetime.date):
