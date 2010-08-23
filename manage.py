@@ -66,6 +66,7 @@ EXTRA_PATHS = [
   os.path.join(DIR_PATH, 'lib', 'webob'),
   os.path.join(DIR_PATH, 'lib', 'yaml', 'lib'),
   os.path.join(".", 'lib'),
+  os.path.join(".", os.path.join('local', 'lib')),
   #os.path.join(".", local_path),
 ]
 
