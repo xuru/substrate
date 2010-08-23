@@ -8,6 +8,13 @@ from google.appengine.ext.webapp import util
 
 from restler import serializers
 
+
+def render_to_json(response, model_or_query, strategy=None)
+    json = serializers.to_json(model_or_query, strategy)
+    response.set_status(200)
+    response.headers['Content-Type'] = "application/json"
+    response.out.write(resp)
+
 class RestlerApp(webapp.WSGIApplication):
 
     def __init__(self, url_mapping, debug=False):

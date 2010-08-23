@@ -42,48 +42,69 @@ class ModelStrategy(object):
                 raise ValueError("Cannot add type: %s" % type(mapping))
             return self
 
+        def __sub__(self, mapping):
+            if isinstance(mapping, ModelStrategy):
+                m = self._new_mapping(mapping.to_dict())
+            else:
+                raise ValueError("Not of type ModelStrategy")
+
         def __repr__(self):
             return pprint.pformat(self.mappings)
 
-    def __init__(self, model, fields = []):
+    def __init__(self, model, include_all_fields=False):
         self.model = model
-        self.fields = fields[:]
+        if include_all_fields:
+            self.fields = [f for f in model.fields()]
+        else:
+            self.fields = fields = []
 
-    def add_field(self, field):
-        self.add(field)
-        return self
+    def __name_map(self):
+        # We remove 'properties' i.e. things with callables by name
+        # so we create a list of names that can be deleted
+        names = {};
+        for p in self.fields:
+            if isinstance(p, dict):
+                names[p.keys()[0]] = p
+            elif isinstance(p, str):
+                names[p] = p
+        return names
 
-    def exclude_field(self, field):
-        self.add("-" + field)
-        return self
+    def __add(self, fields):
+        names = self.__name_map()
+        m = ModelStrategy(self.model)
+        m.fields = self.fields[:]
+        if isinstance(fields, (tuple, list)):
+            for name in fields:
+                if isinstance(name, dict):
+                    if len(name.keys()) != 1:
+                        raise ValueError("Mapping is not a 1-1 name -> field/callable")
+                    else:
+                        prop = name
+                        name = name.keys()[0]
+                        if name not in names:
+                            m.fields.append(prop)
+                            names[name] = prop
+                        else:
+                            raise ValueError("Cannot add field.  '%s' already exists" % name)
+                elif name not in names:
+                    m.fields.append(name)
+                    names[name] = name
+                else:
+                    raise ValueError("Cannot add field.  '%s' already exists" % (name, ))
+        else:
+            raise ValueError("Only lists/tuples or fields can be added")
+        return m
 
-    def add_fields(self, fields):
-        if isinstance(fields, str):
-            raise ValueError("list or tuple required.")
-        self.add(fields)
-        return self
-
-    def exclude_fields(self, fields):
-        if isinstance(fields, str):
-            raise ValueError("list or tuple required.")
-        self.add(["-%s"%f for f in fields])
-        return self
-
-    def add_property(self, prop):
-        self.add(prop)
-        return self
-
-    def add(self, field, with_=None):
-        if isinstance(field, (tuple, list)):
-            self.fields.extend([f for f in field if f not in self.fields])
-        elif isinstance(field, dict):
-            self.fields.extend([(f, with_) for f, with_ in field if (f, with_) not in self.fields])
-        elif with_ is None: 
-            if field not in self.fields: 
-                self.fields.append(field)
-        elif field not in self.fields:
-            self.fields.append((field, with_))
-        return self
+    def __remove(self, fields):
+        m = ModelStrategy(self.model) + self.fields
+        names = self.__name_map()
+        if isinstance(fields, (tuple, list)):
+            for f in fields:
+                if f in names:
+                    m.fields.remove(names[f])
+        else:
+            raise ValueError("Field '%s' is not in %s" % field, self.fields)
+        return m
 
     def to_dict(self): 
         return {self.model: list(self.fields)}
@@ -94,7 +115,17 @@ class ModelStrategy(object):
         elif isinstance(other, self.SerializationStrategy):
             return other + self
         elif isinstance(other, (list, tuple, str)):
-            return self.add(other)
+            return self.__add(other)
+        else:
+            raise ValueError("Cannot add type %s" % type(other))
+
+    def __sub__(self, other):
+        if isinstance(other, self.__class__):
+            raise ValueError("Cannot subtract type %s" % type(other))
+        elif isinstance(other, self.SerializationStrategy):
+            return other - self
+        elif isinstance(other, (list, tuple, str)):
+            return self.__remove(other)
         else:
             raise ValueError("Cannot add type %s" % type(other))
 
@@ -149,24 +180,10 @@ def to_json(thing, strategy={}):
                 # catch the case where there's just one property (and it's not in a list/tuple)
                 if not isinstance(fields, (tuple, list)):
                     fields = [fields]
-                # if any fields use the "-" to exclude a field from 'all' properties
-                if any([f.startswith("-") for f in fields if isinstance(f, str)]):
-                    obj_fields = obj.properties().keys()
-                    for f in fields:
-                        if isinstance(f, str) and f.startswith("-") and len(f) > 1:
-                            try:
-                                obj_fields.remove(f[1:])
-                            except ValueError:
-                                raise ValueError( "'%s' can't be excluded. "
-                                        + "It isn't a valid property of %s"
-                                        % (f[1:], obj.__class__.__name__))
-                        elif f not in obj_fields:
-                            obj_fields.append(f)
-                    fields = obj_fields
                 callable_ = None
                 for field_name in fields:
-                    if isinstance(field_name, (tuple, list)):
-                        field_name, callable_ = field_name
+                    if isinstance(field_name, dict):
+                        field_name, callable_ = field_name.items()[0]
                         if isinstance(callable_, str):
                             callable_ = ( globals().get(callable_, None) 
                                         or getattr(obj.__class__, callable_, None) )
