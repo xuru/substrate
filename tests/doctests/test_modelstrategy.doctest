@@ -1,0 +1,104 @@
+
+"""
+>>> from restler.serializers import ModelStrategy, to_json
+>>> from models import Model1
+
+
+>>> # Default model strategy is no fields
+>>> ModelStrategy(Model1)
+{<class 'models.Model1'>: []}
+
+>>> # include_all_fields option adds all db.Properties for a model
+>>> ModelStrategy(Model1, True)
+{<class 'models.Model1'>: ['rating',
+                           'string',
+                           'reference',
+                           'selfreference',
+                           'text',
+                           'datetime',
+                           'boolean',
+                           'im',
+                           'user',
+                           'date',
+                           'integer',
+                           'postaladdress',
+                           'stringlist',
+                           'phonenumber',
+                           'blobreference',
+                           'category',
+                           'list_',
+                           'float_',
+                           'blob',
+                           'geopt',
+                           'time',
+                           'link',
+                           'bytestring',
+                           'email']}
+
+>>> # Expose one field
+>>> ModelStrategy(Model1) + ["new_field"]
+{<class 'models.Model1'>: ['new_field']}
+
+# 
+>>> ModelStrategy(Model1) - ["new_field"]
+{<class 'models.Model1'>: []}
+
+>>> ModelStrategy(Model1, True) + ["new_field"]
+{<class 'models.Model1'>: ['rating',
+                           'string',
+                           'reference',
+                           'selfreference',
+                           'text',
+                           'datetime',
+                           'boolean',
+                           'im',
+                           'user',
+                           'date',
+                           'integer',
+                           'postaladdress',
+                           'stringlist',
+                           'phonenumber',
+                           'blobreference',
+                           'category',
+                           'list_',
+                           'float_',
+                           'blob',
+                           'geopt',
+                           'time',
+                           'link',
+                           'bytestring',
+                           'email',
+                           'new_field']}
+
+>>> ModelStrategy(Model1, True) - ["rating"]
+{<class 'models.Model1'>: ['string',
+                           'reference',
+                           'selfreference',
+                           'text',
+                           'datetime',
+                           'boolean',
+                           'im',
+                           'user',
+                           'date',
+                           'integer',
+                           'postaladdress',
+                           'stringlist',
+                           'phonenumber',
+                           'blobreference',
+                           'category',
+                           'list_',
+                           'float_',
+                           'blob',
+                           'geopt',
+                           'time',
+                           'link',
+                           'bytestring',
+                           'email']}
+
+>>> "[{'prop': <function <lambda>" in repr(ModelStrategy(Model1) + [{"prop": lambda o: o}])
+True
+
+>>> (ModelStrategy(Model1) + [{"prop": lambda o: o}]) - ["prop"]
+{<class 'models.Model1'>: []}
+
+"""

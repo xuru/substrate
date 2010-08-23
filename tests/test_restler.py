@@ -62,11 +62,15 @@ class RestlerTest(unittest.TestCase):
         m.postaladdress = "234 Shady Oak Rd., Eden Prairie, MN, 55218" 
         m.rating = 23 
         m.put()
-        print serializers.to_json(m, serializers.ModelStrategy(Model1) - ("selfreference", "blobreference"))
+        #print serializers.to_json(m, serializers.ModelStrategy(Model1) - ("selfreference", "blobreference"))
 
+'''
     def test_simple(self):
         self.assertEqual(serializers.to_json(Model1().all(), serialization), 
                """[{"string": "this", "key": "agZyZXN0bGVyDgsSB015TW9kZWwYtwEM", "myprop": "this and this"}, {"string": "that", "key": "agZyZXN0bGVyDgsSB015TW9kZWwYuAEM", "myprop": "this and that"}]""")
 
     def test_simple_properties(self):
         self.assertTrue(True)
+'''
+
+
