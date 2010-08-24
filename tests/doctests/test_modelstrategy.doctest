@@ -36,8 +36,8 @@
                            'email']}
 
 >>> # Expose one field
->>> ModelStrategy(Model1) + ["new_field"]
-{<class 'models.Model1'>: ['new_field']}
+>>> ModelStrategy(Model1) + ["string"]
+{<class 'models.Model1'>: ['string']}
 
 >>> # raise and exception if the field doesn't exist (and you try to remove it)
 >>> ModelStrategy(Model1) - ["new_field"]
@@ -45,33 +45,11 @@ Traceback (most recent call last):
 ...
 ValueError: 'new_field' cannot be removed. It is not in the current fields list ([])
 
->>> # Expose additional field
->>> ModelStrategy(Model1, True) + ["new_field"]
-{<class 'models.Model1'>: ['rating',
-                           'string',
-                           'reference',
-                           'selfreference',
-                           'text',
-                           'datetime',
-                           'boolean',
-                           'im',
-                           'user',
-                           'date',
-                           'integer',
-                           'postaladdress',
-                           'stringlist',
-                           'phonenumber',
-                           'blobreference',
-                           'category',
-                           'list_',
-                           'float_',
-                           'blob',
-                           'geopt',
-                           'time',
-                           'link',
-                           'bytestring',
-                           'email',
-                           'new_field']}
+>>> # Operations new update the object, always return a new instance
+>>> m1 = ModelStrategy(Model1) + ["string"]
+>>> m2 = m1 + ["rating"]
+>>> m1 != m2
+True
 
 >>> # Remove a field
 >>> ModelStrategy(Model1, True) - ["rating"]
@@ -106,13 +84,18 @@ True
 >>> (ModelStrategy(Model1) + [{"prop": lambda o: o}]) - ["prop"]
 {<class 'models.Model1'>: []}
 
->>> ((ModelStrategy(Model1) + ["prop"])+ [{"prop": lambda o: o}])
+>>> ((ModelStrategy(Model1) + ["rating"])+ [{"rating": lambda o: o}])
 Traceback (most recent call last):
 ...
-ValueError: Cannot add field.  'prop' already exists
+ValueError: Cannot add field.  'rating' already exists
 
->>> str(((ModelStrategy(Model1) + ["prop"]) - ["prop"]) + [{"prop": lambda o: o}]).startswith(
-...     "{<class 'models.Model1'>: [{'prop': <function <lambda>")
+>>> str(((ModelStrategy(Model1) + ["rating"]) - ["rating"]) + [{"rating": lambda o: o}]).startswith(
+...     "{<class 'models.Model1'>: [{'rating': <function <lambda>")
+True
+
+# A shorthand way to update the behavior of a field
+>>> str((ModelStrategy(Model1) + ["rating"]) << [{"rating": lambda o: o}]).startswith(
+...     "{<class 'models.Model1'>: [{'rating': <function <lambda>")
 True
 
 """

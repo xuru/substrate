@@ -87,8 +87,11 @@ class ModelStrategy(object):
                         else:
                             raise ValueError("Cannot add field.  '%s' already exists" % name)
                 elif name not in names:
-                    m.fields.append(name)
-                    names[name] = name
+                    if name in self.model.fields():
+                        m.fields.append(name)
+                        names[name] = name
+                    else:
+                        raise ValueError("Cannot add field.  '%s' is not a valid field for model '%s'" % (name, self.model ))
                 else:
                     raise ValueError("Cannot add field.  '%s' already exists" % (name, ))
         else:
@@ -100,6 +103,9 @@ class ModelStrategy(object):
         names = self.__name_map()
         if isinstance(fields, (tuple, list)):
             for f in fields:
+                # if they're giving us the field -> callable mapping, we just want the field
+                if isinstance(f, dict):
+                    f, _ = f.items()[0]
                 if f in names:
                     m.fields.remove(names[f])
                 else:
@@ -130,6 +136,13 @@ class ModelStrategy(object):
             return self.__remove(other)
         else:
             raise ValueError("Cannot add type %s" % type(other))
+
+    def __lshift__(self, other):
+        """ Shorthand for overriding fields with new behavior
+            i.e. remove the fields and add back in with new mappings"""
+        if not isinstance(other, (list, tuple, basestring)):
+            raise ValueError("Cannot add type %s" % type(other))
+        return self.__remove(other).__add(other)
 
     def __repr__(self):
         return pprint.pformat(self.to_dict())
