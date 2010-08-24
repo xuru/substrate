@@ -11,10 +11,10 @@
 >>> #len(Model1.all().fetch(100))
 >>> db.delete(Model1.all().fetch(100))
 >>> ref = Model1()
->>> ref = ref.put()
+>>> ref_key = ref.put()
 >>> m = Model1()
 >>> m2 = Model2()
->>> m2 = m2.put()
+>>> m2_key = m2.put()
 >>> m.string = "string"
 >>> m.bytestring = "\00\0x" 
 >>> m.boolean = True 
@@ -39,17 +39,21 @@
 >>> m.phonenumber = "612-292-4339" 
 >>> m.postaladdress = "234 Shady Oak Rd., Eden Prairie, MN, 55218" 
 >>> m.rating = 23 
->>> m = m.put()
->>> ss = ModelStrategy(Model1, True) + ModelStrategy(Model2)
+>>> key = m.put()
+
+>>> ss = ModelStrategy(Model1) + [{"the_date": "date"}]
 >>> sj = simplejson.loads(to_json(Model1.all(), ss))
->>> #print pformat(sj)
+>>> sj[1]
+{u'the_date': u'2010-08-24'}
 
->>> len(sj)
-2
->>> len(sj[0].keys())
-24
+>>> ss = ModelStrategy(Model1) + [{"the_date": lambda o: o.date.strftime("%m-%d-%Y") if o.date else None}]
+>>> sj = simplejson.loads(to_json(Model1.all(), ss))
+>>> sj[1]
+{u'the_date': u'08-24-2010'}
 
->>> 
-
+>>> ss = ModelStrategy(Model1) + [{"date": lambda o: o.date.strftime("%m-%d-%Y") if o.date else None}]
+>>> sj = simplejson.loads(to_json(Model1.all(), ss))
+>>> sj[1]
+{u'date': u'08-24-2010'}
 
 """

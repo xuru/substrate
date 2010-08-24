@@ -180,23 +180,21 @@ def to_json(thing, strategy={}):
                 # catch the case where there's just one property (and it's not in a list/tuple)
                 if not isinstance(fields, (tuple, list)):
                     fields = [fields]
-                callable_ = None
+                target = None
                 for field_name in fields:
+                    # Check to see if this remaps a field to a callable or a different field
                     if isinstance(field_name, dict):
-                        field_name, callable_ = field_name.items()[0]
-                        if isinstance(callable_, str):
-                            callable_ = ( globals().get(callable_, None) 
-                                        or getattr(obj.__class__, callable_, None) )
-                        if not callable_:
-                            raise ValueError("'%s' was not found or is not callable" % callable_name)
-                    elif isinstance(field_name, str):
-                        attr = ( globals().get(field_name, None)
-                                    or getattr(obj.__class__, field_name, None) )
-                        if callable(attr): callable_ = attr
-                    if callable_:
-                        ret[field_name] = callable_(obj)
+                        field_name, target = field_name.items()[0] # Only one key/value
+                    if callable(target): # Defer to the callable
+                        ret[field_name] = target(obj)
                     else:
-                        ret[field_name] = getattr(obj, field_name) 
+                        if target: # Remapped name
+                            if hasattr(obj, target):
+                                ret[field_name] = getattr(obj, target)
+                            else:
+                                raise ValueError("'%s' was not found " % target)
+                        else: # Common case (just the field)
+                            ret[field_name] = getattr(obj, field_name) 
             return ret
     return simplejson.dumps(thing, cls=AEEncoder)
 
