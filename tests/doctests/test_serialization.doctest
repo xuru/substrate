@@ -1,0 +1,55 @@
+
+"""
+>>> from google.appengine.ext import db
+>>> from google.appengine.api import users
+>>> from restler.serializers import ModelStrategy, to_json
+>>> from models import Model1, Model2
+>>> from pprint import pformat
+>>> from django.utils import simplejson
+>>> from datetime import datetime
+
+>>> #len(Model1.all().fetch(100))
+>>> db.delete(Model1.all().fetch(100))
+>>> ref = Model1()
+>>> ref = ref.put()
+>>> m = Model1()
+>>> m2 = Model2()
+>>> m2 = m2.put()
+>>> m.string = "string"
+>>> m.bytestring = "\00\0x" 
+>>> m.boolean = True 
+>>> m.integer = 123
+>>> m.float_ = 22.0 
+>>> m.datetime = datetime.now() 
+>>> m.date = datetime.now().date() 
+>>> m.time = datetime.now().time() 
+>>> m.list_ = [1,2,3]
+>>> m.stringlist = ["one", "two", "three"] 
+>>> m.reference = m2
+>>> m.selfreference = ref
+>>> m.blobreference = None # Todo
+>>> m.user = users.get_current_user() 
+>>> m.blob = "binary data" # Todo
+>>> m.text = "text"
+>>> m.category = "category"
+>>> m.link = "http://www.yahoo.com" 
+>>> m.email = "joe@yahoo.com" 
+>>> m.geopt = "1.0, 2.0"
+>>> m.im = "http://aim.com/ joe@yahoo.com" 
+>>> m.phonenumber = "612-292-4339" 
+>>> m.postaladdress = "234 Shady Oak Rd., Eden Prairie, MN, 55218" 
+>>> m.rating = 23 
+>>> m = m.put()
+>>> ss = ModelStrategy(Model1, True) + ModelStrategy(Model2)
+>>> sj = simplejson.loads(to_json(Model1.all(), ss))
+>>> #print pformat(sj)
+
+>>> len(sj)
+2
+>>> len(sj[0].keys())
+24
+
+>>> 
+
+
+"""

@@ -39,10 +39,11 @@
 >>> ModelStrategy(Model1) + ["new_field"]
 {<class 'models.Model1'>: ['new_field']}
 
-# 
+>>> # Can't remove missing field TODO should throw an error
 >>> ModelStrategy(Model1) - ["new_field"]
 {<class 'models.Model1'>: []}
 
+>>> # Expose additional field
 >>> ModelStrategy(Model1, True) + ["new_field"]
 {<class 'models.Model1'>: ['rating',
                            'string',
@@ -70,6 +71,7 @@
                            'email',
                            'new_field']}
 
+>>> # Remove a field
 >>> ModelStrategy(Model1, True) - ["rating"]
 {<class 'models.Model1'>: ['string',
                            'reference',
@@ -98,6 +100,7 @@
 >>> "[{'prop': <function <lambda>" in repr(ModelStrategy(Model1) + [{"prop": lambda o: o}])
 True
 
+# Add and remove a property
 >>> (ModelStrategy(Model1) + [{"prop": lambda o: o}]) - ["prop"]
 {<class 'models.Model1'>: []}
 

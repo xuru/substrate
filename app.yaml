@@ -8,3 +8,8 @@ handlers:
   script: main.py
 - url: /api/.*
   script: api.py
+
+skip_files:
+- ^local/.*
+- ^tests/.*
+- ^.hg/.*
