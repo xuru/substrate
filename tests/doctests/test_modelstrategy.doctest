@@ -77,24 +77,24 @@ True
                            'bytestring',
                            'email']}
 
->>> "[{'prop': <function <lambda>" in repr(ModelStrategy(Model1) + [{"prop": lambda o: o}])
+>>> "[{'prop': <function <lambda>" in repr(ModelStrategy(Model1) + [{"prop": lambda o: o.rating}])
 True
 
 # Add and remove a property
->>> (ModelStrategy(Model1) + [{"prop": lambda o: o}]) - ["prop"]
+>>> (ModelStrategy(Model1) + [{"prop": lambda o: o.rating}]) - ["prop"]
 {<class 'models.Model1'>: []}
 
->>> ((ModelStrategy(Model1) + ["rating"])+ [{"rating": lambda o: o}])
+>>> ((ModelStrategy(Model1) + ["rating"])+ [{"rating": lambda o: o.rating}])
 Traceback (most recent call last):
 ...
 ValueError: Cannot add field.  'rating' already exists
 
->>> str(((ModelStrategy(Model1) + ["rating"]) - ["rating"]) + [{"rating": lambda o: o}]).startswith(
+>>> str(((ModelStrategy(Model1) + ["rating"]) - ["rating"]) + [{"rating": lambda o: o.rating}]).startswith(
 ...     "{<class 'models.Model1'>: [{'rating': <function <lambda>")
 True
 
-# A shorthand way to update the behavior of a field
->>> str((ModelStrategy(Model1) + ["rating"]) << [{"rating": lambda o: o}]).startswith(
+# A shorthand way to update/override the behavior of a field
+>>> str((ModelStrategy(Model1) + ["rating"]) << [{"rating": lambda o: o.rating}]).startswith(
 ...     "{<class 'models.Model1'>: [{'rating': <function <lambda>")
 True
 
