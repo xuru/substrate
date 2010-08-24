@@ -65,7 +65,7 @@ class ModelStrategy(object):
         for p in self.fields:
             if isinstance(p, dict):
                 names[p.keys()[0]] = p
-            elif isinstance(p, str):
+            elif isinstance(p, basestring):
                 names[p] = p
         return names
 
@@ -102,8 +102,10 @@ class ModelStrategy(object):
             for f in fields:
                 if f in names:
                     m.fields.remove(names[f])
+                else:
+                    raise ValueError("'%s' cannot be removed. It is not in the current fields list (%s)" % (f, self.fields))
         else:
-            raise ValueError("Field '%s' is not in %s" % field, self.fields)
+            raise ValueError("Fields must be a tuple or list.")
         return m
 
     def to_dict(self): 
@@ -114,7 +116,7 @@ class ModelStrategy(object):
             return self.SerializationStrategy(self) + other
         elif isinstance(other, self.SerializationStrategy):
             return other + self
-        elif isinstance(other, (list, tuple, str)):
+        elif isinstance(other, (list, tuple, basestring)):
             return self.__add(other)
         else:
             raise ValueError("Cannot add type %s" % type(other))
@@ -124,7 +126,7 @@ class ModelStrategy(object):
             raise ValueError("Cannot subtract type %s" % type(other))
         elif isinstance(other, self.SerializationStrategy):
             return other - self
-        elif isinstance(other, (list, tuple, str)):
+        elif isinstance(other, (list, tuple, basestring)):
             return self.__remove(other)
         else:
             raise ValueError("Cannot add type %s" % type(other))

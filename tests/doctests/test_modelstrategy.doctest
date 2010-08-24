@@ -9,7 +9,7 @@
 {<class 'models.Model1'>: []}
 
 >>> # include_all_fields option adds all db.Properties for a model
->>> ModelStrategy(Model1, True)
+>>> ModelStrategy(Model1, include_all_fields=True)
 {<class 'models.Model1'>: ['rating',
                            'string',
                            'reference',
@@ -39,9 +39,11 @@
 >>> ModelStrategy(Model1) + ["new_field"]
 {<class 'models.Model1'>: ['new_field']}
 
->>> # Can't remove missing field TODO should throw an error
+>>> # raise and exception if the field doesn't exist (and you try to remove it)
 >>> ModelStrategy(Model1) - ["new_field"]
-{<class 'models.Model1'>: []}
+Traceback (most recent call last):
+...
+ValueError: 'new_field' cannot be removed. It is not in the current fields list ([])
 
 >>> # Expose additional field
 >>> ModelStrategy(Model1, True) + ["new_field"]
@@ -103,5 +105,14 @@ True
 # Add and remove a property
 >>> (ModelStrategy(Model1) + [{"prop": lambda o: o}]) - ["prop"]
 {<class 'models.Model1'>: []}
+
+>>> ((ModelStrategy(Model1) + ["prop"])+ [{"prop": lambda o: o}])
+Traceback (most recent call last):
+...
+ValueError: Cannot add field.  'prop' already exists
+
+>>> str(((ModelStrategy(Model1) + ["prop"]) - ["prop"]) + [{"prop": lambda o: o}]).startswith(
+...     "{<class 'models.Model1'>: [{'prop': <function <lambda>")
+True
 
 """
