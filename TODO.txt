@@ -1,0 +1,26 @@
+
+TODO
+====
+ * add runserver command
+ * add --datastore-path to manage.py (before command)
+ * create new datastore name for tests
+ * clear datastore before running tests
+ * consistent way to fix up sys.args to pass to commands
+ * add WebTest
+ * verify some edge case serialization AE properties
+ * add unittest2 tests
+ * add rate limiting
+ * add oauth server support
+ * add gaema authentication
+ * add xml serialization (if needed)
+ * add copyright file headers
+ * add api/key management
+ * add documentation system
+
+DONE
+====
+ * include decent test suite
+ * move non deployed libraries to local/lib  
+ * simplify serialization by moving complexity to 'strategy' classes
+ * add simple RestlerApp (webapp based)
+ * add example webapp
