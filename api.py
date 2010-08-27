@@ -18,26 +18,31 @@
 import sys, os
 import logging
 
+sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
+
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.ext.webapp import util
 
-class MainHandler(webapp.RequestHandler):
+from restler import serializers
+from restler.webapp import RestlerApp
+
+from models import Model1
+
+V1_SERVICE_STRATEGY = serializers.ModelStrategy(Model1)
+V2_SERVICE_STRATEGY = V1_SERVICE_STRATEGY + ["boolean", "phonenumber"]
+
+class V1ApiHandlerService(webapp.RequestHandler):
     def get(self):
-        html = """
-        <html>
-            <body>
-                <ul>
-                    <li> <a href="/api/v1/model1">V1 API</a> </li>
-                    <li> <a href="/api/v2/model1">V2 API</a> </li>
-                </ul>
-            </body>
-        </html>
-        """
-        self.response.out.write(html)
+        return Model1.all()
+
+class V2ApiHandlerService(webapp.RequestHandler):
+    def get(self):
+        return Model1.all(), V2_SERVICE_STRATEGY
 
 def main():
-    application = webapp.WSGIApplication([('/', MainHandler)],
+    application = RestlerApp([('/api/v1/model1', V1ApiHandlerService),
+                              ('/api/v2/model1', V2ApiHandlerService)],
                                          debug=True)
     util.run_wsgi_app(application)
 

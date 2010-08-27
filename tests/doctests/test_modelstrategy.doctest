@@ -1,0 +1,101 @@
+
+"""
+>>> from restler.serializers import ModelStrategy, to_json
+>>> from models import Model1
+
+
+>>> # Default model strategy is no fields
+>>> ModelStrategy(Model1)
+{<class 'models.Model1'>: []}
+
+>>> # include_all_fields option adds all db.Properties for a model
+>>> ModelStrategy(Model1, include_all_fields=True)
+{<class 'models.Model1'>: ['rating',
+                           'string',
+                           'reference',
+                           'selfreference',
+                           'text',
+                           'datetime',
+                           'boolean',
+                           'im',
+                           'user',
+                           'date',
+                           'integer',
+                           'postaladdress',
+                           'stringlist',
+                           'phonenumber',
+                           'blobreference',
+                           'category',
+                           'list_',
+                           'float_',
+                           'blob',
+                           'geopt',
+                           'time',
+                           'link',
+                           'bytestring',
+                           'email']}
+
+>>> # Expose one field
+>>> ModelStrategy(Model1) + ["string"]
+{<class 'models.Model1'>: ['string']}
+
+>>> # raise and exception if the field doesn't exist (and you try to remove it)
+>>> ModelStrategy(Model1) - ["new_field"]
+Traceback (most recent call last):
+...
+ValueError: 'new_field' cannot be removed. It is not in the current fields list ([])
+
+>>> # Operations new update the object, always return a new instance
+>>> m1 = ModelStrategy(Model1) + ["string"]
+>>> m2 = m1 + ["rating"]
+>>> m1 != m2
+True
+
+>>> # Remove a field
+>>> ModelStrategy(Model1, True) - ["rating"]
+{<class 'models.Model1'>: ['string',
+                           'reference',
+                           'selfreference',
+                           'text',
+                           'datetime',
+                           'boolean',
+                           'im',
+                           'user',
+                           'date',
+                           'integer',
+                           'postaladdress',
+                           'stringlist',
+                           'phonenumber',
+                           'blobreference',
+                           'category',
+                           'list_',
+                           'float_',
+                           'blob',
+                           'geopt',
+                           'time',
+                           'link',
+                           'bytestring',
+                           'email']}
+
+>>> "[{'prop': <function <lambda>" in repr(ModelStrategy(Model1) + [{"prop": lambda o: o.rating}])
+True
+
+# Add and remove a property
+>>> (ModelStrategy(Model1) + [{"prop": lambda o: o.rating}]) - ["prop"]
+{<class 'models.Model1'>: []}
+
+>>> ((ModelStrategy(Model1) + ["rating"])+ [{"rating": lambda o: o.rating}])
+Traceback (most recent call last):
+...
+ValueError: Cannot add field.  'rating' already exists
+
+>>> str(((ModelStrategy(Model1) + ["rating"]) - ["rating"]) + [{"rating": lambda o: o.rating}]).startswith(
+...     "{<class 'models.Model1'>: [{'rating': <function <lambda>")
+True
+
+# A shorthand way to update/override the behavior of a field
+>>> str((ModelStrategy(Model1) + ["rating"]) << [{"rating": lambda o: o.rating}]).startswith(
+...     "{<class 'models.Model1'>: [{'rating': <function <lambda>")
+True
+
+"""
