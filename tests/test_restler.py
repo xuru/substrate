@@ -35,7 +35,7 @@ class RestlerTest(unittest.TestCase):
         ref = Model1()
         ref.put()
         m = Model1()
-        m2 = Model2()
+        m2 = Model2(model2_prop='model2_prop')
         m2.put()
         m.string = "string"
         m.bytestring = "\00\0x" 
@@ -64,13 +64,21 @@ class RestlerTest(unittest.TestCase):
         m.put()
         #print serializers.to_json(m, serializers.ModelStrategy(Model1) - ("selfreference", "blobreference"))
 
-'''
+    '''
     def test_simple(self):
         self.assertEqual(serializers.to_json(Model1().all(), serialization), 
                """[{"string": "this", "key": "agZyZXN0bGVyDgsSB015TW9kZWwYtwEM", "myprop": "this and this"}, {"string": "that", "key": "agZyZXN0bGVyDgsSB015TW9kZWwYuAEM", "myprop": "this and that"}]""")
 
     def test_simple_properties(self):
         self.assertTrue(True)
-'''
+    '''
 
+    def test_with_builder(self):
+        from lib.ae_test_data.builder import build
+        m = build(Model2)
+        self.assertNotEquals(None, m.model2_prop)
+        self.assertTrue('model2_prop', m.model2_prop)
+        n = build(Model2, model2_prop='foo')
+        self.assertEqual('foo', n.model2_prop)
+        # self.assertTrue(False)
 
