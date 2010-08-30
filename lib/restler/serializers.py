@@ -56,12 +56,13 @@ class ModelStrategy(object):
         def __repr__(self):
             return pprint.pformat(self.mappings)
 
-    def __init__(self, model, include_all_fields=False):
+    def __init__(self, model, include_all_fields=False, name=None):
         self.model = model
         if include_all_fields:
             self.fields = [f for f in model.fields()]
         else:
             self.fields = fields = []
+        self.name = name
 
     def __name_map(self):
         # We remove 'properties' i.e. things with callables by name
@@ -76,7 +77,7 @@ class ModelStrategy(object):
 
     def __add(self, fields):
         names = self.__name_map()
-        m = ModelStrategy(self.model)
+        m = ModelStrategy(self.model, name=self.name)
         m.fields = self.fields[:]
         if isinstance(fields, (tuple, list)):
             for name in fields:
@@ -104,7 +105,7 @@ class ModelStrategy(object):
         return m
 
     def __remove(self, fields):
-        m = ModelStrategy(self.model) + self.fields
+        m = ModelStrategy(self.model, name=self.name) + self.fields
         names = self.__name_map()
         if isinstance(fields, (tuple, list)):
             for f in fields:
@@ -120,7 +121,9 @@ class ModelStrategy(object):
         return m
 
     def to_dict(self): 
-        return {self.model: list(self.fields)}
+        if self.name:
+            return {self.model: {self.name: self.fields}}
+        return {self.model: self.fields}
 
     def __add__(self, other):
         if isinstance(other, self.__class__):
@@ -183,6 +186,8 @@ def encoder_builder(type_, strategy={}):
             return str(obj.key()) # TODO is this correct?
         ret = {} # What we're most likely going to return (populated, of course)
         if isinstance(obj, db.Model):
+            model = {}
+            kind = obj.kind().lower()
             # User the model's properties
             if strategy is None:
                 fields = obj.properties().keys()
@@ -191,6 +196,11 @@ def encoder_builder(type_, strategy={}):
                 fields = strategy.get(obj.__class__, None)
                 if fields is None:
                     fields = obj.properties().keys()
+                elif isinstance(fields, dict):
+                    if len(fields.keys()) != 1:
+                        raise ValueError('fields must an instance dict(<model name>=<field list>)')
+                    kind, fields = fields.items()[0]
+            ret[kind] = model
             # catch the case where there's just one property (and it's not in a list/tuple)
             if not isinstance(fields, (tuple, list)):
                 fields = [fields]
@@ -200,15 +210,15 @@ def encoder_builder(type_, strategy={}):
                 if isinstance(field_name, dict):
                     field_name, target = field_name.items()[0] # Only one key/value
                 if callable(target): # Defer to the callable
-                    ret[field_name] = target(obj)
+                    model[field_name] = target(obj)
                 else:
                     if target: # Remapped name
                         if hasattr(obj, target):
-                            ret[field_name] = getattr(obj, target)
+                            model[field_name] = getattr(obj, target)
                         else:
                             raise ValueError("'%s' was not found " % target)
                     else: # Common case (just the field)
-                        ret[field_name] = getattr(obj, field_name) 
+                        model[field_name] = getattr(obj, field_name) 
         return ret
     if type_ == "json":
         class AEEncoder(simplejson.JSONEncoder):
@@ -237,13 +247,8 @@ def _encode_xml(thing, node, strategy, xml_style):
     encoder = encoder_builder("xml", strategy)
     # Easy types to convert to unicode
     simple_types = (bool, basestring, int, long, float, decimal.Decimal)
-    collection_types = (list, dict, db.Model) # db.Model is much like a dict
-    if isinstance(thing, db.Model):
-        el = xml_style["model"](node, thing)
-        if el is None: el = node
-        _encode_xml(encoder(thing), el, strategy, xml_style)
-        return
-    elif isinstance(thing, dict):
+    collection_types = (list, dict)
+    if isinstance(thing, dict):
         # Might seem a little weird how we serialize dictionaries, but in this case
         # the inspiration is from json (where objects define a consistent structure)
         # so we use a <key>value</key> format
@@ -270,6 +275,10 @@ def _encode_xml(thing, node, strategy, xml_style):
         el = xml_style["list"](node, thing)
         if el is None: el = node
         for value in thing:
+            if isinstance(value, db.Model):
+                # Note: we don't create an item in this circumstance
+                _encode_xml(encoder(value), el, strategy, xml_style)
+                continue
             i = xml_style["list_item"](el, value)
             if not isinstance(value, simple_types):
                 if isinstance(value, collection_types):
