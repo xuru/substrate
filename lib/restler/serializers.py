@@ -4,7 +4,6 @@ import decimal
 import pprint
 import types
 
-from xml.sax import saxutils
 from xml.etree import ElementTree as ET
 
 from google.appengine.ext import blobstore
@@ -238,13 +237,16 @@ def _encode_xml(thing, node, strategy, xml_style):
     encoder = encoder_builder("xml", strategy)
     # Easy types to convert to unicode
     simple_types = (bool, basestring, int, long, float, decimal.Decimal)
-    collection_types = (list, dict)
+    collection_types = (list, dict, db.Model) # db.Model is much like a dict
     if isinstance(thing, db.Model):
         el = xml_style["model"](node, thing)
         if el is None: el = node
         _encode_xml(encoder(thing), el, strategy, xml_style)
         return
     elif isinstance(thing, dict):
+        # Might seem a little weird how we serialize dictionaries, but in this case
+        # the inspiration is from json (where objects define a consistent structure)
+        # so we use a <key>value</key> format
         # Allow overriding default
         el = xml_style["dict"](node, thing)
         if el is None: el = node
