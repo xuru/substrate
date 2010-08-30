@@ -56,7 +56,7 @@ class ModelStrategy(object):
         def __repr__(self):
             return pprint.pformat(self.mappings)
 
-    def __init__(self, model, include_all_fields=False, name=None):
+    def __init__(self, model, include_all_fields=False, name="__kind__"):
         self.model = model
         if include_all_fields:
             self.fields = [f for f in model.fields()]
@@ -121,7 +121,7 @@ class ModelStrategy(object):
         return m
 
     def to_dict(self): 
-        if self.name:
+        if self.name != "__kind__":
             return {self.model: {self.name: self.fields}}
         return {self.model: self.fields}
 
@@ -200,7 +200,13 @@ def encoder_builder(type_, strategy={}):
                     if len(fields.keys()) != 1:
                         raise ValueError('fields must an instance dict(<model name>=<field list>)')
                     kind, fields = fields.items()[0]
-            ret[kind] = model
+                    if callable(kind):
+                        kind = kind(obj)
+            # Handle the case where we don't want the model name as part of the serialization
+            if kind is None:
+                model = ret
+            else:
+                ret[unicode(kind)] = model
             # catch the case where there's just one property (and it's not in a list/tuple)
             if not isinstance(fields, (tuple, list)):
                 fields = [fields]
