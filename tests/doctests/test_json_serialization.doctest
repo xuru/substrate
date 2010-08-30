@@ -46,6 +46,11 @@
 >>> sj[1]
 {u'model1': {u'the_text': u'text'}}
 
+>>> ss = ModelStrategy(Model1, name="person") + [{"the_text": "text"}]
+>>> sj = simplejson.loads(to_json(Model1.all(), ss))
+>>> sj[1]
+{u'person': {u'the_text': u'text'}}
+
 >>> ss = ModelStrategy(Model1) + [{"the_text": lambda o: o.text}]
 >>> sj = simplejson.loads(to_json(Model1.all(), ss))
 >>> sj[1]
