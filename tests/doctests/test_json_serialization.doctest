@@ -41,19 +41,19 @@
 >>> m.rating = 23 
 >>> key = m.put()
 
->>> ss = ModelStrategy(Model1) + [{"the_date": "date"}]
+>>> ss = ModelStrategy(Model1) + [{"the_text": "text"}]
 >>> sj = simplejson.loads(to_json(Model1.all(), ss))
 >>> sj[1]
-{u'the_date': u'2010-08-24'}
+{u'the_text': u'text'}
 
->>> ss = ModelStrategy(Model1) + [{"the_date": lambda o: o.date.strftime("%m-%d-%Y") if o.date else None}]
+>>> ss = ModelStrategy(Model1) + [{"the_text": lambda o: o.text}]
 >>> sj = simplejson.loads(to_json(Model1.all(), ss))
 >>> sj[1]
-{u'the_date': u'08-24-2010'}
+{u'the_text': u'text'}
 
->>> ss = ModelStrategy(Model1) + [{"date": lambda o: o.date.strftime("%m-%d-%Y") if o.date else None}]
+>>> ss = ModelStrategy(Model1) + [{"text": lambda o: "the_text"}]
 >>> sj = simplejson.loads(to_json(Model1.all(), ss))
 >>> sj[1]
-{u'date': u'08-24-2010'}
+{u'text': u'the_text'}
 
 """
