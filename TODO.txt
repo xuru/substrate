@@ -12,7 +12,6 @@ TODO
  * add rate limiting
  * add oauth server support
  * add gaema authentication
- * add xml serialization (if needed)
  * add copyright file headers
  * add api/key management
  * add documentation system
@@ -24,3 +23,4 @@ DONE
  * simplify serialization by moving complexity to 'strategy' classes
  * add simple RestlerApp (webapp based)
  * add example webapp
+ * add xml serialization
