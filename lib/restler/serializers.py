@@ -21,7 +21,16 @@ TIME_FORMAT = "%H:%M:%S"
 
 class ModelStrategy(object):
     """ Defines how to serialize an AppEngine model i.e. which fields to include,
-        exclude or map to a callable.  """
+        exclude or map to a callable.
+        
+        keyname arguments:
+        include_all_fields=True Creates a strategy with all properties of the Model to be serialized.
+        name=[None|key|tag] The key or tag that surrounds the serialized properties for a Model. 
+            The default value is the lowercase classname of the Model.
+            None flattens the result structure. 
+                with name:  [{'my_class':{'prop1':'value1'}}, ...]
+                without name:  [{'prop1':'value1'}, ...]
+    """
 
     class SerializationStrategy(object):
         """ A container for multiple mappings (shouldn't be used directly)"""
