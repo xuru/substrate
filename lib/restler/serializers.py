@@ -22,14 +22,6 @@ TIME_FORMAT = "%H:%M:%S"
 class ModelStrategy(object):
     """ Defines how to serialize an AppEngine model i.e. which fields to include,
         exclude or map to a callable.
-        
-        keyname arguments:
-        include_all_fields=True Creates a strategy with all properties of the Model to be serialized.
-        name=[None|key|tag] The key or tag that surrounds the serialized properties for a Model. 
-            The default value is the lowercase classname of the Model.
-            None flattens the result structure. 
-                with name:  [{'my_class':{'prop1':'value1'}}, ...]
-                without name:  [{'prop1':'value1'}, ...]
     """
 
     class SerializationStrategy(object):
@@ -65,13 +57,24 @@ class ModelStrategy(object):
         def __repr__(self):
             return pprint.pformat(self.mappings)
 
-    def __init__(self, model, include_all_fields=False, name="__kind__"):
+    def __init__(self, model, include_all_fields=False, output_name="__kind__"):
+        """
+        model - The App Engine model class to be serialized.
+        
+        keyname arguments:
+        include_all_fields=False Creates a strategy with all properties of the Model to be serialized.
+        output_name='__kind__' [__kind__|None|string|callable] The key or tag that surrounds the serialized properties for a Model. 
+            The default value is the lowercase classname of the Model.
+            None flattens the result structure. 
+                with name:  [{'my_class':{'prop1':'value1'}}, ...]
+                without name:  [{'prop1':'value1'}, ...]
+        """
         self.model = model
         if include_all_fields:
             self.fields = [f for f in model.fields()]
         else:
             self.fields = fields = []
-        self.name = name
+        self.name = output_name
 
     def __name_map(self):
         # We remove 'properties' i.e. things with callables by name
@@ -86,7 +89,7 @@ class ModelStrategy(object):
 
     def __add(self, fields):
         names = self.__name_map()
-        m = ModelStrategy(self.model, name=self.name)
+        m = ModelStrategy(self.model, output_name=self.name)
         m.fields = self.fields[:]
         if isinstance(fields, (tuple, list)):
             for name in fields:
@@ -114,7 +117,7 @@ class ModelStrategy(object):
         return m
 
     def __remove(self, fields):
-        m = ModelStrategy(self.model, name=self.name) + self.fields
+        m = ModelStrategy(self.model, output_name=self.name) + self.fields
         names = self.__name_map()
         if isinstance(fields, (tuple, list)):
             for f in fields:
