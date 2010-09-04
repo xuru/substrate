@@ -1,4 +1,5 @@
 
+import copy
 import datetime
 import decimal
 import pprint
@@ -19,51 +20,70 @@ import datetime_safe
 DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M:%S"
 
+DEFAULT_STYLE = {
+    'xml' : {
+        "root": lambda thing: ET.Element("result"),
+        "model": lambda el, thing: ET.SubElement(el, thing.kind().lower()),
+        "list": lambda el, thing: None, # top level element for a list
+        "list_item": lambda el, thing: ET.SubElement(el, "item"), # An item in a list
+        "dict": lambda el, thing: None, # top level element for a dict
+        "dict_item": lambda el, thing: ET.SubElement(el, thing[0]), # thing is tuple(key, value)
+        "null": lambda el, thing: el.set("null", "true"),
+    },
+    'json' : {
+        "flatten" : True,
+    }
+} 
+
+class SerializationStrategy(object):
+    """ A container for multiple mappings (shouldn't be used directly)"""
+    def __init__(self, mappings={}, style=None):
+        if isinstance(mappings, ModelStrategy):
+            self.mappings = mappings.to_dict()
+        else:
+            self.mappings = dict(mappings.items())
+        if style == None:
+            self.style = copy.deepcopy(DEFAULT_STYLE)
+        else:
+            self.style = style
+
+    def _new_mapping(self, other_dict):
+        maps = dict(self.mappings.items())
+        maps.update(other_dict)
+        return self.__class__(maps)
+
+    def __add__(self, mapping):
+        if isinstance(mapping, dict):
+            return self._new_mapping(mapping)
+        elif isinstance(mapping, self.__class__):
+            return self._new_mapping(mapping.mappings)
+        elif isinstance(mapping, ModelStrategy):
+            return self._new_mapping(mapping.to_dict())
+        else:
+            raise ValueError("Cannot add type: %s" % type(mapping))
+        return self
+
+    def __sub__(self, mapping):
+        if isinstance(mapping, ModelStrategy):
+            m = self._new_mapping(mapping.to_dict())
+        else:
+            raise ValueError("Not of type ModelStrategy")
+
+    def __repr__(self):
+        return pprint.pformat(self.mappings)
+
 class ModelStrategy(object):
     """ Defines how to serialize an AppEngine model i.e. which fields to include,
         exclude or map to a callable.
     """
 
-    class SerializationStrategy(object):
-        """ A container for multiple mappings (shouldn't be used directly)"""
-        def __init__(self, mappings={}):
-            if isinstance(mappings, ModelStrategy):
-                self.mappings = mappings.to_dict()
-            else:
-                self.mappings = dict(mappings.items())
-
-        def _new_mapping(self, other_dict):
-            maps = dict(self.mappings.items())
-            maps.update(other_dict)
-            return self.__class__(maps)
-
-        def __add__(self, mapping):
-            if isinstance(mapping, dict):
-                return self._new_mapping(mapping)
-            elif isinstance(mapping, self.__class__):
-                return self._new_mapping(mapping.mappings)
-            elif isinstance(mapping, ModelStrategy):
-                return self._new_mapping(mapping.to_dict())
-            else:
-                raise ValueError("Cannot add type: %s" % type(mapping))
-            return self
-
-        def __sub__(self, mapping):
-            if isinstance(mapping, ModelStrategy):
-                m = self._new_mapping(mapping.to_dict())
-            else:
-                raise ValueError("Not of type ModelStrategy")
-
-        def __repr__(self):
-            return pprint.pformat(self.mappings)
-
-    def __init__(self, model, include_all_fields=False, output_name="__kind__"):
+    def __init__(self, model, include_all_fields=False, output_name=None):
         """
         model - The App Engine model class to be serialized.
         
         keyname arguments:
         include_all_fields=False Creates a strategy with all properties of the Model to be serialized.
-        output_name='__kind__' [__kind__|None|string|callable] The key or tag that surrounds the serialized properties for a Model. 
+        output_name=None [None|string|callable] The key or tag that surrounds the serialized properties for a Model. 
             The default value is the lowercase classname of the Model.
             None flattens the result structure. 
                 with name:  [{'my_class':{'prop1':'value1'}}, ...]
@@ -133,14 +153,14 @@ class ModelStrategy(object):
         return m
 
     def to_dict(self): 
-        if self.name != "__kind__":
+        if self.name is not None:
             return {self.model: {self.name: self.fields}}
         return {self.model: self.fields}
 
     def __add__(self, other):
         if isinstance(other, self.__class__):
-            return self.SerializationStrategy(self) + other
-        elif isinstance(other, self.SerializationStrategy):
+            return SerializationStrategy(self) + other
+        elif isinstance(other, SerializationStrategy):
             return other + self
         elif isinstance(other, (list, tuple, basestring)):
             return self.__add(other)
@@ -150,7 +170,7 @@ class ModelStrategy(object):
     def __sub__(self, other):
         if isinstance(other, self.__class__):
             raise ValueError("Cannot subtract type %s" % type(other))
-        elif isinstance(other, self.SerializationStrategy):
+        elif isinstance(other, SerializationStrategy):
             return other - self
         elif isinstance(other, (list, tuple, basestring)):
             return self.__remove(other)
@@ -167,7 +187,7 @@ class ModelStrategy(object):
     def __repr__(self):
         return pprint.pformat(self.to_dict())
 
-def encoder_builder(type_, strategy={}):
+def encoder_builder(type_, strategy=None, style=None):
     def default_impl(obj):
         # Load objects from the datastore (could be done in parallel)
         if isinstance(obj, db.Query):
@@ -208,6 +228,7 @@ def encoder_builder(type_, strategy={}):
                 fields = strategy.get(obj.__class__, None)
                 if fields is None:
                     fields = obj.properties().keys()
+                # If it's a dict, we're changing the output_name for the model
                 elif isinstance(fields, dict):
                     if len(fields.keys()) != 1:
                         raise ValueError('fields must an instance dict(<model name>=<field list>)')
@@ -215,7 +236,7 @@ def encoder_builder(type_, strategy={}):
                     if callable(kind):
                         kind = kind(obj)
             # Handle the case where we don't want the model name as part of the serialization
-            if kind is None:
+            if type_ == 'json' and bool(style['json']["flatten"]):
                 model = ret
             else:
                 ret[unicode(kind)] = model
@@ -250,19 +271,20 @@ def encoder_builder(type_, strategy={}):
     return None
 
 
-def to_json(thing, strategy={}):
-    if isinstance(strategy, ModelStrategy):
-        strategy = strategy.to_dict()
-    elif isinstance(strategy, ModelStrategy.SerializationStrategy):
-        strategy = strategy.mappings
-    elif not isinstance(strategy, dict):
+def to_json(thing, strategy=None):
+    if not isinstance(strategy, (ModelStrategy, SerializationStrategy)):
         raise ValueError("Serialization strategy must be a ModelStrategy, SerializationStrategy or dict")
-    encoder = encoder_builder("json", strategy)
+    if isinstance(strategy, ModelStrategy):
+        strategy = SerializationStrategy(strategy)
+    mappings = strategy.mappings
+    style = strategy.style
+    encoder = encoder_builder("json", mappings, style)
     return simplejson.dumps(thing, cls=encoder)
 
 
-def _encode_xml(thing, node, strategy, xml_style):
-    encoder = encoder_builder("xml", strategy)
+def _encode_xml(thing, node, strategy, style):
+    xml_style = style["xml"]
+    encoder = encoder_builder("xml", strategy, style)
     # Easy types to convert to unicode
     simple_types = (bool, basestring, int, long, float, decimal.Decimal)
     collection_types = (list, dict)
@@ -282,9 +304,9 @@ def _encode_xml(thing, node, strategy, xml_style):
                 xml_style["null"](e, None) 
             elif not isinstance(value, simple_types):
                 if isinstance(value, collection_types):
-                    _encode_xml(value, e, strategy, xml_style)
+                    _encode_xml(value, e, strategy, style)
                 else:
-                    _encode_xml(encoder(value), e, strategy, xml_style)
+                    _encode_xml(encoder(value), e, strategy, style)
             else:
                 e.text = unicode(value)
         return 
@@ -295,14 +317,14 @@ def _encode_xml(thing, node, strategy, xml_style):
         for value in thing:
             if isinstance(value, db.Model):
                 # Note: we don't create an item in this circumstance
-                _encode_xml(encoder(value), el, strategy, xml_style)
+                _encode_xml(encoder(value), el, strategy, style)
                 continue
             i = xml_style["list_item"](el, value)
             if not isinstance(value, simple_types):
                 if isinstance(value, collection_types):
-                    _encode_xml(value, i, strategy, xml_style)
+                    _encode_xml(value, i, strategy, style)
                 else:
-                    _encode_xml(encoder(value), i, strategy, xml_style)
+                    _encode_xml(encoder(value), i, strategy, style)
             else:
                 i.text = unicode(value)
             if value is None:
@@ -313,30 +335,21 @@ def _encode_xml(thing, node, strategy, xml_style):
     elif thing is None:
         xml_style["null"](node, None) 
     else:
-        _encode_xml(encoder(thing), node, strategy, xml_style)
+        _encode_xml(encoder(thing), node, strategy, style)
     return
 
 
-DEFAULT_XML_STYLE = {
-            "root": lambda thing: ET.Element("result"),
-            "model": lambda el, thing: ET.SubElement(el, thing.kind().lower()),
-            "list": lambda el, thing: None, # top level element for a list
-            "list_item": lambda el, thing: ET.SubElement(el, "item"), # An item in a list
-            "dict": lambda el, thing: None, # top level element for a dict
-            "dict_item": lambda el, thing: ET.SubElement(el, thing[0]), # thing is tuple(key, value)
-            "null": lambda el, thing: el.set("null", "true"),
-} 
-
-def to_xml(thing, strategy={}, xml_style=DEFAULT_XML_STYLE):
-    if isinstance(strategy, ModelStrategy):
-        strategy = strategy.to_dict()
-    elif isinstance(strategy, ModelStrategy.SerializationStrategy):
-        strategy = strategy.mappings
-    elif not isinstance(strategy, dict):
+def to_xml(thing, strategy=None):
+    if not isinstance(strategy, (ModelStrategy, SerializationStrategy)):
         raise ValueError("Serialization strategy must be a ModelStrategy, SerializationStrategy or dict")
+    if isinstance(strategy, ModelStrategy):
+        strategy = SerializationStrategy(strategy)
 
-    root = xml_style["root"](thing)
-    _encode_xml(thing, root, strategy, xml_style)
+    style = strategy.style
+    mappings = strategy.mappings
+
+    root = style["xml"]["root"](thing)
+    _encode_xml(thing, root, mappings, style)
     return ET.tostring(root)
 
 

@@ -2,7 +2,7 @@
 """
 >>> from google.appengine.ext import db
 >>> from google.appengine.api import users
->>> from restler.serializers import ModelStrategy, to_json
+>>> from restler.serializers import ModelStrategy, SerializationStrategy, to_json
 >>> from models import Model1, Model2
 >>> from pprint import pformat
 >>> from django.utils import simplejson
@@ -44,21 +44,16 @@
 >>> ss = ModelStrategy(Model1) + [{"the_text": "text"}]
 >>> sj = simplejson.loads(to_json(Model1.all(), ss))
 >>> sj[1]
-{u'model1': {u'the_text': u'text'}}
-
->>> ss = ModelStrategy(Model1, output_name="person") + [{"the_text": "text"}]
->>> sj = simplejson.loads(to_json(Model1.all(), ss))
->>> sj[1]
-{u'person': {u'the_text': u'text'}}
+{u'the_text': u'text'}
 
 >>> ss = ModelStrategy(Model1) + [{"the_text": lambda o: o.text}]
 >>> sj = simplejson.loads(to_json(Model1.all(), ss))
 >>> sj[1]
-{u'model1': {u'the_text': u'text'}}
+{u'the_text': u'text'}
 
 >>> ss = ModelStrategy(Model1) + [{"text": lambda o: "the_text"}]
 >>> sj = simplejson.loads(to_json(Model1.all(), ss))
 >>> sj[1]
-{u'model1': {u'text': u'the_text'}}
+{u'text': u'the_text'}
 
 """
