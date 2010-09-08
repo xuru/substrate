@@ -30,7 +30,7 @@
 >>> m.blobreference = None # Todo
 >>> m.user = users.get_current_user() 
 >>> m.blob = "binary data" # Todo
->>> m.text = "text"
+>>> m.text = 'text & < > &amp; " '
 >>> m.category = "category"
 >>> m.link = "http://www.yahoo.com" 
 >>> m.email = "joe@yahoo.com" 
@@ -43,11 +43,17 @@
 
 >>> ss = ModelStrategy(Model1) + [{"the_text": "text"}]
 >>> tree = ET.fromstring(to_xml(Model1.all(), ss))
+>>> len(tree.findall(".//model1"))
+2
 >>> len(tree.findall(".//the_text"))
 2
+>>> tree.findall(".//the_text")[1].text  == 'text & < > &amp; " '
+True
 
->>> ss = ModelStrategy(Model1) + [{"the_text": lambda o: o.text}]
+>>> ss = ModelStrategy(Model1, output_name="person") + [{"the_text": lambda o: o.text}]
 >>> tree = ET.fromstring(to_xml(Model1.all(), ss))
+>>> len(tree.findall(".//person"))
+2
 >>> len(tree.findall(".//the_text"))
 2
 
