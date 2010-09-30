@@ -68,4 +68,5 @@
 >>> sj['models'][1]
 {u'category': u'category', u'rating': 23, u'list_': [1, 2, 3], u'string': u'string', u'reference': {u'model2_prop': None}, u'selfreference': {u'category': None, u'rating': None, u'list_': [], u'string': None, u'reference': None, u'selfreference': None, u'text': None, u'stringlist': [], u'blobreference': None, u'float_': None, u'im': None, u'blob': None, u'geopt': None, u'boolean': None, u'link': None, u'postaladdress': None, u'bytestring': None, u'integer': None, u'email': None, u'phonenumber': None, u'user': None}, u'text': u'text', u'stringlist': [u'one', u'two', u'three'], u'blobreference': None, u'float_': 22.0, u'im': u'http://aim.com/ joe@yahoo.com', u'blob': u'binary data', u'geopt': u'1.0 2.0', u'boolean': True, u'link': u'http://www.yahoo.com', u'postaladdress': u'234 Shady Oak Rd., Eden Prairie, MN, 55218', u'bytestring': u'\x00\x00x', u'integer': 123, u'email': u'joe@yahoo.com', u'phonenumber': u'612-292-4339', u'user': None}
 
+>>> to_json({'success':True})
 """
