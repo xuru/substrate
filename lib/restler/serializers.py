@@ -125,7 +125,9 @@ class ModelStrategy(object):
                         else:
                             raise ValueError("Cannot add field.  '%s' already exists" % name)
                 elif name not in names:
-                    if name in self.model.fields():
+                    if (name in self.model.fields()
+                            or isinstance(getattr(self.model, name, None), property)
+                            or callable(getattr(self.model, name, None))):
                         m.fields.append(name)
                         names[name] = name
                     else:
@@ -233,6 +235,7 @@ def encoder_builder(type_, strategy=None, style=None):
                     if len(fields.keys()) != 1:
                         raise ValueError('fields must an instance dict(<model name>=<field list>)')
                     kind, fields = fields.items()[0]
+                    # if kind is callable, we'll call it to get the output_name
                     if callable(kind):
                         kind = kind(obj)
             # Handle the case where we don't want the model name as part of the serialization
@@ -248,6 +251,7 @@ def encoder_builder(type_, strategy=None, style=None):
                 # Check to see if this remaps a field to a callable or a different field
                 if isinstance(field_name, dict):
                     field_name, target = field_name.items()[0] # Only one key/value
+
                 if callable(target): # Defer to the callable
                     model[field_name] = target(obj)
                 else:
@@ -272,10 +276,12 @@ def encoder_builder(type_, strategy=None, style=None):
 
 
 def to_json(thing, strategy=None):
-    if not isinstance(strategy, (ModelStrategy, SerializationStrategy)):
+    if not isinstance(strategy, (ModelStrategy, SerializationStrategy, types.NoneType)):
         raise ValueError("Serialization strategy must be a ModelStrategy, SerializationStrategy or dict")
     if isinstance(strategy, ModelStrategy):
         strategy = SerializationStrategy(strategy)
+    if strategy is None:
+        strategy = SerializationStrategy()
     mappings = strategy.mappings
     style = strategy.style
     encoder = encoder_builder("json", mappings, style)

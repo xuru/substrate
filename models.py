@@ -5,6 +5,10 @@ from google.appengine.ext import blobstore
 class Model2(db.Model):
 
     model2_prop = db.StringProperty()
+    
+    @property
+    def my_method(self):
+        return "I say blah!"
 
 class Model1(db.Model):
 
