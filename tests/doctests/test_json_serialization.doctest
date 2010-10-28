@@ -2,7 +2,7 @@
 """
 >>> from google.appengine.ext import db
 >>> from google.appengine.api import users
->>> from restler.serializers import ModelStrategy, SerializationStrategy, to_json
+>>> from restler.serializers import ModelStrategy, SerializationStrategy, to_json, SKIP
 >>> from models import Model1, Model2
 >>> from pprint import pformat
 >>> from django.utils import simplejson
@@ -79,5 +79,8 @@
 
 >>> to_json(Model2(), ModelStrategy(Model2) + [{"my_method": lambda obj, context: context["foo"]}], context={"foo": "woohoo"})
 '{"my_method": "woohoo"}'
+
+>>> to_json(Model2(), ModelStrategy(Model2) + [{"yes": lambda o: "yes"}, {"no" : lambda o: SKIP}])
+'{"yes": "yes"}'
 
 """
