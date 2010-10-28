@@ -32,6 +32,7 @@ DEFAULT_STYLE = {
     },
     'json' : {
         "flatten" : True,
+        "indent" : None,
     }
 } 
 
@@ -39,6 +40,20 @@ class SkipField(object): pass
 
 SKIP = SkipField()
 
+def json_response(response, model_or_query, strategy=None, status_code=200, context={}):
+    """ Render json to a webapp response """
+    json = to_json(model_or_query, strategy)
+    response.set_status(status_code)
+    response.headers['Content-Type'] = "application/json"
+    response.out.write(json)
+                                
+def xml_response(response, model_or_query, strategy=None, status_code=200, context={}):
+    """ Render xml to a webapp response """
+    xml = to_xml(model_or_query, strategy)
+    response.set_status(status_code)
+    response.headers['Content-Type'] = "application/xml"
+    response.out.write(xml)
+                                
 class SerializationStrategy(object):
     """ A container for multiple mappings (shouldn't be used directly)"""
     def __init__(self, mappings={}, style=None):
@@ -296,7 +311,7 @@ def to_json(thing, strategy=None, context={}):
     mappings = strategy.mappings
     style = strategy.style
     encoder = encoder_builder("json", mappings, style, context)
-    return simplejson.dumps(thing, cls=encoder)
+    return simplejson.dumps(thing, cls=encoder, indent=style["json"]["indent"])
 
 
 def _encode_xml(thing, node, strategy, style, context):

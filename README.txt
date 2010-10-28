@@ -2,7 +2,8 @@
 Restler
 =======
 
-Restler is a set of components to help create and manage a JSON/Restful API
+Restler at it's most basic level, is a library that can serialize App Engine models and queries to json and xml.
+In addition and contains infrastructure and components to help create and manage a JSON/Restful API
 using the GAE 'webapp' framework.
 
 Installation
@@ -16,6 +17,14 @@ Getting Started
 ===============
 
 The simple case:
+
+# Restler can create a json string from any data serializable by simplejson.dumps().
+
+>>> from restler.serializers import to_json
+>>> to_json({"alist": [1, 2, 3]})
+'{"alist": [1, 2, 3]}'
+
+# Serialize all fields in a model from a Query
 
 >>> from restler.serializers import ModelStrategy, SerializationStrategy, to_json, to_xml
 >>> from models import Model1, Model2
@@ -51,8 +60,5 @@ Integrating with your web framework
 ===================================
 
 The easiest way to integrate restler with your framework is to use it as a library.
-
-You can, however, use the included 'webapp' adapter to handle the HTTP verbs.  Return
-a tuple with the collection (Query/model objects) and a SerializationStrategy or ModelStrategy.
 
 
