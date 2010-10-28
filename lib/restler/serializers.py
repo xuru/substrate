@@ -115,7 +115,7 @@ class ModelStrategy(object):
             for name in fields:
                 if isinstance(name, dict):
                     if len(name.keys()) != 1:
-                        raise ValueError("Mapping is not a 1-1 name -> field/callable")
+                        raise ValueError("Only one key/value per dictionary is allowed i.e. name -> field/callable")
                     else:
                         prop = name
                         name = name.keys()[0]
