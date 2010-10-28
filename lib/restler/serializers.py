@@ -253,9 +253,10 @@ def encoder_builder(type_, strategy=None, style=None, context={}):
                     field_name, target = field_name.items()[0] # Only one key/value
 
                 if callable(target): # Defer to the callable
+                    # if the function has exactly two arguments, assume we should pass the context
                     if hasattr(target, "func_code") and target.func_code.co_argcount == 2:
                         model[field_name] = target(obj, context)
-                    else:
+                    else: # No context passed
                         model[field_name] = target(obj)
                 else:
                     if target: # Remapped name
