@@ -77,4 +77,7 @@
 >>> to_json(Model2(), ModelStrategy(Model2) + ["my_method"])
 '{"my_method": "I say blah!"}'
 
+>>> to_json(Model2(), ModelStrategy(Model2) + [{"my_method": lambda obj, context: context["foo"]}], context={"foo": "woohoo"})
+'{"my_method": "woohoo"}'
+
 """

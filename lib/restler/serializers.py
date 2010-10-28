@@ -189,7 +189,7 @@ class ModelStrategy(object):
     def __repr__(self):
         return pprint.pformat(self.to_dict())
 
-def encoder_builder(type_, strategy=None, style=None):
+def encoder_builder(type_, strategy=None, style=None, context={}):
     def default_impl(obj):
         # Load objects from the datastore (could be done in parallel)
         if isinstance(obj, db.Query):
@@ -253,7 +253,10 @@ def encoder_builder(type_, strategy=None, style=None):
                     field_name, target = field_name.items()[0] # Only one key/value
 
                 if callable(target): # Defer to the callable
-                    model[field_name] = target(obj)
+                    if hasattr(target, "func_code") and target.func_code.co_argcount == 2:
+                        model[field_name] = target(obj, context)
+                    else:
+                        model[field_name] = target(obj)
                 else:
                     if target: # Remapped name
                         if hasattr(obj, target):
@@ -275,7 +278,7 @@ def encoder_builder(type_, strategy=None, style=None):
     return None
 
 
-def to_json(thing, strategy=None):
+def to_json(thing, strategy=None, context={}):
     if not isinstance(strategy, (ModelStrategy, SerializationStrategy, types.NoneType)):
         raise ValueError("Serialization strategy must be a ModelStrategy, SerializationStrategy or dict")
     if isinstance(strategy, ModelStrategy):
@@ -284,13 +287,13 @@ def to_json(thing, strategy=None):
         strategy = SerializationStrategy()
     mappings = strategy.mappings
     style = strategy.style
-    encoder = encoder_builder("json", mappings, style)
+    encoder = encoder_builder("json", mappings, style, context)
     return simplejson.dumps(thing, cls=encoder)
 
 
-def _encode_xml(thing, node, strategy, style):
+def _encode_xml(thing, node, strategy, style, context):
     xml_style = style["xml"]
-    encoder = encoder_builder("xml", strategy, style)
+    encoder = encoder_builder("xml", strategy, style, context)
     # Easy types to convert to unicode
     simple_types = (bool, basestring, int, long, float, decimal.Decimal)
     collection_types = (list, dict)
@@ -310,9 +313,9 @@ def _encode_xml(thing, node, strategy, style):
                 xml_style["null"](e, None) 
             elif not isinstance(value, simple_types):
                 if isinstance(value, collection_types):
-                    _encode_xml(value, e, strategy, style)
+                    _encode_xml(value, e, strategy, style, context)
                 else:
-                    _encode_xml(encoder(value), e, strategy, style)
+                    _encode_xml(encoder(value), e, strategy, style, context)
             else:
                 e.text = unicode(value)
         return 
@@ -323,14 +326,14 @@ def _encode_xml(thing, node, strategy, style):
         for value in thing:
             if isinstance(value, db.Model):
                 # Note: we don't create an item in this circumstance
-                _encode_xml(encoder(value), el, strategy, style)
+                _encode_xml(encoder(value), el, strategy, style, context)
                 continue
             i = xml_style["list_item"](el, value)
             if not isinstance(value, simple_types):
                 if isinstance(value, collection_types):
-                    _encode_xml(value, i, strategy, style)
+                    _encode_xml(value, i, strategy, style, context)
                 else:
-                    _encode_xml(encoder(value), i, strategy, style)
+                    _encode_xml(encoder(value), i, strategy, style, context)
             else:
                 i.text = unicode(value)
             if value is None:
@@ -341,11 +344,11 @@ def _encode_xml(thing, node, strategy, style):
     elif thing is None:
         xml_style["null"](node, None) 
     else:
-        _encode_xml(encoder(thing), node, strategy, style)
+        _encode_xml(encoder(thing), node, strategy, style, context)
     return
 
 
-def to_xml(thing, strategy=None):
+def to_xml(thing, strategy=None, context={}):
     if not isinstance(strategy, (ModelStrategy, SerializationStrategy)):
         raise ValueError("Serialization strategy must be a ModelStrategy, SerializationStrategy or dict")
     if isinstance(strategy, ModelStrategy):
@@ -355,7 +358,7 @@ def to_xml(thing, strategy=None):
     mappings = strategy.mappings
 
     root = style["xml"]["root"](thing)
-    _encode_xml(thing, root, mappings, style)
+    _encode_xml(thing, root, mappings, style, context)
     return ET.tostring(root)
 
 
