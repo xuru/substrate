@@ -42,14 +42,14 @@ SKIP = SkipField()
 
 def json_response(response, model_or_query, strategy=None, status_code=200, context={}):
     """ Render json to a webapp response """
-    json = to_json(model_or_query, strategy)
+    json = to_json(model_or_query, strategy, context=context)
     response.set_status(status_code)
     response.headers['Content-Type'] = "application/json"
     response.out.write(json)
                                 
 def xml_response(response, model_or_query, strategy=None, status_code=200, context={}):
     """ Render xml to a webapp response """
-    xml = to_xml(model_or_query, strategy)
+    xml = to_xml(model_or_query, strategy, context=context)
     response.set_status(status_code)
     response.headers['Content-Type'] = "application/xml"
     response.out.write(xml)
