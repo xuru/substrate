@@ -4,9 +4,11 @@ import tempfile
 from google.appengine.tools import dev_appserver
 from google.appengine.tools import dev_appserver_main
 
+
 from nose.core import main
 from nosegae import NoseGAE
 from nose_exclude import NoseExclude
+from nose.plugins.logcapture import LogCapture
 import re
 
 import os
@@ -15,6 +17,7 @@ os.environ['NOSE_WITH_NOSEEXCLUDE'] = "--exclude-dir=lib"
 os.environ['NOSEEXCLUDE_DIRS'] = "./lib ./local/lib"
 os.environ['NOSE_WHERE'] = "."
 os.environ['NOSE_ALL_MODULES'] = "false"
+os.environ['NOSE_LOGGING_CLEAR_HANDLERS'] = "true"
 
 config = matcher = None
 
@@ -45,5 +48,5 @@ os.environ['APPLICATION_ID'] = config.application
 import sys
 sys.argv[1] = "."
 
-main(plugins=[NoseGAE(), NoseExclude()])
+main(plugins=[NoseGAE(), NoseExclude(), LogCapture()])
 

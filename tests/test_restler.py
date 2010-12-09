@@ -1,4 +1,5 @@
 
+import logging
 import unittest
 from datetime import datetime
 from google.appengine.ext import db
