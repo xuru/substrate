@@ -4,7 +4,6 @@ import tempfile
 from google.appengine.tools import dev_appserver
 from google.appengine.tools import dev_appserver_main
 
-
 from nose.core import main
 from nosegae import NoseGAE
 from nose_exclude import NoseExclude
