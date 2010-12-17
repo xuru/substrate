@@ -8,6 +8,8 @@ handlers:
   script: main.py
 - url: /api/.*
   script: api.py
+- url: /hulk/image_upload
+  script: hulk_image_shim.py
 
 skip_files:
 - ^local/.*

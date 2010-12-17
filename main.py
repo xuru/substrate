@@ -15,23 +15,11 @@
 # limitations under the License.
 #
 
-#!/usr/bin/env python
-
 import sys, os
-try:
-    import json #Python >= 2.6
-except ImportError:
-    try:
-        import simplejson as json #Python < 2.6
-    except ImportError:
-        try:
-            from django.utils import simplejson as json #Google App Engine
-        except ImportError:
-            raise ImportError, "Can't load a json library"
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
 from google.appengine.api import apiproxy_stub_map
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
 from webapp2 import WSGIApplication
 
