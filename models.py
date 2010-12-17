@@ -1,6 +1,8 @@
-
 from google.appengine.ext import db
 from google.appengine.ext import blobstore
+
+class ModelException(Exception):
+    pass
 
 class Model2(db.Model):
 
