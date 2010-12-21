@@ -3,7 +3,6 @@ TODO
 ====
  * add runserver command
  * add --datastore-path to manage.py (before command)
- * create new datastore name for tests
  * clear datastore before running tests
  * consistent way to fix up sys.args to pass to commands
  * add WebTest
@@ -13,7 +12,6 @@ TODO
  * add oauth server support
  * add gaema authentication
  * add copyright file headers
- * add api/key management
  * add documentation system
 
 DONE
@@ -24,3 +22,5 @@ DONE
  * add simple RestlerApp (webapp based)
  * add example webapp
  * add xml serialization
+ * create new datastore name for tests
+ * add api/key management

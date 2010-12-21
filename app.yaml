@@ -16,3 +16,7 @@ skip_files:
 - ^tests/.*
 - ^.hg/.*
 - ^.idea/.*
+- ^.*~
+- ^.*\.py[co]
+- ^.*\.po
+- ^.*\.pot
