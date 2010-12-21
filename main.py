@@ -15,13 +15,12 @@
 # limitations under the License.
 #
 
-import sys, os
-from lib.ext.env import load_config_module
+from setup import setup
+setup()
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
+from hulk.env import load_config_module, on_production_server
 
 from webapp2 import RequestHandler, WSGIApplication
-
 
 
 class MainHandler(RequestHandler):
@@ -29,30 +28,14 @@ class MainHandler(RequestHandler):
         html = """
         <html>
             <body>
-                <ul>
-                    <li> <a href="/api/v1/model1">V1 API</a> </li>
-                    <li> <a href="/api/v2/model1">V2 API</a> </li>
-                </ul>
+                Hello World!
             </body>
         </html>
         """
         self.response.out.write(html)
 
-# Configuration
-#def load_config_module(m):
-#    config = {}
-#    for key in m.__dict__:
-#        if not key.startswith('__'):
-#            config[key] = m.__dict__[key]
-#    return config
-
-import main_config
-config = {
-    'main': load_config_module(main_config)
-}
-
 def get_application():
-    return WSGIApplication([('/', MainHandler)], config=config, debug=not on_production_server)
+    return WSGIApplication([('/', MainHandler)], debug=not on_production_server)
 application = get_application()
 
 def main():

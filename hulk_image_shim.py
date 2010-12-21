@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-import os, sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
+from setup import setup
+setup()
 
 from hulk.image import main
 

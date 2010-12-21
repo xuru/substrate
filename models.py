@@ -1,9 +1,6 @@
 from google.appengine.ext import db
 from google.appengine.ext import blobstore
 
-class ModelException(Exception):
-    pass
-
 class Model2(db.Model):
 
     model2_prop = db.StringProperty()
@@ -38,4 +35,3 @@ class Model1(db.Model):
     phonenumber = db.PhoneNumberProperty()
     postaladdress = db.PostalAddressProperty()
     rating = db.RatingProperty()
-
