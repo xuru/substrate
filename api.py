@@ -40,7 +40,7 @@ class V2ApiHandlerService(MultiPageHandler):
 
 # Application
 def get_application():
-    from main import on_production_server
+    from hulk.env import on_production_server
     return WSGIApplication(
         [
             ('/api/v1/model1', V1ApiHandlerService),
