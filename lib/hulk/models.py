@@ -41,3 +41,5 @@ class NamedModel(db.Model):
                 entity = db.run_in_transaction(txn, key_name)
         return entity
 
+class ModelException(Exception):
+    pass
