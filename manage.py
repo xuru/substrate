@@ -77,9 +77,13 @@ def fix_sys_path():
 def run_command(command, globals_, script_dir=SCRIPT_DIR):
     """Execute the file at the specified path with the passed-in globals."""
     fix_sys_path()
-    script_name = sys.argv[1]
-    script_path = os.path.join('./%s/commands' % local_path, script_name + ".py")
-    execfile(script_path, globals_)
+    if len(sys.argv) > 1:
+        script_name = sys.argv[1]
+        script_path = os.path.join('./%s/commands' % local_path, script_name + ".py")
+        execfile(script_path, globals_)
+    else:
+        # todo add help displaying available commands
+        print "No command selected."
 
 
 if __name__ == '__main__':
