@@ -7,7 +7,7 @@
 # supported values for the Django version are '0.96' (the default),
 # '1.0', and '1.1'.
 
-from google.appengine.dist import use_library
+#from google.appengine.dist import use_library
 #use_library('django', '1.0')
 #import django
 
@@ -29,7 +29,7 @@ hulk_url_APPLICATIONS = ['main', 'api']
 # Enable debug logging for the hulk.auth module
 #hulk_auth_DEBUG = False
 
-# Default static API keys for use with the default 'authorize' method
+# Default static API keys for use with the default 'authorize' function
 #hulk_auth_VALID_API_KEYS = ['key1', 'key2']
 
 # The authorization function to use
