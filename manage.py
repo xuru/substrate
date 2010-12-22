@@ -51,7 +51,7 @@ if version_tuple != (2, 5):
 
 if not DIR_PATH:
     sys.stderr.write("Could not find SDK path.  Make sure dev_appserver.py is in your PATH")
-    sys.exit(1);
+    sys.exit(1)
 
 # local 'helper' scripts
 local_path = 'local'
