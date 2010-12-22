@@ -13,7 +13,7 @@ class ConfigDefaults(object):
 
         hulk_auth_DEBUG = True
         hulk_auth_VALID_API_KEYS = ['key1', 'key2']
-        hulk_auth_authorize = lambda(request): return True
+        hulk_auth_authorize = lambda handler, *args, **kwargs: return True
     """
     DEBUG = False
 
@@ -22,13 +22,13 @@ class ConfigDefaults(object):
     else:
         VALID_API_KEYS = ['testapikey1', 'testapikey2']
 
-    def authorize(request):
+    def authorize(handler, *args, **kwargs):
         from hulk.env import on_production_server
-        scheme, netloc, path, query, fragment = urlparse.urlsplit(request.url)
+        scheme, netloc, path, query, fragment = urlparse.urlsplit(handler.request.url)
         # Only allow HTTPS on PRODuction
         if on_production_server and scheme and scheme.lower() != 'https':
             return False
-        api_key = request.get('api_key', default_value=None)
+        api_key = handler.request.get('api_key', default_value=None)
         valid_api_keys = config.VALID_API_KEYS
         return api_key in valid_api_keys
 
@@ -38,7 +38,7 @@ def api_key_required(method, auth_func=None):
     def authorized_method(handler, *args, **kwargs):
         if auth_func is None:
             auth_func = config.authorize
-        if auth_func(handler.request):
+        if auth_func(handler, *args, **kwargs):
             method(handler, *args, **kwargs)
         else:
             handler.abort(401)

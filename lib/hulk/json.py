@@ -23,7 +23,7 @@ INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR'
 class ConfigDefaults(object):
     """Configurable constants.
 
-    To override hulk.url configuration values, define values like this
+    To override hulk.json configuration values, define values like this
     in your appengine_config.py file (in the root of your app):
 
         hulk_json_DEBUG = True
