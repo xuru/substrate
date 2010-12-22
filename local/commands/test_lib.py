@@ -13,7 +13,7 @@ import re
 import os
 
 os.environ['NOSE_WITH_NOSEEXCLUDE'] = "--exclude-dir=lib"
-os.environ['NOSEEXCLUDE_DIRS'] = "./lib ./local"
+os.environ['NOSEEXCLUDE_DIRS'] = "./local"
 os.environ['NOSE_WHERE'] = "."
 os.environ['NOSE_ALL_MODULES'] = "false"
 os.environ['NOSE_LOGGING_CLEAR_HANDLERS'] = "true"
