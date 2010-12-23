@@ -16,7 +16,7 @@
 # HULK SETTINGS
 ##############################################################################
 
-# Root level WSGI application modules that 'url_for' will search
+# Root level WSGI application modules that 'hulk.url.url_for()' will search
 hulk_url_APPLICATIONS = ['main', 'api']
 
 # Enable debug logging for the hulk.url module
