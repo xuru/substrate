@@ -1,4 +1,3 @@
-# JSON Handler Base Class
 from google.appengine.api.mail_errors import BadRequestError
 
 from api import string_to_int
@@ -11,14 +10,6 @@ from google.appengine.api import lib_config
 
 from webapp2 import RequestHandler, HTTPException
 
-
-OK = 'OK'
-CREATED = 'CREATED'
-BAD_REQUEST = 'BAD_REQUEST'
-METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED'
-UNAUTHORIZED = 'UNAUTHORIZED'
-NOT_FOUND = 'NOT_FOUND'
-INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR'
 
 class ConfigDefaults(object):
     """Configurable constants.
@@ -54,19 +45,19 @@ class JsonRequestHandler(RequestHandler):
             code = exception.code
         elif isinstance(exception, ModelException):
             code = 400
-            status_text = "%s: %s" % (BAD_REQUEST, status_text)
+            status_text = "BAD_REQUEST: %s" % status_text
         else:
             code = 500
-            status_text = "%s: %s" % (INTERNAL_SERVER_ERROR, status_text)
+            status_text = "INTERNAL_SERVER_ERROR: %s" % status_text
             if debug_mode:
                 import logging
                 logging.error("INTERNAL_SERVER_ERROR %s: %s" % (code, status_text))
         if code == 401:
-            status_text = UNAUTHORIZED
+            status_text = 'UNAUTHORIZED'
         if code == 404:
-            status_text = NOT_FOUND
+            status_text = 'NOT_FOUND'
         if code == 405:
-            status_text = METHOD_NOT_ALLOWED
+            status_text = 'METHOD_NOT_ALLOWED'
         return self.json_response({}, status_code=code, status_text=status_text)
 
 class MultiPageHandler(JsonRequestHandler):
