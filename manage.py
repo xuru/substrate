@@ -82,8 +82,10 @@ def run_command(command, globals_, script_dir=SCRIPT_DIR):
         script_path = os.path.join('./%s/commands' % local_path, script_name + ".py")
         execfile(script_path, globals_)
     else:
-        # todo add help displaying available commands
-        print "No command selected."
+        import os.path, pkgutil, local.commands
+        pkgpath = os.path.dirname(local.commands.__file__)
+        commands = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
+        print "Available commands: %s"% commands
 
 
 if __name__ == '__main__':
