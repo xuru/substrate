@@ -14,6 +14,8 @@ from google.appengine.api import datastore_types
 from google.appengine.api import users
 from django.utils import simplejson
 
+from restler import models
+
 
 import datetime_safe
 
@@ -112,7 +114,7 @@ class ModelStrategy(object):
         if include_all_fields:
             self.fields = [f for f in model.fields()]
         else:
-            self.fields = fields = []
+            self.fields = []
         self.name = output_name
 
     def __name_map(self):
@@ -238,7 +240,7 @@ def encoder_builder(type_, strategy=None, style=None, context={}):
         if isinstance(obj, blobstore.BlobInfo):
             return str(obj.key()) # TODO is this correct?
         ret = {} # What we're most likely going to return (populated, of course)
-        if isinstance(obj, db.Model):
+        if isinstance(obj, (db.Model, models.TransientModel)):
             model = {}
             kind = obj.kind().lower()
             # User the model's properties
