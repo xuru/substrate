@@ -12,6 +12,8 @@ TODO
  * add copyright file headers
  * add documentation system
  * add tests for transient model serialization
+ * add tests for django 1.1
+ * add tests for session middleware
 
 DONE
 ====

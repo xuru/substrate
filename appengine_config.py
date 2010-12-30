@@ -41,3 +41,19 @@ hulk_url_APPLICATIONS = ['main', 'api']
 
 # The maximum number of results to return per 'page', regardless of how many are requested
 #hulk_json_MAX_PAGE_SIZE = 100
+
+
+##############################################################################
+# SESSION SETTINGS
+##############################################################################
+
+# create a SESSION_KEY
+# import os
+# os.urandom(64)
+from gaesessions import SessionMiddleware
+SESSION_KEY='Replace with key'
+def webapp_add_wsgi_middleware(app):
+    app = SessionMiddleware(app, cookie_key=SESSION_KEY)
+    return app
+
+
