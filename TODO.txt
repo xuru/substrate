@@ -14,6 +14,7 @@ TODO
  * add tests for transient model serialization
  * add tests for django 1.1
  * add tests for session middleware
+ * change gaesession to use lib_config for settings?
 
 DONE
 ====
