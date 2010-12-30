@@ -7,9 +7,7 @@
 # supported values for the Django version are '0.96' (the default),
 # '1.0', and '1.1'.
 
-#from google.appengine.dist import use_library
-#use_library('django', '1.0')
-#import django
+webapp_django_version = 1.1
 
 
 ##############################################################################
