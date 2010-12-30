@@ -3,11 +3,9 @@ TODO
 ====
  * add runserver command
  * add --datastore-path to manage.py (before command)
- * clear datastore before running tests
  * consistent way to fix up sys.args to pass to commands
- * add WebTest
  * verify some edge case serialization AE properties
- * add unittest2 tests
+ * explore unittest2 plugin for ae
  * add rate limiting
  * add oauth server support
  * add gaema authentication
@@ -25,3 +23,7 @@ DONE
  * add xml serialization
  * create new datastore name for tests
  * add api/key management
+ * add WebTest
+ * clear datastore before running tests
+ 
+ 
