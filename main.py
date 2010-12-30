@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from setup import setup
+setup()
 
 from hulk.env import on_production_server
 

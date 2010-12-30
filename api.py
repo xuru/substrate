@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from setup import setup
+setup()
 
 from hulk.json import MultiPageHandler
 
