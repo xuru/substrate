@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from setup import setup
-setup()
 
 from hulk.image import main
 
