@@ -1,7 +1,5 @@
 from google.appengine.api.mail_errors import BadRequestError
 
-from api import string_to_int
-
 from hulk.models import ModelException
 
 from restler.serializers import json_response as restler_json_response
@@ -10,6 +8,11 @@ from google.appengine.api import lib_config
 
 from webapp2 import RequestHandler, HTTPException
 
+def string_to_int(s, default=10):
+    try:
+        return int(s)
+    except:
+        return default
 
 class ConfigDefaults(object):
     """Configurable constants.
