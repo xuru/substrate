@@ -105,4 +105,27 @@ class TransientModelTest(unittest.TestCase):
         self.assertEqual('12345', full_subject.model_number)
         self.assertEqual('a terse description', full_subject.short_description)
         self.assertEqual('a much more wordy description', full_subject.long_description)
-        
+
+    def test_properties(self):
+        partial_subject = MixedTransientModel(
+            sku = '98765',
+            model_number = '12345'
+        )
+        self.assertEqual({
+            'sku': '98765',
+            'model_number': '12345',
+            'short_description': None,
+            'long_description': None
+        }, partial_subject.properties())
+        full_subject = MixedTransientModel(
+            sku = '98765',
+            model_number = '12345',
+            short_description = 'a terse description',
+            long_description = 'a much more wordy description'
+        )
+        self.assertEqual({
+            'sku': '98765',
+            'model_number': '12345',
+            'short_description': 'a terse description',
+            'long_description': 'a much more wordy description'
+        }, full_subject.properties())
