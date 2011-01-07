@@ -13,7 +13,11 @@ class MainHandler(RequestHandler):
         html = """
         <html>
             <body>
-                Hello World!
+              <ul>
+                <li><a href="/lib_config">lib_config settings</a></li>
+                <li><a href="/api/v1/model1">/api/v1/model1</a></li>
+                <li><a href="/api/v2/model1">/api/v2/model1</a></li>
+              </ul>
             </body>
         </html>
         """

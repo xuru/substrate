@@ -14,6 +14,9 @@ handlers:
 - url: /hulk/image_upload
   script: hulk_image_shim.py
 
+- url: /lib_config
+  script: $PYTHON_LIB/google/appengine/api/lib_config.py
+
 skip_files:
 - ^local/.*
 - ^tests/.*

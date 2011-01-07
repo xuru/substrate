@@ -1,18 +1,12 @@
+from google.appengine.api import lib_config
 from google.appengine.api.mail_errors import BadRequestError
 
 from hulk.models import ModelException
 
 from restler.serializers import json_response as restler_json_response
 
-from google.appengine.api import lib_config
-
 from webapp2 import RequestHandler, HTTPException
 
-def string_to_int(s, default=10):
-    try:
-        return int(s)
-    except:
-        return default
 
 class ConfigDefaults(object):
     """Configurable constants.
@@ -29,6 +23,13 @@ class ConfigDefaults(object):
     MAX_PAGE_SIZE = 100
 
 config = lib_config.register('hulk_json', ConfigDefaults.__dict__)
+
+
+def string_to_int(s, default=10):
+    try:
+        return int(s)
+    except:
+        return default
 
 class JsonRequestHandler(RequestHandler):
     """A RequestHandler class to help with json web service handlers, including error handling"""
