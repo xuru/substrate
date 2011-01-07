@@ -12,15 +12,24 @@ from webapp2 import WSGIApplication
 from models import Model1
 
 
-V1_SERVICE_STRATEGY = serializers.ModelStrategy(Model1)
-V2_SERVICE_STRATEGY = V1_SERVICE_STRATEGY + ["boolean", "phonenumber"]
+V1_SERVICE_STRATEGY = serializers.ModelStrategy(Model1, include_all_fields=True)
+V2_SERVICE_STRATEGY = V1_SERVICE_STRATEGY - ["boolean", "phonenumber"]
+
+
+def create_sample_data():
+    all = Model1.all().fetch(10)
+    if len(all) < 10:
+        model1 = Model1(string='test entry %s'% len(all))
+        model1.put()
 
 class V1ApiHandlerService(MultiPageHandler):
     def get(self):
+        create_sample_data()
         return self.json_response(Model1.all(), V1_SERVICE_STRATEGY)
 
 class V2ApiHandlerService(MultiPageHandler):
     def get(self):
+        create_sample_data()
         return self.json_response(Model1.all(), V2_SERVICE_STRATEGY)
 
 # Application
