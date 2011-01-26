@@ -44,8 +44,19 @@ dev_appserver.SetupStubs(config.application, **args)
 os.environ['APPLICATION_ID'] = config.application
 
 # Run the test on the current directory
-import sys
-sys.argv[1] = "."
+# import sys
+# sys.argv[1] = "."
 
-main(plugins=[NoseGAE(), NoseExclude(), LogCapture()])
+# Run the test on the current directory if no other test is passed in as an option.
+# ie python manage.py test tests/my_tests.py
+import sys
+if len (sys.argv) < 3:
+    print "No tests specified.  Running everything..."
+    sys.argv[1] = "."
+else:
+    print "Testing: %s"% sys.argv[2]
+    sys.argv[1] = sys.argv[2]
+
+main(plugins=[NoseGAE(), NoseExclude()])
+# main(plugins=[NoseGAE(), NoseExclude(), LogCapture()])
 
