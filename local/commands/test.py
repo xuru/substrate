@@ -56,6 +56,7 @@ if len (sys.argv) < 3:
 else:
     print "Testing: %s"% sys.argv[2]
     sys.argv[1] = sys.argv[2]
+    del sys.argv[2]
 
 main(plugins=[NoseGAE(), NoseExclude()])
 # main(plugins=[NoseGAE(), NoseExclude(), LogCapture()])
