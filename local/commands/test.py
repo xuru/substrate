@@ -35,7 +35,7 @@ args[dev_appserver_main.ARG_BLOBSTORE_PATH] = os.path.join(
         tempfile.gettempdir(), 'dev_appserver.test.blobstore')
 args[dev_appserver_main.ARG_DATASTORE_PATH] = os.path.join(
         tempfile.gettempdir(), 'dev_appserver.test.datastore')
-args[dev_appserver_main.ARG_MATCHER_PATH] = os.path.join(
+args[dev_appserver_main.ARG_PROSPECTIVE_SEARCH_PATH] = os.path.join(
         tempfile.gettempdir(), 'dev_appserver.test.matcher')
 args[dev_appserver_main.ARG_HISTORY_PATH] = os.path.join(
         tempfile.gettempdir(), 'dev_appserver.test.datastore.history')
