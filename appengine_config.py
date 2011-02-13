@@ -45,6 +45,8 @@ hulk_url_APPLICATIONS = ['main', 'api']
 # The maximum number of results to return per 'page', regardless of how many are requested
 #hulk_json_MAX_PAGE_SIZE = 100
 
+# Turns off using {'data':model_name_or_query} by not using the data node
+# hulk_json_USE_DATA_ROOT_NODE = False
 
 ##############################################################################
 # SESSION SETTINGS
