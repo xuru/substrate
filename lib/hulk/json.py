@@ -21,6 +21,7 @@ class ConfigDefaults(object):
     DEBUG = False
     DEFAULT_PAGE_SIZE = 10
     MAX_PAGE_SIZE = 100
+    USE_DATA_ROOT_NODE = True
 
 config = lib_config.register('hulk_json', ConfigDefaults.__dict__)
 
@@ -40,7 +41,10 @@ class JsonRequestHandler(RequestHandler):
         data = dict()
         data['status_code'] = status_code
         data['status_text'] = status_text
-        data['data'] = model_or_query
+        if config.USE_DATA_ROOT_NODE:
+            data['data'] = model_or_query
+        else:
+            data.update(model_or_query)
         return restler_json_response(self.response, data, strategy=strategy, status_code=status_code, context=context)
 
     def handle_exception(self, exception, debug_mode):
