@@ -17,6 +17,9 @@
 # Root level WSGI application modules that 'hulk.url.url_for()' will search
 hulk_url_APPLICATIONS = ['main', 'api']
 
+# The integration appid if it doesn't end in '-int'
+# hulk_env_INTEGRATION_APP_ID = ''
+
 # Enable debug logging for the hulk.url module
 #hulk_url_DEBUG = False
 
