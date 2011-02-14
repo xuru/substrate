@@ -1,3 +1,4 @@
+from google.appengine.api import lib_config
 from google.appengine.ext import db
 from google.appengine.ext.webapp import blobstore_handlers
 
@@ -14,14 +15,19 @@ class ImageUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
                 if len(uploads) == 1:
                     image.blob_info = uploads[0]
                     image.put()
-                    self.redirect(self.get_upload_url())
+                    from hulk.image import ConfigDefaults
+                    config = lib_config.register('hulk_image', ConfigDefaults.__dict__)
+                    self.redirect(config.UPLOAD_URL)
                 else:
+                    import logging
+                    logging.error("OLD: No uploaded image found")
                     self.error(400)
             else:
+                import logging
+                logging.error("OLD: No valid image key provided: %s" % key)
                 self.error(400)
-        except:
-            self.error(500)
-
-    @classmethod
-    def get_upload_url(cls):
-        return '/hulk/image_upload/'
+        except Exception, e:
+            import logging
+            logging.error("OLD: Image upload exception: %s" % e)
+            from hulk.env import on_production_server
+            self.handle_exception(e, not on_production_server)

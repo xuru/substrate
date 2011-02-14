@@ -27,7 +27,7 @@ def url_for(name, *args, **kwargs):
     _netloc = kwargs.get('_netloc', None)
     if _netloc is None and _full and owned_domain and config.PRODUCTION_DOMAIN and on_production_server:
         kwargs['_netloc'] = config.PRODUCTION_DOMAIN
-    if owned_domain:
+    if owned_domain and _full:
         kwargs['_scheme'] = 'http'
     url = None
     for app_name in config.APPLICATIONS:

@@ -1,7 +1,11 @@
+import datetime
+
 from google.appengine.api import lib_config
 from google.appengine.api.mail_errors import BadRequestError
 
 from hulk.models import ModelException
+
+from pytz.gae import pytz
 
 from restler.serializers import json_response as restler_json_response
 
@@ -41,6 +45,7 @@ class JsonRequestHandler(RequestHandler):
         data = dict()
         data['status_code'] = status_code
         data['status_text'] = status_text
+        data['timestamp'] = datetime.datetime.now(pytz.utc)
         if config.USE_DATA_ROOT_NODE:
             data['data'] = model_or_query
         else:
