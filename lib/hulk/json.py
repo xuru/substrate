@@ -67,6 +67,8 @@ class JsonRequestHandler(RequestHandler):
                 logging.error("INTERNAL_SERVER_ERROR %s: %s" % (code, status_text))
         if code == 401:
             status_text = 'UNAUTHORIZED'
+        if code == 403:
+            status_text = 'FORBIDDEN'
         if code == 404:
             status_text = 'NOT_FOUND'
         if code == 405:
