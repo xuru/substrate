@@ -48,6 +48,7 @@ def json_response(response, model_or_query, strategy=None, status_code=200, cont
     response.set_status(status_code)
     response.headers['Content-Type'] = "application/json"
     response.out.write(json)
+    return json
                                 
 def xml_response(response, model_or_query, strategy=None, status_code=200, context={}):
     """ Render xml to a webapp response """

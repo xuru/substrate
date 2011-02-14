@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 def get_application():
+    from google.appengine.api import lib_config
+    from hulk.image import ConfigDefaults
+    config = lib_config.register('hulk_image', ConfigDefaults.__dict__)
     from google.appengine.ext.webapp import WSGIApplication
-    from handlers import ImageUploadHandler
     return WSGIApplication(
         [
-            (ImageUploadHandler.get_upload_url(), ImageUploadHandler),
+            (config.UPLOAD_URL, config.UPLOAD_HANDLER),
         ],
         debug=True
     )
