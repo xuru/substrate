@@ -7,7 +7,7 @@
 # supported values for the Django version are '0.96' (the default),
 # '1.0', and '1.1'.
 
-# webapp_django_version = 1.1
+# webapp_django_version = 1.2
 
 
 ##############################################################################
