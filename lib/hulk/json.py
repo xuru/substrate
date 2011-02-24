@@ -1,16 +1,18 @@
-import datetime
-
-from google.appengine.api import lib_config
 from google.appengine.api.mail_errors import BadRequestError
 
 from hulk.models import ModelException
 
-from pytz.gae import pytz
-
 from restler.serializers import json_response as restler_json_response
+
+from google.appengine.api import lib_config
 
 from webapp2 import RequestHandler, HTTPException
 
+def string_to_int(s, default=10):
+    try:
+        return int(s)
+    except:
+        return default
 
 class ConfigDefaults(object):
     """Configurable constants.
@@ -29,27 +31,28 @@ class ConfigDefaults(object):
 
 config = lib_config.register('hulk_json', ConfigDefaults.__dict__)
 
-
-def string_to_int(s, default=10):
-    try:
-        return int(s)
-    except:
-        return default
-
 class JsonRequestHandler(RequestHandler):
-    """A RequestHandler class to help with json web service handlers, including error handling"""
-    def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', context=None):
+    def _setup_context(self, context):
         if not context:
             context = {}
         context['request'] = self.request
+        return context
+    
+    def _setup_data(self, model_or_query, status_code, status_text):
         data = dict()
         data['status_code'] = status_code
         data['status_text'] = status_text
-        data['timestamp'] = datetime.datetime.now(pytz.utc)
         if config.USE_DATA_ROOT_NODE:
             data['data'] = model_or_query
-        else:
+        else:    
             data.update(model_or_query)
+        return data
+
+    """A RequestHandler class to help with json web service handlers, including error handling"""
+    def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', context=None):
+        context = self._setup_context(context)
+        data = self._setup_data(model_or_query, status_code, status_text)
+
         return restler_json_response(self.response, data, strategy=strategy, status_code=status_code, context=context)
 
     def handle_exception(self, exception, debug_mode):
@@ -67,8 +70,6 @@ class JsonRequestHandler(RequestHandler):
                 logging.error("INTERNAL_SERVER_ERROR %s: %s" % (code, status_text))
         if code == 401:
             status_text = 'UNAUTHORIZED'
-        if code == 403:
-            status_text = 'FORBIDDEN'
         if code == 404:
             status_text = 'NOT_FOUND'
         if code == 405:
@@ -95,3 +96,32 @@ class MultiPageHandler(JsonRequestHandler):
         if len(results) == self.page_size:
             next_page_key = query.cursor()
         return results, next_page_key
+
+
+class AjaxCrossDomainRequestHandler(MultiPageHandler):
+    def options(self):
+        origin = self.request.headers.get('Origin', 'unknown origin')
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
+        self.response.headers['Access-Control-Max-Age'] = 1728000 
+        self.response.headers['Access-Control-Allow-Credentials'] = \
+            self.request.headers.get('Access-Credentials', 'true')
+        self.response.headers['Access-Control-Allow-Origin']= ':'.join(origin.split(':')[0:2])
+        self.response.headers['Access-Control-Allow-Origin']= origin.strip()
+        self.response.headers['Access-Control-Allow-Headers'] = \
+            self.request.headers.get('Access-Control-Request-Headers', '') 
+
+    """A RequestHandler class to help with json web service handlers, including error handling"""
+    def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', context=None):       
+        context = self._setup_context(context)
+        data = self._setup_data(model_or_query, status_code, status_text)
+
+        origin = self.request.headers.get('Origin', '') 
+        if origin:
+            self.response.headers['Access-Control-Allow-Origin'] = origin
+        else:
+            self.response.headers['Access-Control-Allow-Origin'] = "/".join(self.request.headers.get("Referer", "").split("/")[0:3]) 
+        self.response.headers['Access-Control-Allow-Headers'] = "true"
+        self.response.headers['Access-Control-Allow-Credentials'] = "true"
+
+        return restler_json_response(self.response, data, strategy=strategy, status_code=status_code, context=context)
+
