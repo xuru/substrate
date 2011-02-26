@@ -1,6 +1,6 @@
 from google.appengine.api.mail_errors import BadRequestError
 
-from hulk.models import ModelException
+from agar.models import ModelException
 
 from restler.serializers import json_response as restler_json_response
 
@@ -17,19 +17,19 @@ def string_to_int(s, default=10):
 class ConfigDefaults(object):
     """Configurable constants.
 
-    To override hulk.json configuration values, define values like this
+    To override agar.json configuration values, define values like this
     in your appengine_config.py file (in the root of your app):
 
-        hulk_json_DEBUG = True
-        hulk_json_DEFAULT_PAGE_SIZE = 20
-        hulk_json_MAX_PAGE_SIZE = 200
+        agar_json_DEBUG = True
+        agar_json_DEFAULT_PAGE_SIZE = 20
+        agar_json_MAX_PAGE_SIZE = 200
     """
     DEBUG = False
     DEFAULT_PAGE_SIZE = 10
     MAX_PAGE_SIZE = 100
     USE_DATA_ROOT_NODE = True
 
-config = lib_config.register('hulk_json', ConfigDefaults.__dict__)
+config = lib_config.register('agar_json', ConfigDefaults.__dict__)
 
 class JsonRequestHandler(RequestHandler):
     def _setup_context(self, context):

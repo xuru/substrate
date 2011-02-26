@@ -11,8 +11,8 @@ handlers:
   script: main.py
 - url: /api/.*
   script: api.py
-- url: /hulk/image_upload
-  script: hulk_image_shim.py
+- url: /agar/image_upload
+  script: agar_image_shim.py
 
 - url: /lib_config
   script: $PYTHON_LIB/google/appengine/api/lib_config.py

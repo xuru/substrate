@@ -7,24 +7,24 @@ from google.appengine.api import images, lib_config, urlfetch
 
 from google.appengine.ext import db, blobstore
 
-from hulk.image.handlers import ImageUploadHandler
+from agar.image.handlers import ImageUploadHandler
 
 
 class ConfigDefaults(object):
     """Configurable constants.
 
-    To override hulk.image configuration values, define values like this
+    To override agar.image configuration values, define values like this
     in your appengine_config.py file (in the root of your app):
 
-        hulk_image_DEBUG = True
-        hulk_image_UPLOAD_HANDLER = The handler to use to POST the image data to.
-        hulk_image_UPLOAD_URL = The URL to POST the image data to.
+        agar_image_DEBUG = True
+        agar_image_UPLOAD_HANDLER = The handler to use to POST the image data to.
+        agar_image_UPLOAD_URL = The URL to POST the image data to.
     """
     DEBUG = False
     UPLOAD_HANDLER = ImageUploadHandler
-    UPLOAD_URL = '/hulk/image_upload/'
+    UPLOAD_URL = '/agar/image_upload/'
 
-config = lib_config.register('hulk_image', ConfigDefaults.__dict__)
+config = lib_config.register('agar_image', ConfigDefaults.__dict__)
 
 class Image(db.Model):
     blob_info = blobstore.BlobReferenceProperty(required=False, default=None)
@@ -113,7 +113,7 @@ class Image(db.Model):
 #            )
 #            logging.debug('Post response: %s' % response)
         except Exception, e:
-            from hulk.env import on_server
+            from agar.env import on_server
             if on_server:
                 import logging
                 logging.error("Failed to create image: %s" % e)

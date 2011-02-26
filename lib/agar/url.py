@@ -1,23 +1,23 @@
 from google.appengine.api import lib_config
 
-from hulk.env import on_production_server
+from agar.env import on_production_server
 
 
 class ConfigDefaults(object):
     """Configurable constants.
 
-    To override hulk.url configuration values, define values like this
+    To override agar.url configuration values, define values like this
     in your appengine_config.py file (in the root of your app):
 
-        hulk_url_DEBUG = True
-        hulk_url_PRODUCTION_DOMAIN = 'www.mydomain.com'
-        hulk_url_APPLICATIONS = ['main', 'api']
+        agar_url_DEBUG = True
+        agar_url_PRODUCTION_DOMAIN = 'www.mydomain.com'
+        agar_url_APPLICATIONS = ['main', 'api']
     """
     DEBUG = False
     PRODUCTION_DOMAIN = ''
     APPLICATIONS = ['main']
 
-config = lib_config.register('hulk_url', ConfigDefaults.__dict__)
+config = lib_config.register('agar_url', ConfigDefaults.__dict__)
 
 def url_for(name, *args, **kwargs):
     # todo throw exception if no url found?
