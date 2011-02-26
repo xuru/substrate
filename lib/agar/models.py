@@ -2,7 +2,6 @@ from google.appengine.ext import db
 
 
 def new_iid():
-    """Called by the websetup to get a unique uuid for the application iid."""
     import uuid
     return uuid.uuid4().hex
 
