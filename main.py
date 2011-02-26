@@ -9,7 +9,7 @@ setup()
 # from google.appengine.dist import use_library
 # use_library('django', '1.2')
 
-from hulk.env import on_production_server
+from agar.env import on_production_server
 
 from webapp2 import RequestHandler, WSGIApplication
 

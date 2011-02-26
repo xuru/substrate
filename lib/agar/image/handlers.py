@@ -15,8 +15,8 @@ class ImageUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
                 if len(uploads) == 1:
                     image.blob_info = uploads[0]
                     image.put()
-                    from hulk.image import ConfigDefaults
-                    config = lib_config.register('hulk_image', ConfigDefaults.__dict__)
+                    from agar.image import ConfigDefaults
+                    config = lib_config.register('agar_image', ConfigDefaults.__dict__)
                     self.redirect(config.UPLOAD_URL)
                 else:
                     import logging
@@ -29,5 +29,5 @@ class ImageUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         except Exception, e:
             import logging
             logging.error("OLD: Image upload exception: %s" % e)
-            from hulk.env import on_production_server
+            from agar.env import on_production_server
             self.handle_exception(e, not on_production_server)

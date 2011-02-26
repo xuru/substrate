@@ -3,7 +3,7 @@
 from env_setup import setup
 setup()
 
-from hulk.json import MultiPageHandler
+from agar.json import MultiPageHandler
 
 from restler import serializers
 
@@ -34,7 +34,7 @@ class V2ApiHandlerService(MultiPageHandler):
 
 # Application
 def get_application():
-    from hulk.env import on_production_server
+    from agar.env import on_production_server
     return WSGIApplication(
         [
             ('/api/v1/model1', V1ApiHandlerService),

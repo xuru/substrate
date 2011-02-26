@@ -5,16 +5,16 @@ from google.appengine.api import apiproxy_stub_map, lib_config
 class ConfigDefaults(object):
     """Configurable constants.
 
-    To override hulk.env configuration values, define values like this
+    To override agar.env configuration values, define values like this
     in your appengine_config.py file (in the root of your app):
 
-        hulk_env_INTEGRATION_APP_ID = 'other_int_id'
-        hulk_env_PRODUCTION_APP_ID = 'other_prod_id'
+        agar_env_INTEGRATION_APP_ID = 'other_int_id'
+        agar_env_PRODUCTION_APP_ID = 'other_prod_id'
     """
     INTEGRATION_APP_ID = ''
     PRODUCTION_APP_ID = ''
 
-config = lib_config.register('hulk_env', ConfigDefaults.__dict__)
+config = lib_config.register('agar_env', ConfigDefaults.__dict__)
 
 
 server_software = os.environ.get('SERVER_SOFTWARE', '')
