@@ -98,7 +98,8 @@ class MultiPageHandler(JsonRequestHandler):
         return results, next_page_key
 
 
-class AjaxCrossDomainRequestHandler(MultiPageHandler):
+class CorsMultiPageHandler(MultiPageHandler):
+    """ A RequestHandler to help with json, multi-page requests and Cross-Origin Resource sharing  """
     def options(self):
         origin = self.request.headers.get('Origin', 'unknown origin')
         self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
