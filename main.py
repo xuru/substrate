@@ -21,7 +21,7 @@ from google.appengine.api import apiproxy_stub_map
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
-from webapp2 import WSGIApplication
+from webapp2 import WSGIApplication, RequestHandler
 
 
 have_appserver = bool(apiproxy_stub_map.apiproxy.GetStub('datastore_v3'))
@@ -70,7 +70,7 @@ def url_for(name, *args, **kwargs):
     return url
 
 
-class MainHandler(webapp.RequestHandler):
+class MainHandler(RequestHandler):
     def get(self):
         html = """
         <html>
