@@ -3,6 +3,7 @@ import copy
 import datetime
 import decimal
 import pprint
+import simplejson
 import types
 
 from xml.etree import ElementTree as ET
@@ -12,7 +13,6 @@ from google.appengine.ext import db
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
 from google.appengine.api import users
-from django.utils import simplejson
 
 from restler import models
 
