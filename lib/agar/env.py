@@ -1,21 +1,6 @@
 import os
 
-from google.appengine.api import apiproxy_stub_map, lib_config
-
-class ConfigDefaults(object):
-    """Configurable constants.
-
-    To override agar.env configuration values, define values like this
-    in your appengine_config.py file (in the root of your app):
-
-        agar_env_INTEGRATION_APP_ID = 'other_int_id'
-        agar_env_PRODUCTION_APP_ID = 'other_prod_id'
-    """
-    INTEGRATION_APP_ID = ''
-    PRODUCTION_APP_ID = ''
-
-config = lib_config.register('agar_env', ConfigDefaults.__dict__)
-
+from google.appengine.api import apiproxy_stub_map
 
 server_software = os.environ.get('SERVER_SOFTWARE', '')
 have_appserver = bool(apiproxy_stub_map.apiproxy.GetStub('datastore_v3'))
@@ -38,6 +23,6 @@ on_development_server = have_appserver and server_software.lower().startswith('d
 # Are we running on a google server?
 on_server = bool(have_appserver and appid and server_software and not on_development_server)
 # Are we running on an integration environment?
-on_integration_server = on_server and appid.lower().endswith('-int') or appid.lower() == config.INTEGRATION_APP_ID.lower()
+on_integration_server = on_server and appid.lower().endswith('-int')
 # Are we running on a production environment?
-on_production_server = on_server and not on_integration_server or appid.lower() == config.PRODUCTION_APP_ID.lower()
+on_production_server = on_server and not on_integration_server
