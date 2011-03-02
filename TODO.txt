@@ -1,20 +1,18 @@
 
 TODO
 ====
- * add runserver command
+ * add runserver command - not sure this is needed, use dev_appserver
  * add --datastore-path to manage.py (before command)
  * consistent way to fix up sys.args to pass to commands
  * verify some edge case serialization AE properties
- * explore unittest2 plugin for ae
  * add rate limiting
  * add oauth server support
  * add gaema authentication
  * add copyright file headers
  * add documentation system
  * add tests for transient model serialization
- * add tests for django 1.1
  * add tests for session middleware
- * change gaesession to use lib_config for settings?
+ * figure out a way to define one or more int,prod servers, allow for non standard naming - see agar.env
 
 DONE
 ====
@@ -28,5 +26,5 @@ DONE
  * add api/key management
  * add WebTest
  * clear datastore before running tests
- 
+ * explore unittest2 plugin for ae - created discover command, manage.py sets up gae env.
  
