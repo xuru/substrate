@@ -17,6 +17,9 @@ handlers:
 - url: /lib_config
   script: $PYTHON_LIB/google/appengine/api/lib_config.py
 
+- url: /bookstore/?.*
+  script: bookstore.py
+
 skip_files:
 - ^local/.*
 - ^tests/.*

@@ -1,5 +1,18 @@
+from env_setup import setup
+setup()
+
 from google.appengine.ext import db
 from google.appengine.ext import blobstore
+from agar.models import NamedModel
+
+class Author(NamedModel):
+    first_name = db.StringProperty(required=True)
+    last_name = db.StringProperty(required=True)
+
+class Book(NamedModel):
+    title = db.StringProperty(required=True)
+
+
 
 class Model2(db.Model):
 
