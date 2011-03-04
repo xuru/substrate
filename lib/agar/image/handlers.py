@@ -13,6 +13,9 @@ class ImageUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
             if image is not None:
                 uploads = self.get_uploads()
                 if len(uploads) == 1:
+                    if image.blob_info is not None:
+                        image.blob_info.delete()
+                        image.blob_info = None
                     image.blob_info = uploads[0]
                     image.put()
                     from agar.image import ConfigDefaults

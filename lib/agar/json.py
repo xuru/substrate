@@ -1,18 +1,18 @@
-from google.appengine.api.mail_errors import BadRequestError
+import copy
+import datetime
+import logging
+
+from google.appengine.api import lib_config
+from google.appengine.ext.db import BadRequestError, BadValueError
 
 from agar.models import ModelException
 
-from restler.serializers import json_response as restler_json_response
+from pytz.gae import pytz
 
-from google.appengine.api import lib_config
+from restler.serializers import json_response as restler_json_response
 
 from webapp2 import RequestHandler, HTTPException
 
-def string_to_int(s, default=10):
-    try:
-        return int(s)
-    except:
-        return default
 
 class ConfigDefaults(object):
     """Configurable constants.
@@ -31,7 +31,15 @@ class ConfigDefaults(object):
 
 config = lib_config.register('agar_json', ConfigDefaults.__dict__)
 
+
+def string_to_int(s, default=10):
+    try:
+        return int(s)
+    except:
+        return default
+
 class JsonRequestHandler(RequestHandler):
+    """A RequestHandler class to help with json web service handlers, including error handling"""
     def _setup_context(self, context):
         if not context:
             context = {}
@@ -42,13 +50,13 @@ class JsonRequestHandler(RequestHandler):
         data = dict()
         data['status_code'] = status_code
         data['status_text'] = status_text
+        data['timestamp'] = datetime.datetime.now(pytz.utc)
         if config.USE_DATA_ROOT_NODE:
             data['data'] = model_or_query
         else:    
             data.update(model_or_query)
         return data
 
-    """A RequestHandler class to help with json web service handlers, including error handling"""
     def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', context=None):
         context = self._setup_context(context)
         data = self._setup_data(model_or_query, status_code, status_text)
@@ -65,15 +73,17 @@ class JsonRequestHandler(RequestHandler):
         else:
             code = 500
             status_text = "INTERNAL_SERVER_ERROR: %s" % status_text
-            if debug_mode:
-                import logging
-                logging.error("INTERNAL_SERVER_ERROR %s: %s" % (code, status_text))
+            logging.error("API 500 ERROR: %s" % exception)
         if code == 401:
             status_text = 'UNAUTHORIZED'
+        if code == 403:
+            status_text = 'FORBIDDEN'
         if code == 404:
             status_text = 'NOT_FOUND'
         if code == 405:
             status_text = 'METHOD_NOT_ALLOWED'
+        if code == 400:
+            logging.warning("API %s WARNING: %s" % (code, status_text))
         return self.json_response({}, status_code=code, status_text=status_text)
 
 class MultiPageHandler(JsonRequestHandler):
@@ -85,13 +95,22 @@ class MultiPageHandler(JsonRequestHandler):
         return page_size
 
     def fetch_page(self, query):
+        original_query = copy.deepcopy(query)
         cursor = self.request.get('cursor', None)
         if cursor is not None:
             try:
                 query = query.with_cursor(cursor)
-            except BadRequestError:
-                self.abort(400, "The cursor has expired: %s" % cursor)
-        results = query.fetch(self.page_size)
+            except (BadValueError, BadRequestError):
+                query = original_query
+        try:
+            results = query.fetch(self.page_size)
+        except (BadValueError, BadRequestError):
+#            self.abort(500, "BAD_REQUEST: The cursor has expired (%s)" % cursor)
+            if cursor is not None:
+                query = original_query
+                results = query.fetch(self.page_size)
+            else:
+                raise
         next_page_key = None
         if len(results) == self.page_size:
             next_page_key = query.cursor()
