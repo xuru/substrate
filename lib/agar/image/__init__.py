@@ -1,12 +1,15 @@
 from cStringIO import StringIO
+import logging
+import time
 import urllib2
 import urllib2_file
 import urlparse
 
-from google.appengine.api import images, lib_config, urlfetch
+from google.appengine.api import images, lib_config, memcache
 
 from google.appengine.ext import db, blobstore
 
+from agar.env import on_server
 from agar.image.handlers import ImageUploadHandler
 
 
@@ -23,6 +26,9 @@ class ConfigDefaults(object):
     DEBUG = False
     UPLOAD_HANDLER = ImageUploadHandler
     UPLOAD_URL = '/agar/image_upload/'
+    MAX_UPLOAD_TRIES = 3
+    SERVING_URL_TIMEOUT = 60*60
+    SERVING_URL_LOOKUP_TRIES = 3
 
 config = lib_config.register('agar_image', ConfigDefaults.__dict__)
 
@@ -63,10 +69,26 @@ class Image(db.Model):
             return blobstore.BlobReader(self.blob_key).read()
         return None
 
-    def get_serving_url(self, *args, **kwargs):
+    def get_serving_url(self, size=None, crop=False):
+        serving_url = None
         if self.blob_key is not None:
-            return images.get_serving_url(str(self.blob_key), *args, **kwargs)
-        return None
+            namespace = "agar-image-serving-url"
+            key = "%s-%s-%s" % (self.key().name(), size, crop)
+            serving_url = memcache.get(key, namespace=namespace)
+            if serving_url is None:
+                tries = 0
+                while tries < config.SERVING_URL_LOOKUP_TRIES:
+                    try:
+                        tries += 1
+                        serving_url = images.get_serving_url(str(self.blob_key), size=size, crop=crop)
+                        if serving_url is not None:
+                            break
+                    except Exception, e:
+                        if tries >= config.SERVING_URL_LOOKUP_TRIES:
+                            logging.error("Unable to get image serving URL: %s" % e)
+                if serving_url is not None:
+                    memcache.set(key, serving_url, time=config.SERVING_URL_TIMEOUT, namespace=namespace)
+        return serving_url
 
     #noinspection PyUnresolvedReferences
     def delete(self, **kwargs):
@@ -102,73 +124,26 @@ class Image(db.Model):
             filename = str(image.key())
         file = urllib2_file.UploadFile(data, filename)
         upload_url = blobstore.create_upload_url(upload_url)
-        try:
-            result = urllib2.urlopen(upload_url, {'file': file, 'key': str(image.key())})
-#            data = urllib2.urlopen(upload_url, {'file': file, 'key': str(image.key())})
-#            logging.info("POSTing to %s" % upload_url)
-#            response = post_multipart(
-#                url,
-#                [('key', str(image.key()))],
-#                [('file', filename, str(StringIO(data)))]
-#            )
-#            logging.debug('Post response: %s' % response)
-        except Exception, e:
-            from agar.env import on_server
-            if on_server:
-                import logging
-                logging.error("Failed to create image: %s" % e)
-                import time
-                time.sleep(5)
+        tries = 0
+        e = None
+        while tries < config.MAX_UPLOAD_TRIES:
+            try:
+                image = cls.get(str(image.key()))
+                if image is not None and image.blob_info is not None:
+                    break
+                result = urllib2.urlopen(upload_url, {'file': file, 'key': str(image.key())})
+                logging.debug('Post response: %s' % result)
+                break
+            except Exception, e:
+                if on_server:
+                    tries += 1
+                    time.sleep(1)
+                else:
+                    break
         image = cls.get(str(image.key()))
         if image is not None and image.blob_info is None:
+            if on_server:
+                logging.error("Failed to create image: %s" % e)
             image.delete()
             image = None
         return image
-
-import httplib, mimetypes
-
-#def post_multipart(host, selector, fields, files):
-def post_multipart(url, fields, files):
-    """
-    Post fields and files to an http host as multipart/form-data.
-    fields is a sequence of (name, value) elements for regular form fields.
-    files is a sequence of (name, filename, value) elements for data to be uploaded as files
-    Return the server's response page.
-    """
-    import logging
-    logging.info('Encoding formdata')
-    content_type, body = encode_multipart_formdata(fields, files)
-    logging.info('POSTing: %s' % body)
-    response = urlfetch.fetch(url, body, urlfetch.POST, {'Content-Type': content_type}, False, False)
-    logging.info('POSTed')
-    return response.status_code
-
-
-def encode_multipart_formdata(fields, files):
-    """
-    fields is a sequence of (name, value) elements for regular form fields.
-    files is a sequence of (name, filename, value) elements for data to be uploaded as files
-    Return (content_type, body) ready for httplib.HTTP instance
-    """
-    BOUNDARY = '----------ThIs_Is_tHe_bouNdaRY_$'
-    CRLF = '\r\n'
-    L = []
-    for (key, value) in fields:
-        L.append('--' + BOUNDARY)
-        L.append('Content-Disposition: form-data; name="%s"' % key)
-        L.append('')
-        L.append(value)
-    for (key, filename, value) in files:
-        L.append('--' + BOUNDARY)
-        L.append('Content-Disposition: form-data; name="%s"; filename="%s"' % (key, filename))
-        L.append('Content-Type: %s' % get_content_type(filename))
-        L.append('')
-        L.append(value)
-    L.append('--' + BOUNDARY + '--')
-    L.append('')
-    body = CRLF.join(L)
-    content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
-    return content_type, body
-
-def get_content_type(filename):
-    return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
