@@ -1,6 +1,3 @@
-
-
-
 def create_error_dict(error_list):
     from django.forms.util import ErrorList
 
@@ -12,11 +9,10 @@ def create_error_dict(error_list):
             text_errors[key] = value
     return text_errors
 
-
-def validate_service(Form):
+def validate_service(form_class):
     def decorator(request_method):
         def wrapped(self, *args, **kwargs):
-            form = Form(self.request.params)
+            form = form_class(self.request.params)
             if form.is_valid():
                 self.request.form = form
                 request_method(self, *args, **kwargs)
@@ -28,4 +24,3 @@ def validate_service(Form):
                 
         return wrapped
     return decorator
-
