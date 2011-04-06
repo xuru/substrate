@@ -3,7 +3,6 @@ import doctest
 import unittest
 
 
-#DOCTEST_FILES = ["test_modelstrategy.doctest"]
 DOCTEST_FILES = []
 
 for root, dirs, files in os.walk("."):
