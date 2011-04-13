@@ -95,13 +95,28 @@ class MultiPageHandler(JsonRequestHandler):
         return page_size
 
     def fetch_page(self, query):
+        original_query = copy.deepcopy(query)
         cursor = self.request.get('cursor', None)
         if cursor is not None:
             try:
                 query = query.with_cursor(cursor)
-            except BadRequestError:
-                self.abort(400, "The cursor has expired: %s" % cursor)
-        results = query.fetch(self.page_size)
+            except (BadValueError, BadRequestError):
+                query = original_query
+            except:
+                logging.exception("Uncaught 'with_cursor' exception")
+                query = original_query
+        try:
+            results = query.fetch(self.page_size)
+        except (BadValueError, BadRequestError):
+            if cursor is not None:
+                query = original_query
+                results = query.fetch(self.page_size)
+            else:
+                logging.exception("Uncaught 're-fetch' exception")
+                raise
+        except:
+            logging.exception("Uncaught 'fetch' exception")
+            raise
         next_page_key = None
         if len(results) == self.page_size:
             next_page_key = query.cursor()

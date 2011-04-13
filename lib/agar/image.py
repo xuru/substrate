@@ -1,16 +1,12 @@
-from cStringIO import StringIO
+from __future__ import with_statement
+
 import logging
-import time
-import urllib2
-import urllib2_file
+import mimetypes
 import urlparse
 
-from google.appengine.api import images, lib_config, memcache
+from google.appengine.api import images, lib_config, memcache, files, urlfetch
 
 from google.appengine.ext import db, blobstore
-
-from agar.env import on_server
-from agar.image.handlers import ImageUploadHandler
 
 
 class ConfigDefaults(object):
@@ -20,13 +16,10 @@ class ConfigDefaults(object):
     in your appengine_config.py file (in the root of your app):
 
         agar_image_DEBUG = True
-        agar_image_UPLOAD_HANDLER = The handler to use to POST the image data to.
-        agar_image_UPLOAD_URL = The URL to POST the image data to.
+        agar_image_SERVING_URL_TIMEOUT = 60*60
+        agar_image_SERVING_URL_LOOKUP_TRIES = 3
     """
     DEBUG = False
-    UPLOAD_HANDLER = ImageUploadHandler
-    UPLOAD_URL = '/agar/image_upload/'
-    MAX_UPLOAD_TRIES = 3
     SERVING_URL_TIMEOUT = 60*60
     SERVING_URL_LOOKUP_TRIES = 3
 
@@ -74,6 +67,7 @@ class Image(db.Model):
         if self.blob_key is not None:
             namespace = "agar-image-serving-url"
             key = "%s-%s-%s" % (self.key().name(), size, crop)
+            #noinspection PyArgumentList
             serving_url = memcache.get(key, namespace=namespace)
             if serving_url is None:
                 tries = 0
@@ -87,6 +81,7 @@ class Image(db.Model):
                         if tries >= config.SERVING_URL_LOOKUP_TRIES:
                             logging.error("Unable to get image serving URL: %s" % e)
                 if serving_url is not None:
+                    #noinspection PyArgumentList
                     memcache.set(key, serving_url, time=config.SERVING_URL_TIMEOUT, namespace=namespace)
         return serving_url
 
@@ -103,47 +98,32 @@ class Image(db.Model):
         return image
 
     @classmethod
-    def create(cls, blob_info=None, data=None, filename=None, url=None, upload_url=None, **kwargs):
+    def create(cls, blob_info=None, data=None, filename=None, url=None, mime_type=None, **kwargs):
         if blob_info is not None:
             kwargs['blob_info'] = blob_info
             return cls.create_new_entity(**kwargs)
         if data is None:
             if url is not None:
-                data = StringIO(urllib2.urlopen(url).read())
+                response = urlfetch.fetch(url)
+                data = response.content
+                mime_type = mime_type or response.headers.get('Content-Type', None)
                 if filename is None:
                     path = urlparse.urlsplit(url)[2]
                     filename = path[path.rfind('/')+1:]
-        else:
-            data = StringIO(str(data))
         if data is None:
             raise db.Error("No image data")
-        if upload_url is None:
-            upload_url = config.UPLOAD_URL
         image = cls.create_new_entity(source_url=url, **kwargs)
-        if filename is None:
-            filename = str(image.key())
-        file = urllib2_file.UploadFile(data, filename)
-        upload_url = blobstore.create_upload_url(upload_url)
-        tries = 0
-        e = None
-        while tries < config.MAX_UPLOAD_TRIES:
-            try:
-                image = cls.get(str(image.key()))
-                if image is not None and image.blob_info is not None:
-                    break
-                result = urllib2.urlopen(upload_url, {'file': file, 'key': str(image.key())})
-                logging.debug('Post response: %s' % result)
-                break
-            except Exception, e:
-                if on_server:
-                    tries += 1
-                    time.sleep(1)
-                else:
-                    break
+        filename = filename or str(image.key())
+        mime_type = mime_type or mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+        blob_file_name = files.blobstore.create(mime_type=mime_type, _blobinfo_uploaded_filename=filename)
+        with files.open(blob_file_name, 'a') as f:
+            f.write(data)
+        files.finalize(blob_file_name)
+        image.blob_info = files.blobstore.get_blob_key(blob_file_name)
+        image.put()
         image = cls.get(str(image.key()))
         if image is not None and image.blob_info is None:
-            if on_server:
-                logging.error("Failed to create image: %s" % e)
+            logging.error("Failed to create image: %s" % filename)
             image.delete()
             image = None
         return image
