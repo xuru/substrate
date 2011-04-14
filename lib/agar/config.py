@@ -1,7 +1,7 @@
 from google.appengine.api import lib_config
 
 class Config(object):
-    _namespace = 'bbyoffer'
+    _namespace = 'agar'
 
     def __init__(self, **kwargs):
         self.defaults = {}
