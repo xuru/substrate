@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import re
 
-from pytz.reference import FixedOffset
+from pytz.gae import pytz
 
 
 def parse_datetime(s):
@@ -26,8 +26,7 @@ def parse_datetime(s):
     # into its constituent date/time, microseconds, and
     # timezone fields where microseconds and timezone are
     # optional.
-    m = re.match(r'(.*?)(?:\.(\d+))?(([-+]\d{1,2}):(\d{2}))?$',
-                 str(s))
+    m = re.match(r'(.*?)(?:\.(\d+))?(([-+]\d{1,2}):(\d{2}))?$', str(s))
     datestr, fractional, tzname, tzhour, tzmin = m.groups()
 
     # Create tzinfo object representing the timezone
@@ -42,8 +41,7 @@ def parse_datetime(s):
         tzhour, tzmin = int(tzhour), int(tzmin)
         if tzhour == tzmin == 0:
             tzname = 'UTC'
-        tz = FixedOffset(timedelta(hours=tzhour,
-                                   minutes=tzmin), tzname)
+        tz = pytz.reference.FixedOffset(timedelta(hours=tzhour, minutes=tzmin), tzname)
 
     # Convert the date/time field into a python datetime
     # object.
