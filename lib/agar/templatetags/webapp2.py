@@ -19,7 +19,7 @@ class URLNode(Node):
                        for k, v in self.kwargs.items()])
         url = None
         try:
-            from main import url_for
+            from agar.url import url_for
             url = url_for(self.route_name, *args, **kwargs)
         except Exception, e:
             if self.asvar is None:

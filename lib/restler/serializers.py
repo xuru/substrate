@@ -2,7 +2,9 @@
 import copy
 import datetime
 import decimal
+import logging
 import pprint
+import simplejson
 import types
 
 from xml.etree import ElementTree as ET
@@ -12,7 +14,6 @@ from google.appengine.ext import db
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
 from google.appengine.api import users
-from django.utils import simplejson
 
 from restler import models
 
@@ -38,7 +39,9 @@ DEFAULT_STYLE = {
     }
 } 
 
-class SkipField(object): pass
+class SkipField(object):
+    """ An empty class to dynamically exclude fields on serialization """
+    pass
 
 SKIP = SkipField()
 
@@ -48,6 +51,7 @@ def json_response(response, model_or_query, strategy=None, status_code=200, cont
     response.set_status(status_code)
     response.headers['Content-Type'] = "application/json"
     response.out.write(json)
+    return json
                                 
 def xml_response(response, model_or_query, strategy=None, status_code=200, context={}):
     """ Render xml to a webapp response """
@@ -124,6 +128,8 @@ class ModelStrategy(object):
         for p in self.fields:
             if isinstance(p, dict):
                 names[p.keys()[0]] = p
+            elif isinstance(p, tuple):
+                names[p[0]] = p[1]
             elif isinstance(p, basestring):
                 names[p] = p
         return names
@@ -135,14 +141,15 @@ class ModelStrategy(object):
         if isinstance(fields, (tuple, list)):
             for name in fields:
                 if isinstance(name, dict):
-                    if len(name.keys()) != 1:
-                        raise ValueError("Only one key/value per dictionary is allowed i.e. name -> field/callable")
-                    else:
-                        prop = name
-                        name = name.keys()[0]
-                        if name not in names:
-                            m.fields.append(prop)
-                            names[name] = prop
+                    name = name.items()
+                if isinstance(name, tuple):
+                    name = [name]
+                if isinstance(name, list):
+                    for props in name:
+                        fname, prop = props
+                        if fname not in names:
+                            m.fields.append(props)
+                            names[fname] = prop
                         else:
                             raise ValueError("Cannot add field.  '%s' already exists" % name)
                 elif name not in names:
@@ -167,8 +174,13 @@ class ModelStrategy(object):
                 # if they're giving us the field -> callable mapping, we just want the field
                 if isinstance(f, dict):
                     f, _ = f.items()[0]
+                if isinstance(f, tuple):
+                    f, _ = f
                 if f in names:
-                    m.fields.remove(names[f])
+                    if callable(names[f]): # Derived property
+                        m.fields.remove((f, names[f]))
+                    else: # simple field
+                        m.fields.remove(names[f])
                 else:
                     raise ValueError("'%s' cannot be removed. It is not in the current fields list (%s)" % (f, self.fields))
         else:
@@ -190,6 +202,9 @@ class ModelStrategy(object):
         else:
             raise ValueError("Cannot add type %s" % type(other))
 
+    def include(self, *args): 
+        return self.__add__(args)
+
     def __sub__(self, other):
         if isinstance(other, self.__class__):
             raise ValueError("Cannot subtract type %s" % type(other))
@@ -200,12 +215,18 @@ class ModelStrategy(object):
         else:
             raise ValueError("Cannot add type %s" % type(other))
 
+    def exclude(self, *args):
+        return self.__sub__(args)
+
     def __lshift__(self, other):
         """ Shorthand for overriding fields with new behavior
             i.e. remove the fields and add back in with new mappings"""
         if not isinstance(other, (list, tuple, basestring)):
             raise ValueError("Cannot add type %s" % type(other))
         return self.__remove(other).__add(other)
+
+    def override(self, **kwargs):
+        return self.__lshift__(kwargs.items())
 
     def __repr__(self):
         return pprint.pformat(self.to_dict())
@@ -270,8 +291,8 @@ def encoder_builder(type_, strategy=None, style=None, context={}):
             target = None
             for field_name in fields:
                 # Check to see if this remaps a field to a callable or a different field
-                if isinstance(field_name, dict):
-                    field_name, target = field_name.items()[0] # Only one key/value
+                if isinstance(field_name, tuple):
+                    field_name, target = field_name # Only one key/value
 
                 if callable(target): # Defer to the callable
                     # if the function has exactly two arguments, assume we should include the context param

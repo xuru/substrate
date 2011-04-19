@@ -1,20 +1,15 @@
 from google.appengine.ext import db
 
 
-def new_iid():
-    """Called by the websetup to get a unique uuid for the application iid."""
-    import uuid
-    return uuid.uuid4().hex
-
 class NamedModel(db.Model):
     """This base model has a classmethod for automatically asigning a
     new uuid for its key_name on creation of a new entity."""
     @classmethod
-    def get_key_generator(cls, requested_key_name=None):
+    def get_key_name(cls, requested_key_name=None):
         if requested_key_name is not None:
-            yield requested_key_name
-        while 1:
-          yield new_iid()
+            return requested_key_name
+        import uuid
+        return uuid.uuid4().hex
 
     @classmethod
     def create_new_entity(cls, **kwargs):
@@ -32,12 +27,13 @@ class NamedModel(db.Model):
                 return None
         # Function body
         requested_key_name = kwargs.pop('key_name', None)
-        key_generator = cls.get_key_generator(requested_key_name=requested_key_name)
-        first_key_name = key_generator.next()
-        entity = db.run_in_transaction(txn, first_key_name)
+        key_name = cls.get_key_name(requested_key_name=requested_key_name)
+        entity = db.run_in_transaction(txn, key_name)
         if requested_key_name is None:
             while entity is None:
-                key_name = key_generator.next()
+                key_name = cls.get_key_name()
                 entity = db.run_in_transaction(txn, key_name)
         return entity
 
+class ModelException(Exception):
+    pass
