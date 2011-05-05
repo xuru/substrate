@@ -4,10 +4,20 @@ from google.appengine.ext import db
 class NamedModel(db.Model):
     """This base model has a classmethod for automatically asigning a
     new uuid for its key_name on creation of a new entity."""
+    @property
+    def key_name(self):
+        if self.key():
+            return self.key().name()
+        return None
+
+    @property
+    def key_name_str(self):
+        if self.key_name:
+            return str(self.key_name)
+        return None
+
     @classmethod
-    def get_key_name(cls, requested_key_name=None):
-        if requested_key_name is not None:
-            return requested_key_name
+    def generate_key_name(cls):
         import uuid
         return uuid.uuid4().hex
 
@@ -26,13 +36,13 @@ class NamedModel(db.Model):
             else:
                 return None
         # Function body
+        entity = None
         requested_key_name = kwargs.pop('key_name', None)
-        key_name = cls.get_key_name(requested_key_name=requested_key_name)
-        entity = db.run_in_transaction(txn, key_name)
-        if requested_key_name is None:
+        if requested_key_name:
+            entity = db.run_in_transaction(txn, requested_key_name)
+        else:
             while entity is None:
-                key_name = cls.get_key_name()
-                entity = db.run_in_transaction(txn, key_name)
+                entity = db.run_in_transaction(txn, cls.generate_key_name())
         return entity
 
 class ModelException(Exception):
