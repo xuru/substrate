@@ -80,3 +80,10 @@ def url_for(parser, token):
                         args.append(parser.compile_filter(arg))
     return URLNode(routename, args, kwargs, asvar)
 url_for = register.tag(url_for)
+
+
+def on_production_server():
+    from agar.env import on_production_server
+    return on_production_server
+on_production_server = register.tag(on_production_server)
+

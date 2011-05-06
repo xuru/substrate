@@ -1,4 +1,3 @@
-import copy
 import datetime
 import logging
 
@@ -12,6 +11,9 @@ from pytz.gae import pytz
 from restler.serializers import json_response as restler_json_response
 
 from webapp2 import RequestHandler, HTTPException
+
+
+INVALID_CURSOR = 'INVALID_CURSOR'
 
 
 class ConfigDefaults(object):
@@ -46,21 +48,22 @@ class JsonRequestHandler(RequestHandler):
         context['request'] = self.request
         return context
     
-    def _setup_data(self, model_or_query, status_code, status_text):
+    def _setup_data(self, model_or_query, status_code, status_text, errors=None):
         data = dict()
         data['status_code'] = status_code
         data['status_text'] = status_text
         data['timestamp'] = datetime.datetime.now(pytz.utc)
+        if errors is not None:
+            data['errors'] = errors
         if config.USE_DATA_ROOT_NODE:
             data['data'] = model_or_query
         else:    
             data.update(model_or_query)
         return data
 
-    def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', context=None):
+    def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', errors=None, context=None):
         context = self._setup_context(context)
-        data = self._setup_data(model_or_query, status_code, status_text)
-
+        data = self._setup_data(model_or_query, status_code, status_text, errors=errors)
         return restler_json_response(self.response, data, strategy=strategy, status_code=status_code, context=context)
 
     def handle_exception(self, exception, debug_mode):
@@ -82,8 +85,6 @@ class JsonRequestHandler(RequestHandler):
             status_text = 'NOT_FOUND'
         if code == 405:
             status_text = 'METHOD_NOT_ALLOWED'
-        if code == 400:
-            logging.warning("API %s WARNING: %s" % (code, status_text))
         return self.json_response({}, status_code=code, status_text=status_text)
 
 class MultiPageHandler(JsonRequestHandler):
@@ -95,28 +96,16 @@ class MultiPageHandler(JsonRequestHandler):
         return page_size
 
     def fetch_page(self, query):
-        original_query = copy.deepcopy(query)
         cursor = self.request.get('cursor', None)
         if cursor is not None:
             try:
                 query = query.with_cursor(cursor)
             except (BadValueError, BadRequestError):
-                query = original_query
-            except:
-                logging.exception("Uncaught 'with_cursor' exception")
-                query = original_query
+                self.abort(400, INVALID_CURSOR)
         try:
             results = query.fetch(self.page_size)
         except (BadValueError, BadRequestError):
-            if cursor is not None:
-                query = original_query
-                results = query.fetch(self.page_size)
-            else:
-                logging.exception("Uncaught 're-fetch' exception")
-                raise
-        except:
-            logging.exception("Uncaught 'fetch' exception")
-            raise
+            self.abort(400, INVALID_CURSOR)
         next_page_key = None
         if len(results) == self.page_size:
             next_page_key = query.cursor()
@@ -137,10 +126,9 @@ class CorsMultiPageHandler(MultiPageHandler):
             self.request.headers.get('Access-Control-Request-Headers', '') 
 
     """A RequestHandler class to help with json web service handlers, including error handling"""
-    def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', context=None):       
+    def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', errors=None, context=None):
         context = self._setup_context(context)
-        data = self._setup_data(model_or_query, status_code, status_text)
-
+        data = self._setup_data(model_or_query, status_code, status_text, errors=errors)
         origin = self.request.headers.get('Origin', '') 
         if origin:
             self.response.headers['Access-Control-Allow-Origin'] = origin
