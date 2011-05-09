@@ -30,6 +30,7 @@ class ConfigDefaults(object):
     DEFAULT_PAGE_SIZE = 10
     MAX_PAGE_SIZE = 100
     USE_DATA_ROOT_NODE = True
+    ADD_SUCCESS_FLAG = False
 
 config = lib_config.register('agar_json', ConfigDefaults.__dict__)
 
