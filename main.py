@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from webapp2 import WSGIApplication, RequestHandler
 
 from env_setup import setup
 setup()
