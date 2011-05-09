@@ -48,6 +48,9 @@ agar_url_APPLICATIONS = ['main', 'api']
 # Turns off using {'data':model_name_or_query} by not using the data node
 # agar_json_USE_DATA_ROOT_NODE = False
 
+# Adds success=true or false to the json response.
+# agar_json_ADD_SUCCESS_FLAG = True
+
 ##############################################################################
 # SESSION SETTINGS
 ##############################################################################

@@ -53,6 +53,11 @@ class JsonRequestHandler(RequestHandler):
         data['status_code'] = status_code
         data['status_text'] = status_text
         data['timestamp'] = datetime.datetime.now(pytz.utc)
+        if config.ADD_SUCCESS_FLAG:
+            if status_code in [200, 302]:
+                data['sucess'] = True
+            else:
+                data['sucess'] = False
         if errors is not None:
             data['errors'] = errors
         if config.USE_DATA_ROOT_NODE:
