@@ -30,11 +30,8 @@ agar_url_APPLICATIONS = ['main', 'api']
 # Enable debug logging for the agar.auth module
 #agar_auth_DEBUG = False
 
-# Default static API keys for use with the default 'authorize' function
-#agar_auth_VALID_API_KEYS = ['key1', 'key2']
-
 # The authorization function to use
-#agar_auth_authorize = lambda handler, *args, **kwargs: return True
+#agar_auth_authenticate = lambda request, *args, **kwargs: return None
 
 # Enable debug logging for the agar.json module
 #agar_json_DEBUG = False

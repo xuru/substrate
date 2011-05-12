@@ -1,8 +1,4 @@
-from urlparse import urlparse
-
 from google.appengine.api import lib_config
-
-from agar.env import on_production_server
 
 
 class ConfigDefaults(object):
@@ -12,34 +8,37 @@ class ConfigDefaults(object):
     in your appengine_config.py file (in the root of your app):
 
         agar_auth_DEBUG = True
-        agar_auth_VALID_API_KEYS = ['key1', 'key2']
-        agar_auth_authorize = lambda handler, *args, **kwargs: return True
+        agar_auth_authenticate = lambda request, *args, **kwargs: return None
     """
     DEBUG = False
 
-    if on_production_server:
-        VALID_API_KEYS = ['prodapikey1', 'prodapikey1']
-    else:
-        VALID_API_KEYS = ['testapikey1', 'testapikey2']
-
-    def authorize(handler, *args, **kwargs):
-        from agar.env import on_production_server
-        scheme, netloc, path, query, fragment = urlparse.urlsplit(handler.request.url)
-        # Only allow HTTPS on PRODuction
-        if on_production_server and scheme and scheme.lower() != 'https':
-            return False
-        api_key = handler.request.get('api_key', default_value=None)
-        valid_api_keys = config.VALID_API_KEYS
-        return api_key in valid_api_keys
+    def authenticate(request):
+        return None
 
 config = lib_config.register('agar_auth', ConfigDefaults.__dict__)
 
-def api_key_required(method, auth_func=None):
-    def authorized_method(handler, *args, **kwargs):
-        if auth_func is None:
-            auth_func = config.authorize
-        if auth_func(handler, *args, **kwargs):
-            method(handler, *args, **kwargs)
-        else:
-            handler.abort(401)
-    return authorized_method
+
+def authenticate_https(request):
+    import urlparse
+    from agar.env import on_server
+    scheme, netloc, path, query, fragment = urlparse.urlsplit(request.url)
+    if on_server and scheme and scheme.lower() != 'https':
+        return None
+    return config.authenticate(request)
+
+def authentication_required(authenticator=None):
+    if authenticator is None:
+        authenticator = config.authenticate
+    def decorator(request_method):
+        def wrapped(self, *args, **kwargs):
+            account = authenticator(self.request)
+            if account is not None:
+                self.request.account = account
+                request_method(self, *args, **kwargs)
+            else:
+                self.abort(403)
+        return wrapped
+    return decorator
+
+def https_authentication_required():
+    return authentication_required(authenticator=authenticate_https)
