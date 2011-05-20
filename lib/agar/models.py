@@ -2,16 +2,30 @@ from google.appengine.ext import db
 
 
 class NamedModel(db.Model):
-    """This base model has a classmethod for automatically asigning a
-    new uuid for its key_name on creation of a new entity."""
+    """Base model to create an Entity with a key name.
+
+    This base model has a classmethod for automatically asigning a
+    new uuid for its key_name on creation of a new entity.
+
+    """
+
     @property
     def key_name(self):
+        """ Return the entity.key().name() unicode value if available, otherwise None.
+            
+            Use NamedModel.key_name_str() for string value.
+            
+        """
         if self.key():
             return self.key().name()
         return None
 
     @property
     def key_name_str(self):
+        """ Return the entity.key().name() string value if available, otherwise None.
+            
+            Use NamedModel.key_name_str() for unicode value.
+        """
         if self.key_name:
             return str(self.key_name)
         return None
@@ -23,6 +37,19 @@ class NamedModel(db.Model):
 
     @classmethod
     def create_new_entity(cls, **kwargs):
+        """ Creates a new entity unless the key_name parameter is found.
+
+        Keyword arguments:
+            key_name -- Used for the entity key name, otherwise will be generated.
+
+        Creates and persists an Entity by generating and setting a key_name.
+        If a key_name is provided as a named argument,
+        Entity.get_by_key_name(key_name) will be invoked.
+        If found, the entiry will be returned otherwise a new entity will be created.
+
+        person = Person.create_new_entity()
+
+        """
         # Inline transaction function
         def txn(key_name):
             if kwargs.has_key('parent'):
