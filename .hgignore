@@ -15,5 +15,6 @@ syntax: glob
 *.orig
 _generated_media/*
 .dynamic_media/*
-coverage/*
+.coverage
+htmlcov/*
 .idea/*
