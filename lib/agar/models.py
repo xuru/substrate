@@ -16,15 +16,14 @@ class NamedModel(db.Model):
             Use NamedModel.key_name_str() for string value.
             
         """
-        if self.key():
-            return self.key().name()
-        return None
+        return self.key().name()
 
     @property
     def key_name_str(self):
         """ Return the entity.key().name() string value if available, otherwise None.
             
             Use NamedModel.key_name_str() for unicode value.
+            
         """
         if self.key_name:
             return str(self.key_name)
@@ -43,9 +42,7 @@ class NamedModel(db.Model):
             key_name -- Used for the entity key name, otherwise will be generated.
 
         Creates and persists an Entity by generating and setting a key_name.
-        If a key_name is provided as a named argument,
-        Entity.get_by_key_name(key_name) will be invoked.
-        If found, the entiry will be returned otherwise a new entity will be created.
+        A key_name will be generated or may be provided as a keyword arg.
 
         person = Person.create_new_entity()
 
