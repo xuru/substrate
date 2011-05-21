@@ -8,7 +8,6 @@ class NamedModel(db.Model):
     new uuid for its key_name on creation of a new entity.
 
     """
-
     @property
     def key_name(self):
         """ Return the entity.key().name() unicode value if available, otherwise None.
