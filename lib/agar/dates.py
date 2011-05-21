@@ -11,14 +11,18 @@ def parse_datetime(s):
     on a python datetime object and returns a datetime
     instance that would produce that string.
 
-    Acceptable formats are: "YYYY-MM-DD HH:MM:SS.ssssss+HH:MM",
-                            "YYYY-MM-DD HH:MM:SS.ssssss",
-                            "YYYY-MM-DD HH:MM:SS+HH:MM",
-                            "YYYY-MM-DD HH:MM:SS",
-                            "YYYY-MM-DD"
+    Acceptable formats are:
+    
+    - "YYYY-MM-DD HH:MM:SS.ssssss+HH:MM"
+    - "YYYY-MM-DD HH:MM:SS.ssssss"
+    - "YYYY-MM-DD HH:MM:SS+HH:MM"
+    - "YYYY-MM-DD HH:MM:SS"
+    - "YYYY-MM-DD"
+    
     Where ssssss represents fractional seconds.  The timezone
     is optional and may be either positive or negative
     hours/minutes east of UTC.
+    
     """
     if s is None:
         return None
