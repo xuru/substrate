@@ -23,7 +23,7 @@ class NamedModel(db.Model):
         """ Return the entity.key().name() string value if available, otherwise None.
             
             Use NamedModel.key_name_str() for unicode value.
-            
+
         """
         if self.key_name:
             return str(self.key_name)
@@ -40,6 +40,7 @@ class NamedModel(db.Model):
 
         Keyword arguments:
             key_name -- Used for the entity key name, otherwise will be generated.
+            parent -- Optional parent key. If not supplied, defaults to None.
 
         Creates and persists an Entity by generating and setting a key_name.
         A key_name will be generated or may be provided as a keyword arg.
