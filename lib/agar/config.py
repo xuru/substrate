@@ -1,8 +1,7 @@
 from google.appengine.api import lib_config
 
 class Config(object):
-    """
-    Configurable constants using 'lib_config' wrapper.
+    """Configurable constants using 'lib_config' wrapper.
 
     To use this class, create a subclass that redefines '_namespace' to the appengine_config namespace you'd like the
     configs to appear under.  Then, simply create class-level properties/default values for each constant.
@@ -33,6 +32,7 @@ class Config(object):
     #Then:
     >>> config.STRING_CONFIG == custom_config.STRING_CONFIG == 'settingstring'
     True
+    
     """
     _namespace = 'agar'
 
