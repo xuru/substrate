@@ -9,11 +9,12 @@ import sys
 #         sys.path.insert(0, lib_path)
 
 def setup():
-    '''
-    Adds <project_root>/lib to the python path.  
-    Starts in current working directory and traverses up until found.
+    """Adds <project_root>/lib to the python path.  
+    
+    Starts in current working directory and traverses up until app.yaml is found.
     Assumes app.yaml is in project root.
-    '''
+
+    """
     start_path = os.path.abspath('.')
     search_path = start_path
     while search_path:
