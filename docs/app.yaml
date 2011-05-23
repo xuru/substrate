@@ -1,0 +1,50 @@
+application: substrate-docs
+version: 1
+runtime: python
+api_version: 1
+
+
+handlers:
+- url: /download/Substrate.epub
+  static_files: static/_build/epub/Substrate.epub
+  upload: static/_build/epub/Substrate.epub
+
+# - url: /search.html
+#   static_files: static/_build/html/search.html
+#   upload: static/_build/html/search.html
+# 
+# - url: /searchindex.js
+#   static_files: static/_build/html/searchindex.js
+#   upload: static/_build/html/searchindex.html
+
+
+
+# - url: /.*
+#   static_files: static/_build/html/index.html
+#   upload: static/_build/html/index.html
+
+
+
+# - url: /_static
+  # static_dir: static/_build/html/_static
+
+# - url: /
+  # static_dir: static/_build/html
+
+- url: /(.*\.(css|png|js|html))
+  static_files: static/_build/html/\1
+  upload: static/_build/html/(.*\.(css|png|js|html))
+
+- url: /
+  static_files: static/_build/html/index.html
+  upload: static/_build/html/index.html
+
+skip_files:
+- ^local/.*
+- ^tests/.*
+- ^.hg/.*
+- ^.idea/.*
+- ^.*~
+- ^.*\.py[co]
+- ^.*\.po
+- ^.*\.pot

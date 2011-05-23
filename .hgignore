@@ -18,3 +18,4 @@ _generated_media/*
 .coverage
 htmlcov/*
 .idea/*
+docs/static/_build/*
