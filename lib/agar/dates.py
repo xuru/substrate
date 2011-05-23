@@ -5,25 +5,26 @@ from pytz.gae import pytz
 
 
 def parse_datetime(s):
-    """Create datetime object representing date/time expressed in a string
-
-    Takes a string in the format produced by calling str()
-    on a python datetime object and returns a datetime
-    instance that would produce that string.
-
-    Acceptable formats are:
-    
-    - "YYYY-MM-DD HH:MM:SS.ssssss+HH:MM"
-    - "YYYY-MM-DD HH:MM:SS.ssssss"
-    - "YYYY-MM-DD HH:MM:SS+HH:MM"
-    - "YYYY-MM-DD HH:MM:SS"
-    - "YYYY-MM-DD"
-    
-    Where ssssss represents fractional seconds.  The timezone
-    is optional and may be either positive or negative
-    hours/minutes east of UTC.
-    
     """
+Create ``datetime`` object representing date/time expressed in a string
+
+Takes a string in the format produced by calling ``str()``
+on a python ``datetime`` object and returns a ``datetime``
+instance that would produce that string.
+
+Acceptable formats are:
+
+ * ``YYYY-MM-DD HH:MM:SS.ssssss+HH:MM``
+ * ``YYYY-MM-DD HH:MM:SS.ssssss``
+ * ``YYYY-MM-DD HH:MM:SS+HH:MM``
+ * ``YYYY-MM-DD HH:MM:SS``
+ * ``YYYY-MM-DD``
+
+Where ``ssssss`` represents fractional seconds.  The timezone
+is optional and may be either positive or negative
+hours/minutes east of UTC.
+    """
+    
     if s is None:
         return None
     # Split string in the form 2007-06-18 19:39:25.3300-07:00

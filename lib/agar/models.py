@@ -1,27 +1,27 @@
 from google.appengine.ext import db
+from google.appengine.ext.db import BadKeyError
 
 
 class NamedModel(db.Model):
-    """Base model to create an Entity with a key name.
+    """
+A base (or mix-in) model to create a entity with a ``key_name`` (either passed in or generated automatically).
 
-    This base model has a classmethod for automatically asigning a
-    new uuid for its key_name on creation of a new entity.
-
+This base model has a classmethod for automatically assigning a new uuid for its ``key_name`` on creation of a new entity.
     """
     @property
     def key_name(self):
-        """ Return the entity.key().name() unicode value if available, otherwise None.
+        """ Return the ``entity.key().name()`` unicode value if available, otherwise ``None``.
             
-            Use NamedModel.key_name_str() for string value.
+            Use ``key_name_str`` for string (as opposed to unicode) value.
             
         """
         return self.key().name()
 
     @property
     def key_name_str(self):
-        """ Return the entity.key().name() string value if available, otherwise None.
+        """ Return the ``entity.key().name()`` as a string (as opposed to a unicode) value if available, otherwise ``None``.
             
-            Use NamedModel.key_name_str() for unicode value.
+            Use ``key_name`` for unicode value.
 
         """
         if self.key_name:
@@ -35,18 +35,25 @@ class NamedModel(db.Model):
 
     @classmethod
     def create_new_entity(cls, **kwargs):
-        """ Creates a new entity unless the key_name parameter is found.
-
-        Keyword arguments:
-            key_name -- Used for the entity key name, otherwise will be generated.
-            parent -- Optional parent key. If not supplied, defaults to None.
-
-        Creates and persists an Entity by generating and setting a key_name.
-        A key_name will be generated or may be provided as a keyword arg.
-
-        person = Person.create_new_entity()
-
         """
+Creates a new entity unless the ``key_name`` parameter is already in use for the given entity kind, in which case it
+raises a ``google.appengine.ext.db.BadKeyError`` exception.
+
+Keyword arguments:
+    ``key_name`` -- Used for the entity key name, otherwise will be generated.
+
+    ``parent`` -- Optional parent key. If not supplied, defaults to ``None``.
+
+Creates and persists an entity by (optionally) generating and setting a ``key_name``.
+A ``key_name`` will be generated or may be provided as a keyword arg.
+
+Examples::
+
+    person = Person.create_new_entity()
+
+    person_with_keyname = Person.create_new_entity(key_name='bob')
+        """
+        
         # Inline transaction function
         def txn(key_name):
             if kwargs.has_key('parent'):
@@ -58,15 +65,22 @@ class NamedModel(db.Model):
                 entity.put()
                 return entity
             else:
-                return None
+                raise BadKeyError("key_name '%s' is already in use" % key_name)
+        
         # Function body
         entity = None
+        tries = 0
         requested_key_name = kwargs.pop('key_name', None)
         if requested_key_name:
             entity = db.run_in_transaction(txn, requested_key_name)
         else:
             while entity is None:
-                entity = db.run_in_transaction(txn, cls.generate_key_name())
+                try:
+                    entity = db.run_in_transaction(txn, cls.generate_key_name())
+                except BadKeyError:
+                    tries += 1
+                    if tries >= 3:
+                        raise
         return entity
 
 class ModelException(Exception):

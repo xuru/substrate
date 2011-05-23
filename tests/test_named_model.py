@@ -1,3 +1,4 @@
+from google.appengine.ext.db import BadKeyError
 from env_setup import setup
 setup()
 
@@ -33,9 +34,12 @@ class NamedModelTests(DataStoreTestCase, TestCase):
         class TestModel(NamedModel):
             string = db.StringProperty(required=True)
         
-        model1 = TestModel.create_new_entity(string='test entity1', key_name='test_key')
-        model2 = TestModel.create_new_entity(string='test entity2', key_name='test_key')
-        self.assertIsNone(model2)
+        TestModel.create_new_entity(string='test entity1', key_name='test_key')
+        try:
+            TestModel.create_new_entity(string='test entity2', key_name='test_key')
+            self.fail("Able to create duplicate NamedModel key_name")
+        except BadKeyError:
+            pass
 
     def test_create_with_key_name_and_parent(self):
         class ParentModel(NamedModel):
