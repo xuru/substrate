@@ -29,6 +29,15 @@ Contents:
 .. autodata:: agar.env.on_production_server
 .. autodata:: agar.env.on_server
 
+.. autoclass:: agar.image.Image
+
+.. autoclass:: agar.image.ConfigDefaults
+    :members:
+
+.. py:data:: agar.image.config
+
+    The configuration object for ``agar.image`` settings.
+
 .. autoclass:: agar.json.JsonRequestHandler
     :members:
     :undoc-members:

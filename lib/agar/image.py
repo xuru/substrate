@@ -10,22 +10,36 @@ from google.appengine.ext import db, blobstore
 
 
 class ConfigDefaults(object):
-    """Configurable constants.
+    """
+    Configurable settings for the ``agar.image`` library.
 
-    To override agar.image configuration values, define values like this
-    in your appengine_config.py file (in the root of your app):
-
-        agar_image_DEBUG = True
+    The following settings (and defaults) are provided::
+    
+        agar_image_DEBUG = False
         agar_image_SERVING_URL_TIMEOUT = 60*60
         agar_image_SERVING_URL_LOOKUP_TRIES = 3
+        agar_image_VALID_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif']
+    
+    To override ``agar.image`` settings, define override values in the ``appengine_config.py`` file in the
+    root of your app.
     """
+    #: Whether to log at ``debug`` level for logging in the ``agar.image`` library (Default: ``False``).
     DEBUG = False
+    #: How long (in seconds) to cache the image serving URL (Default: ``60*60``).
     SERVING_URL_TIMEOUT = 60*60
+    #: How many times to try to download an image from a URL (Default: ``3``).
     SERVING_URL_LOOKUP_TRIES = 3
+    #: Valid image mime types (Default: ``['image/jpeg', 'image/png', 'image/gif']``).
+    VALID_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif']
 
+#: The configuration object for ``agar.image`` settings.
 config = lib_config.register('agar_image', ConfigDefaults.__dict__)
 
+
 class Image(db.Model):
+    """
+    The ``Image`` class.
+    """
     blob_info = blobstore.BlobReferenceProperty(required=False, default=None)
     source_url = db.StringProperty(required=False, default=None)
     created = db.DateTimeProperty(auto_now_add=True)
@@ -42,6 +56,12 @@ class Image(db.Model):
     def image(self):
         if self.blob_key is not None:
             return images.Image(blob_key=self.blob_key)
+        return None
+
+    @property
+    def format(self):
+        if self.image is not None:
+            return self.image.format
         return None
 
     @property
@@ -99,6 +119,10 @@ class Image(db.Model):
 
     @classmethod
     def create(cls, blob_info=None, data=None, filename=None, url=None, mime_type=None, **kwargs):
+        if filename is not None:
+            filename = filename.encode('ascii', 'ignore')
+        if url is not None:
+            url = url.encode('ascii', 'ignore')
         if blob_info is not None:
             kwargs['blob_info'] = blob_info
             return cls.create_new_entity(**kwargs)
@@ -115,6 +139,11 @@ class Image(db.Model):
         image = cls.create_new_entity(source_url=url, **kwargs)
         filename = filename or str(image.key())
         mime_type = mime_type or mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+        if mime_type not in config.VALID_MIME_TYPES:
+            message = "The image mime type (%s) isn't valid" % mime_type
+            logging.warning(message)
+            image.delete()
+            raise images.BadImageError(message)
         blob_file_name = files.blobstore.create(mime_type=mime_type, _blobinfo_uploaded_filename=filename)
         with files.open(blob_file_name, 'a') as f:
             f.write(data)
