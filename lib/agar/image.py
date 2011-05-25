@@ -25,7 +25,7 @@ class ConfigDefaults(object):
     """
     #: Whether to log at ``debug`` level for logging in the ``agar.image`` library (Default: ``False``).
     DEBUG = False
-    #: How long (in seconds) to cache the image serving URL (Default: ``60*60``).
+    #: How long (in seconds) to cache the image serving URL (Default: ``60*60`` or one hour).
     SERVING_URL_TIMEOUT = 60*60
     #: How many times to try to download an image from a URL (Default: ``3``).
     SERVING_URL_LOOKUP_TRIES = 3
@@ -38,46 +38,72 @@ config = lib_config.register('agar_image', ConfigDefaults.__dict__)
 
 class Image(db.Model):
     """
-    The ``Image`` class.
+    A model class that helps create and work with images stored in the `Blobstore <http://code.google.com/appengine/docs/python/blobstore/>`_.
     """
+    #: The `BlobInfo <http://code.google.com/appengine/docs/python/blobstore/blobinfoclass.html>`_ entity for the image's Blobstore value.
     blob_info = blobstore.BlobReferenceProperty(required=False, default=None)
+    #: The original URL that the image data was fetched from, if applicable.
     source_url = db.StringProperty(required=False, default=None)
+    #: The create timestamp.
     created = db.DateTimeProperty(auto_now_add=True)
+    #: The last modified timestamp.
     modified = db.DateTimeProperty(auto_now=True)
 
     #noinspection PyUnresolvedReferences
     @property
     def blob_key(self):
+        """
+        The `BlobKey <http://code.google.com/appengine/docs/python/blobstore/blobkeyclass.html>`_ entity for the image's Blobstore value.
+        """
         if self.blob_info is not None:
             return self.blob_info.key()
         return None
 
     @property
     def image(self):
+        """
+        The Google `Image <http://code.google.com/appengine/docs/python/images/imageclass.html>`_ entity for the image.
+        """
         if self.blob_key is not None:
             return images.Image(blob_key=self.blob_key)
         return None
 
     @property
     def format(self):
+        """
+        The format of the image (see `Image.format <http://code.google.com/appengine/docs/python/images/imageclass.html#Image_format>`_
+        documentation for possible values). If there is no image data, this will be ``None``.
+        """
         if self.image is not None:
             return self.image.format
         return None
 
     @property
     def width(self):
+        """
+        The width of the image in pixels (see `Image.width <http://code.google.com/appengine/docs/python/images/imageclass.html#Image_width>`_
+        for more documentation). If there is no image data, this will be ``None``.
+        """
         if self.image is not None:
             return self.image.width
         return None
     
     @property
     def height(self):
+        """
+        The height of the image in pixels (see `Image.height <http://code.google.com/appengine/docs/python/images/imageclass.html#Image_height>`_
+        for more documentation). If there is no image data, this will be ``None``.
+        """
         if self.image is not None:
             return self.image.height
         return None
 
     @property
     def image_data(self):
+        """
+        The raw image data as returned by a `BlobReader <http://code.google.com/appengine/docs/python/blobstore/blobreaderclass.html>`_.
+        If there is no image data, this will be ``None``.
+        """
         if self.blob_key is not None:
             return blobstore.BlobReader(self.blob_key).read()
         return None
