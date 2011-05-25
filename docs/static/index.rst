@@ -30,6 +30,7 @@ Contents:
 .. autodata:: agar.env.on_server
 
 .. autoclass:: agar.image.Image
+    :members:
 
 .. autoclass:: agar.image.ConfigDefaults
     :members:
