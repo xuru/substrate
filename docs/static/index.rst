@@ -13,32 +13,58 @@ Contents:
 
    downloads
 
+====
+agar
+====
+.. automodule:: agar
+
+---------
+agar.auth
+---------
 .. autofunction:: agar.auth.authenticate_https
 .. autofunction:: agar.auth.authentication_required
 .. autofunction:: agar.auth.https_authentication_required
 
+-----------
+agar.config
+-----------
 .. autoclass:: agar.config.Config
-    :members:
+    :members: _namespace, get_config
 
+----------
+agar.dates
+----------
 .. autofunction:: agar.dates.parse_datetime
 
+-----------
+agar.django
+-----------
 .. autofunction:: agar.django.decorators.validate_service
 
+--------
+agar.env
+--------
 .. autodata:: agar.env.on_development_server
 .. autodata:: agar.env.on_integration_server
 .. autodata:: agar.env.on_production_server
 .. autodata:: agar.env.on_server
 
-.. autoclass:: agar.image.Image
+----------
+agar.image
+----------
+.. py:currentmodule:: agar.image
+.. autoclass:: agar.image.Image()
     :members:
+    :exclude-members: create
+
+    .. automethod:: create(blob_info=None, data=None, filename=None, url=None, mime_type=None, parent=None, key_name=None)
 
 .. autoclass:: agar.image.ConfigDefaults
     :members:
 
-.. py:data:: agar.image.config
-
-    The configuration object for ``agar.image`` settings.
-
+---------
+agar.json
+---------
 .. autoclass:: agar.json.JsonRequestHandler
     :members:
     :undoc-members:
@@ -50,14 +76,26 @@ Contents:
 .. autoclass:: agar.json.CorsMultiPageHandler
     :members:
 
+-----------
+agar.models
+-----------
 .. autoclass:: agar.models.NamedModel
     :members:
 
+-----------------
+agar.templatetags
+-----------------
 .. autodata:: agar.templatetags.webapp2.url_for
 .. autodata:: agar.templatetags.webapp2.on_production_server
 
+--------
+agar.url
+--------
 .. autofunction:: agar.url.url_for
 
+=================
+restler
+=================
 .. autoclass:: restler.serializers.ModelStrategy
     :members:
 .. autoclass:: restler.serializers.SerializationStrategy
