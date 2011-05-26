@@ -24,6 +24,8 @@ agar.auth
 .. autofunction:: agar.auth.authenticate_https
 .. autofunction:: agar.auth.authentication_required
 .. autofunction:: agar.auth.https_authentication_required
+.. autoclass:: agar.auth.AuthConfig
+    :members:
 
 -----------
 agar.config
@@ -59,7 +61,7 @@ agar.image
 
     .. automethod:: create(blob_info=None, data=None, filename=None, url=None, mime_type=None, parent=None, key_name=None)
 
-.. autoclass:: agar.image.ConfigDefaults
+.. autoclass:: agar.image.ImageConfig
     :members:
 
 ---------
