@@ -39,6 +39,8 @@ config = lib_config.register('agar_image', ConfigDefaults.__dict__)
 class Image(db.Model):
     """
     A model class that helps create and work with images stored in the `Blobstore <http://code.google.com/appengine/docs/python/blobstore/>`_.
+    Please note that you should never call the constructor for this class directly when creating an image.  Instead, use
+    the :py:meth:`create` method.
     """
     #: The `BlobInfo <http://code.google.com/appengine/docs/python/blobstore/blobinfoclass.html>`_ entity for the image's Blobstore value.
     blob_info = blobstore.BlobReferenceProperty(required=False, default=None)
@@ -109,6 +111,19 @@ class Image(db.Model):
         return None
 
     def get_serving_url(self, size=None, crop=False):
+        """
+        Returns the serving URL for the image. Works just like the Google Images API function
+        `get_serving_url <http://code.google.com/appengine/docs/python/images/functions.html#Image_get_serving_url>`_,
+        but adds caching. The cache timeout is controlled by the :py:attr:`.SERVING_URL_TIMEOUT` setting.
+
+        Keyword arguments
+        (see Google's Image API function, `get_serving_url <http://code.google.com/appengine/docs/python/images/functions.html#Image_get_serving_url>`_
+        for more detailed argument information):
+        
+            ``size`` -- An integer supplying the size of resulting images.
+
+            ``crop`` -- Specify ``true`` for a cropped image, and ``false`` for a resized image.
+        """
         serving_url = None
         if self.blob_key is not None:
             namespace = "agar-image-serving-url"
@@ -133,18 +148,30 @@ class Image(db.Model):
 
     #noinspection PyUnresolvedReferences
     def delete(self, **kwargs):
+        """
+        Delete the image and its attached Blobstore storage.
+        """
         if self.blob_info is not None:
             self.blob_info.delete()
         super(Image, self).delete(**kwargs)
 
     @classmethod
     def create_new_entity(cls, **kwargs):
+        """
+        Called to create a new entity. The default implementation simply creates the entity with the default constructor
+        and calls ``put()``. This method allows the class to be mixed-in with :py:class:`agar.models.NamedModel`.
+        """
         image = cls(**kwargs)
         image.put()
         return image
 
     @classmethod
     def create(cls, blob_info=None, data=None, filename=None, url=None, mime_type=None, **kwargs):
+        """
+        Create an Image. Use this class method rather than creating an image with the constructor (``__init__``).
+
+        
+        """
         if filename is not None:
             filename = filename.encode('ascii', 'ignore')
         if url is not None:

@@ -18,11 +18,11 @@ else:
     except ImportError:
         appid = None
 
-#: Are we running on the dev server?
+#: Returns ``True`` if running in the dev server, ``False`` otherwise.
 on_development_server = have_appserver and server_software.lower().startswith('devel')
-#: Are we running on a google server?
+#: Returns ``True`` if running on a google server, ``False`` otherwise.
 on_server = bool(have_appserver and appid and server_software and not on_development_server)
-#: Are we running on an integration environment?
+#: Returns ``True`` if running on a google server and the application ID ends in ``-int``, ``False`` otherwise.
 on_integration_server = on_server and appid.lower().endswith('-int')
-#: Are we running on a production environment?
+#: Returns ``True`` if running on a google server and the application ID does not end in ``-int``, ``False`` otherwise.
 on_production_server = on_server and not on_integration_server
