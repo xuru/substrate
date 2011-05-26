@@ -1,28 +1,37 @@
-from google.appengine.api import lib_config
+from agar.config import Config
 
 
-class ConfigDefaults(object):
-    """Configurable constants.
-
-    To override agar.auth configuration values, define values like this
-    in your appengine_config.py file (in the root of your app):
-
-        agar_auth_DEBUG = True
-        agar_auth_authenticate = lambda request, *args, **kwargs: return None
+class AuthConfig(Config):
     """
-    DEBUG = False
+    :py:class:`~agar.config.Config` settings for the ``agar.auth`` library.
+    Settings are under the ``agar_auth`` namespace.
+
+    The following settings (and defaults) are provided::
+
+        agar_auth_authenticate = lambda request, *args, **kwargs: return None
+
+    To override ``agar.auth`` settings, define values in the ``appengine_config.py`` file in the root of your app.
+    """
+    _namepace = 'agar_auth'
 
     def authenticate(request):
+        """
+        The ``authenticate`` function. It takes a single `Request <http://webapp-improved.appspot.com/api.html#webapp2.Request>`_
+        argument, and returns a non-``None`` value if the request can be authenticated. If the request can not be
+        authenticated, the function should return ``None``. The type of the returned value can be anything, but it
+        should be a type that your `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_ expects.
+        The default implementation always returns ``None``.
+        """
         return None
 
-config = lib_config.register('agar_auth', ConfigDefaults.__dict__)
-
+#: The configuration object for ``agar.auth`` settings.
+config = AuthConfig.get_config()
 
 def authenticate_https(request):
     """
     An ``authenticator`` for use with the :py:func:`agar.auth.authentication_required` decorator. Enforces that a request
-    was made via HTTPS.  If it was a secure request, it will defer to the ``agar_auth_authenticate`` configured function.  If not, it will
-    return ``None``.
+    was made via HTTPS.  If it was a secure request, it will defer to the config function :py:meth:`~agar.auth.AuthConfig.authenticate`.
+    If not, it will return ``None``.
     """
     import urlparse
     from agar.env import on_server
@@ -37,6 +46,8 @@ def authentication_required(authenticator=None):
     If the ``authenticator`` function returns a non-``None`` value, it will place that value on the request under the
     variable ``account`` so that the handler can access it. If the ``authenticator`` function returns ``None``, it will
     `abort <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler.abort>`_ the call with a status of ``403``.
+    If no ``authenticator`` is passed to the decorator, it will use the config function :py:meth:`~agar.auth.AuthConfig.authenticate`
+    by default.
     """
     if authenticator is None:
         authenticator = config.authenticate
@@ -54,6 +65,6 @@ def authentication_required(authenticator=None):
 def https_authentication_required():
     """
     A decorator to authenticate a secure request to a `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_ method.
-    This decorator uses the :py:func:`agar.auth.authenticate_https` ``authenticator``.
+    This decorator uses the :py:func:`~agar.auth.authenticate_https` ``authenticator``.
     """
     return authentication_required(authenticator=authenticate_https)

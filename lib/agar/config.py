@@ -6,7 +6,7 @@ class Config(object):
     `google.appengine.api.lib_config <http://code.google.com/p/googleappengine/source/browse/trunk/python/google/appengine/api/lib_config.py>`_
     configuration library. A short write-up of this library can be found `here <https://profiles.google.com/u/0/thomasbohmbach/posts/FaxYvaSYuMa>`_.
 
-    To use this class, create a subclass that redefines ``_namespace`` to the appengine_config namespace you'd like the
+    To use this class, create a subclass that redefines :py:attr:`~agar.config.Config._namespace` to the appengine_config namespace you'd like the
     configs to appear under.  Then, simply create class-level properties/functions/default values for each constant.
 
     When instantiating an instance of this class, you can override the default values for that instance by passing
@@ -59,6 +59,8 @@ class Config(object):
     @classmethod
     def get_config(cls, **kwargs):
         """
-        Registers and returns the lib_config ``ConfigHandle`` for the class.
+        Registers and returns the lib_config ``ConfigHandle`` for the class. Keyword arguments will override default
+        values defined in the :py:class:`~agar.config.Config` subclass (but, of course, will still defer to values in
+        the ``appengine_config.py`` file).
         """
         return lib_config.register(cls._namespace, cls(**kwargs).defaults)

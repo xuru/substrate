@@ -4,27 +4,28 @@ import logging
 import mimetypes
 import urlparse
 
-from google.appengine.api import images, lib_config, memcache, files, urlfetch
+from google.appengine.api import images, memcache, files, urlfetch
 
 from google.appengine.ext import db, blobstore
 
+from agar.config import Config
 
-class ConfigDefaults(object):
+
+class ImageConfig(Config):
     """
-    Configurable settings for the ``agar.image`` library.
+    :py:class:`~agar.config.Config` settings for the ``agar.image`` library.
+    Settings are under the ``agar_image`` namespace.
 
     The following settings (and defaults) are provided::
     
-        agar_image_DEBUG = False
         agar_image_SERVING_URL_TIMEOUT = 60*60
         agar_image_SERVING_URL_LOOKUP_TRIES = 3
         agar_image_VALID_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif']
-    
-    To override ``agar.image`` settings, define override values in the ``appengine_config.py`` file in the
-    root of your app.
+
+    To override ``agar.image`` settings, define values in the ``appengine_config.py`` file in the root of your app.
     """
-    #: Whether to log at ``debug`` level for logging in the ``agar.image`` library (Default: ``False``).
-    DEBUG = False
+    _namepace = 'agar_image'
+
     #: How long (in seconds) to cache the image serving URL (Default: ``60*60`` or one hour).
     SERVING_URL_TIMEOUT = 60*60
     #: How many times to try to download an image from a URL (Default: ``3``).
@@ -33,7 +34,7 @@ class ConfigDefaults(object):
     VALID_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif']
 
 #: The configuration object for ``agar.image`` settings.
-config = lib_config.register('agar_image', ConfigDefaults.__dict__)
+config = ImageConfig.get_config()
 
 
 class Image(db.Model):
