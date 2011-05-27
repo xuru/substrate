@@ -1,3 +1,8 @@
+"""
+The ``agar.image`` module contains classes to help work with images stored in the
+`Blobstore <http://code.google.com/appengine/docs/python/blobstore/>`_.
+"""
+
 from __future__ import with_statement
 
 import logging
@@ -169,9 +174,37 @@ class Image(db.Model):
     @classmethod
     def create(cls, blob_info=None, data=None, filename=None, url=None, mime_type=None, **kwargs):
         """
-        Create an Image. Use this class method rather than creating an image with the constructor (``__init__``).
+        Create an Image. Use this class method rather than creating an image with the constructor. You must provide one
+        of the following parameters ``blob_info``, ``data``, or ``url`` to specify the image data to use.
 
-        
+        Keyword arguments
+            ``blob_info`` -- The blobstore data to use as the image data. If this parameter is not ``None``, all other
+            parameters will be ignored as they aren't needed.
+
+            ``data`` -- The image data that should be put in the blobstore and used as the image data.
+
+            ``filename`` -- The filename of the image data. If not provided, the filename will be guessed from the URL
+            or, if there is no URL, it will be set to the stringified `Key <http://code.google.com/appengine/docs/python/datastore/keyclass.html>`_
+            of the image entity.
+
+            ``url`` - The URL to fetch the image data from and then place in the blobstore to be used as the image data.
+
+            ``mime_type`` -- The `mime type <http://en.wikipedia.org/wiki/Internet_media_type>`_ to use for the blobstore
+            image data. If ``None``, it will attempt to guess the mime type from the url fetch response headers or the
+            filename.
+
+        Keyword arguments inherited from `Model <http://code.google.com/appengine/docs/python/datastore/modelclass.html>`_
+            ``parent`` -- The `Model <http://code.google.com/appengine/docs/python/datastore/modelclass.html>`_ instance
+            or `Key <http://code.google.com/appengine/docs/python/datastore/keyclass.html>`_ instance for the entity
+            that is the new image's parent.
+
+            ``key_name`` -- The name for the new entity. The name becomes part of the primary key.
+
+            ``**kwargs`` -- Initial values for the instance's properties, as keyword arguments.  Useful if subclassing.
+
+            ``key`` -- The explicit `Key <http://code.google.com/appengine/docs/python/datastore/keyclass.html>`_ instance
+            for the new entity. Cannot be used with key_name or parent. If None, falls back on the behavior for key_name
+            and parent.
         """
         if filename is not None:
             filename = filename.encode('ascii', 'ignore')

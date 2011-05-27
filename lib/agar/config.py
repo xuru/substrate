@@ -1,4 +1,11 @@
+"""
+The ``agar.config`` module contains a class to help work with the
+`google.appengine.api.lib_config <http://code.google.com/p/googleappengine/source/browse/trunk/python/google/appengine/api/lib_config.py>`_
+configuration library.
+"""
+
 from google.appengine.api import lib_config
+
 
 class Config(object):
     """
