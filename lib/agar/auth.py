@@ -1,6 +1,5 @@
 """
-The ``agar.auth`` module contains classes, functions, and decorators to help secure
-`RequestHandlers <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_.
+The ``agar.auth`` module contains classes, functions, and decorators to help secure a `webapp2.Requesthandler`_.
 """
 
 from agar.config import Config
@@ -22,10 +21,9 @@ class AuthConfig(Config):
 
     def authenticate(request):
         """
-        The authenticate function. It takes a single `Request <http://webapp-improved.appspot.com/api.html#webapp2.Request>`_
-        argument, and returns a non-``None`` value if the request can be authenticated. If the request can not be
-        authenticated, the function should return ``None``. The type of the returned value can be anything, but it
-        should be a type that your `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_ expects.
+        The authenticate function. It takes a single `webapp2.Request`_ argument, and returns a non-``None`` value if
+        the request can be authenticated. If the request can not be authenticated, the function should return ``None``.
+        The type of the returned value can be anything, but it should be a type that your `webapp2.RequestHandler`_ expects.
         The default implementation always returns ``None``.
         """
         return None
@@ -35,7 +33,7 @@ config = AuthConfig.get_config()
 
 def https_authenticate(request):
     """
-    An authenticate function for use with the :py:func:`agar.auth.https_authentication_required` decorator. Enforces that a request
+    An authenticate function for use with the :py:func:`~agar.auth.https_authentication_required` decorator. Enforces that a request
     was made via HTTPS.  If it was a secure request, it will defer to the config function :py:meth:`~agar.auth.AuthConfig.authenticate`.
     If not, it will return ``None``.
     """
@@ -48,18 +46,17 @@ def https_authenticate(request):
 
 def authentication_required(authenticate=None):
     """
-    A decorator to authenticate a `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_ method.
+    A decorator to authenticate a `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_.
     If the authenticate function returns a non-``None`` value, it will assign it to the request ``account`` attribute,
-    that is passed to the decorated handler. If the authenticate function returns ``None``, it will
-    `abort <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler.abort>`_ the call with a status of ``403``.
+    that is passed to the decorated handler. If the authenticate function returns ``None``, it will call the `webapp2.RequestHandler.abort`_
+    method with a status of ``403``.
 
     Keyword arguments:
         ``authenticate`` -- The authenticate function to use to authenticate a request. The function should take a single
-        `Request <http://webapp-improved.appspot.com/api.html#webapp2.Request>`_
-        argument, and return a non-``None`` value if the request can be authenticated. If the request can not be
-        authenticated, the function should return ``None``. The type of the returned value can be anything, but it
-        should be a type that your `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_
-        expects. If ``None``, the config function :py:meth:`~agar.auth.AuthConfig.authenticate` will be used.
+        `webapp2.Request`_ argument, and return a non-``None`` value if the request can be authenticated. If the request
+        can not be authenticated, the function should return ``None``. The type of the returned value can be anything,
+        but it should be a type that your `webapp2.RequestHandler`_ expects.
+        If ``None``, the config function :py:meth:`~agar.auth.AuthConfig.authenticate` will be used.
     """
     if authenticate is None:
         authenticate = config.authenticate
@@ -76,7 +73,7 @@ def authentication_required(authenticate=None):
 
 def https_authentication_required():
     """
-    A decorator to authenticate a secure request to a `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_ method.
+    A decorator to authenticate a secure request to a `webapp2.RequestHandler`_.
     This decorator uses the :py:func:`~agar.auth.https_authenticate` authenticate function.
     """
     return authentication_required(authenticate=https_authenticate)

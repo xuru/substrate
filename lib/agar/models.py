@@ -1,28 +1,32 @@
+"""
+The ``agar.models`` module contains classes to help working with `Model`_.
+"""
+
 from google.appengine.ext import db
 from google.appengine.ext.db import BadKeyError
 
 
 class NamedModel(db.Model):
     """
-A base (or mix-in) model to create an entity with a ``key_name`` (either passed in or generated automatically).
+    A base (or mix-in) `Model`_ subclass to create an entity with a ``key_name`` (either passed in or generated automatically).
 
-This base model has a classmethod for automatically assigning a new uuid for its ``key_name`` on creation of a new entity.
+    This base model has a classmethod for automatically assigning a new uuid for its ``key_name`` on creation of a new entity.
     """
     @property
     def key_name(self):
         """
-        Return the ``entity.key().name()`` unicode value if available, otherwise ``None``.
+        Return the entity's `key().name()`_ unicode value if available, otherwise ``None``.
             
-        Use ``key_name_str`` for string (as opposed to unicode) value.
+        Use :py:attr:`key_name_str` for string (as opposed to unicode) value.
         """
         return self.key().name()
 
     @property
     def key_name_str(self):
         """
-        Return the ``entity.key().name()`` as a string (as opposed to a unicode) value if available, otherwise ``None``.
+        Return the entity's `key().name()`_ as a string (as opposed to a unicode) value if available, otherwise ``None``.
 
-        Use ``key_name`` for unicode value.
+        Use :py:attr:`key_name` for unicode value.
         """
         if self.key_name:
             return str(self.key_name)
@@ -31,7 +35,7 @@ This base model has a classmethod for automatically assigning a new uuid for its
     @classmethod
     def generate_key_name(cls):
         """
-        Returns a (hopefully) unique string to be used as an identifier. The default implementation uses a ``uuid4`` hex value.
+        Returns a (hopefully) unique string to be used as an identifier. The default implementation uses a `uuid4`_ hex value.
         """
         import uuid
         return uuid.uuid4().hex
@@ -49,8 +53,9 @@ This base model has a classmethod for automatically assigning a new uuid for its
 
         Creates and persists an entity by (optionally) generating and setting a ``key_name``.
         A ``key_name`` will be generated or may be provided as a keyword arg.  If a generated ``key_name`` is already in use,
-        a new one will be generated.  If, after the 3rd attempt the ``key_name`` is still not unique, a ``google.appengine.ext.db.BadKeyError``
-        exception will be raised.  This exception will also be raised if a passed in ``key_name`` is not unique.
+        a new one will be generated.  If, after the 3rd attempt the ``key_name`` is still not unique,
+        a :py:class:`agar.models.DuplicateKeyException` will be raised. This exception will also be raised if the argument
+        ``key_name`` is not ``None`` and not unique.
 
         Examples::
 
@@ -70,7 +75,7 @@ This base model has a classmethod for automatically assigning a new uuid for its
                 entity.put()
                 return entity
             else:
-                raise BadKeyError("key_name '%s' is already in use" % key_name)
+                raise DuplicateKeyException("key_name '%s' is already in use" % key_name)
         
         # Function body
         entity = None
@@ -88,5 +93,16 @@ This base model has a classmethod for automatically assigning a new uuid for its
                         raise
         return entity
 
+
+class DuplicateKeyException(Exception):
+    """
+    The :py:class:`NamedModel` tried to create an instance with a ``key_name`` that is already in use.
+    """
+    pass
+
+
 class ModelException(Exception):
+    """
+    There was an exception working with a `Model`_ while processing a :py:class:`agar.json.JsonRequestHandler`.
+    """
     pass
