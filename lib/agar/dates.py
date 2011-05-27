@@ -1,3 +1,7 @@
+"""
+The ``agar.dates`` module contains a function to help work with dates.
+"""
+
 from datetime import datetime, timedelta
 import re
 

@@ -21,40 +21,43 @@ agar
 ---------
 agar.auth
 ---------
-.. autofunction:: agar.auth.authenticate_https
-.. autofunction:: agar.auth.authentication_required
-.. autofunction:: agar.auth.https_authentication_required
-.. autoclass:: agar.auth.AuthConfig
-    :members:
+.. automodule:: agar.auth
+    :members: authentication_required, https_authentication_required, https_authenticate, AuthConfig
 
 -----------
 agar.config
 -----------
+.. automodule:: agar.config
 .. autoclass:: agar.config.Config
     :members: _namespace, get_config
 
 ----------
 agar.dates
 ----------
-.. autofunction:: agar.dates.parse_datetime
+.. automodule:: agar.dates
+    :members:
 
 -----------
 agar.django
 -----------
-.. autofunction:: agar.django.decorators.validate_service
+.. automodule:: agar.django
+
+^^^^^^^^^^^^^^^^^^^^^^
+agar.django.decorators
+^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: agar.django.decorators
+    :members:
 
 --------
 agar.env
 --------
-.. autodata:: agar.env.on_development_server
-.. autodata:: agar.env.on_integration_server
-.. autodata:: agar.env.on_production_server
-.. autodata:: agar.env.on_server
+.. automodule:: agar.env
+    :members:
 
 ----------
 agar.image
 ----------
-.. py:currentmodule:: agar.image
+.. automodule:: agar.image
 .. autoclass:: agar.image.Image()
     :members:
     :exclude-members: create

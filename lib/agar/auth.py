@@ -1,3 +1,8 @@
+"""
+The ``agar.auth`` module contains classes, functions, and decorators to help secure
+`RequestHandlers <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_.
+"""
+
 from agar.config import Config
 
 
@@ -28,7 +33,7 @@ class AuthConfig(Config):
 #: The configuration object for ``agar.auth`` settings.
 config = AuthConfig.get_config()
 
-def authenticate_https(request):
+def https_authenticate(request):
     """
     An authenticate function for use with the :py:func:`agar.auth.https_authentication_required` decorator. Enforces that a request
     was made via HTTPS.  If it was a secure request, it will defer to the config function :py:meth:`~agar.auth.AuthConfig.authenticate`.
@@ -44,8 +49,8 @@ def authenticate_https(request):
 def authentication_required(authenticate=None):
     """
     A decorator to authenticate a `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_ method.
-    If the authenticate function returns a non-``None`` value, it will place that value on the request under the
-    variable ``account`` so that the handler can access it. If the authenticate function returns ``None``, it will
+    If the authenticate function returns a non-``None`` value, it will assign it to the request ``account`` attribute,
+    that is passed to the decorated handler. If the authenticate function returns ``None``, it will
     `abort <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler.abort>`_ the call with a status of ``403``.
 
     Keyword arguments:
@@ -72,6 +77,6 @@ def authentication_required(authenticate=None):
 def https_authentication_required():
     """
     A decorator to authenticate a secure request to a `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_ method.
-    This decorator uses the :py:func:`~agar.auth.authenticate_https` authentication function.
+    This decorator uses the :py:func:`~agar.auth.https_authenticate` authenticate function.
     """
-    return authentication_required(authenticate=authenticate_https)
+    return authentication_required(authenticate=https_authenticate)

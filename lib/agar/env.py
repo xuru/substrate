@@ -1,3 +1,7 @@
+"""
+The ``agar.env`` module contains a number of constants to help determine which environment code is running in.
+"""
+
 import os
 
 from google.appengine.api import apiproxy_stub_map
@@ -5,7 +9,6 @@ from google.appengine.api import apiproxy_stub_map
 server_software = os.environ.get('SERVER_SOFTWARE', '')
 have_appserver = bool(apiproxy_stub_map.apiproxy.GetStub('datastore_v3'))
 
-# Get the appid
 appid = None
 if have_appserver:
     appid = os.environ.get('APPLICATION_ID')
