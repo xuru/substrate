@@ -1,3 +1,6 @@
+"""
+The ``agar.url`` module contains classes to help working with application-wide URLs.
+"""
 from google.appengine.api import lib_config
 
 from agar.env import on_production_server

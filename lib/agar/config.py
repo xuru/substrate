@@ -1,7 +1,5 @@
 """
-The ``agar.config`` module contains a class to help work with the
-`google.appengine.api.lib_config <http://code.google.com/p/googleappengine/source/browse/trunk/python/google/appengine/api/lib_config.py>`_
-configuration library.
+The ``agar.config`` module contains a class to help work with the `google.appengine.api.lib_config`_ configuration library.
 """
 
 from google.appengine.api import lib_config
@@ -9,9 +7,8 @@ from google.appengine.api import lib_config
 
 class Config(object):
     """
-    Configurable constants base class for use with the excellent
-    `google.appengine.api.lib_config <http://code.google.com/p/googleappengine/source/browse/trunk/python/google/appengine/api/lib_config.py>`_
-    configuration library. A short write-up of this library can be found `here <https://profiles.google.com/u/0/thomasbohmbach/posts/FaxYvaSYuMa>`_.
+    Configurable constants base class for use with the excellent `google.appengine.api.lib_config`_
+    configuration library.
 
     To use this class, create a subclass that redefines :py:attr:`~agar.config.Config._namespace` to the appengine_config namespace you'd like the
     configs to appear under.  Then, simply create class-level properties/functions/default values for each constant.
@@ -20,14 +17,14 @@ class Config(object):
     in new defaults via the constructor.  Of course, if there is an entry in ``appengine_config.py`` for your constant, that
     value will supersede any defined in the class or passed in via the constructor.
 
-    Example::
+    Example subclass::
 
         class SampleConfig(Config):
             _namespace = 'test'
 
             STRING_CONFIG = 'defaultstring'
 
-    ::
+    Example usage::
 
         >>> config = SampleConfig.get_config()
         >>> custom_config = SampleConfig.get_config(STRING_CONFIG='customstring')

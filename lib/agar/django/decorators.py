@@ -1,7 +1,6 @@
 """
-The ``agar.django.decorators`` module contains functions and decorators to help validate `django forms <https://docs.djangoproject.com/en/dev/topics/forms/>`_,
-to be used to wrap JSON API `RequestHandlers <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_ that
-accept input.
+The ``agar.django.decorators`` module contains functions and decorators to help validate `django forms`_,
+to be used to wrap :py:class:`agar.json.JsonRequestHandler` methods that accept input.
 """
 
 def create_error_dict(error_list):
@@ -16,18 +15,16 @@ def create_error_dict(error_list):
 
 def validate_service(form_class):
     """
-    A decorator that validates input matches with a
-    `django form <https://code.djangoproject.com/browser/django/trunk/django/forms/forms.py#L380>`_.
+    A decorator that validates input matches with a `django form class`_.
 
     If the form is valid with the given request parameters, the decorator will add the bound form to the request under
-    the ``form`` attribute and pass control on to the wrapped `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_.
+    the ``form`` attribute and pass control on to the wrapped handler method.
 
     If the form doesn't validate, it will return a well-formed JSON response with a status code of ``400`` including an
     error dictionary describing the input errors.
 
     Argument:
-        ``form_class`` -- The `django form class <https://code.djangoproject.com/browser/django/trunk/django/forms/forms.py#L380>`_
-        to use for input validation.
+        ``form_class`` -- The `django form class`_ to use for input validation.
     """
     def decorator(request_method):
         def wrapped(self, *args, **kwargs):

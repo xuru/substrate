@@ -1,3 +1,7 @@
+"""
+The ``agar.json`` module contains Requesthandlers as base classes for json web service handlers.
+"""
+
 import datetime
 import logging
 
@@ -15,18 +19,7 @@ from webapp2 import RequestHandler, HTTPException
 
 INVALID_CURSOR = 'INVALID_CURSOR'
 
-
 class ConfigDefaults(object):
-    """Configurable constants.
-
-    To override agar.json configuration values, define values like this
-    in your appengine_config.py file (in the root of your app):
-
-        agar_json_DEBUG = True
-        agar_json_DEFAULT_PAGE_SIZE = 20
-        agar_json_MAX_PAGE_SIZE = 200
-    """
-    DEBUG = False
     DEFAULT_PAGE_SIZE = 10
     MAX_PAGE_SIZE = 100
     USE_DATA_ROOT_NODE = True
@@ -131,7 +124,6 @@ class CorsMultiPageHandler(MultiPageHandler):
         self.response.headers['Access-Control-Allow-Headers'] = \
             self.request.headers.get('Access-Control-Request-Headers', '') 
 
-    """A RequestHandler class to help with json web service handlers, including error handling"""
     def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', errors=None, context=None):
         context = self._setup_context(context)
         data = self._setup_data(model_or_query, status_code, status_text, errors=errors)

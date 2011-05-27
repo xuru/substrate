@@ -84,8 +84,17 @@ agar.json
 -----------
 agar.models
 -----------
+.. automodule:: agar.models
+
 .. autoclass:: agar.models.NamedModel
     :members:
+    :exclude-members: create_new_entity
+
+    .. automethod:: create_new_entity(parent=None, key_name=None, **kwargs)
+
+.. autoclass:: DuplicateKeyException
+.. autoclass:: ModelException
+
 
 -----------------
 agar.templatetags
@@ -96,7 +105,7 @@ agar.templatetags
 --------
 agar.url
 --------
-.. autofunction:: agar.url.url_for
+.. automodule:: agar.url
 
 =================
 restler
@@ -116,3 +125,33 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+.. Links
+
+.. _Google App Engine python: http://code.google.com/appengine/docs/python/overview.html
+.. _Key: http://code.google.com/appengine/docs/python/datastore/keyclass.html
+.. _key().name(): http://code.google.com/appengine/docs/python/datastore/keyclass.html#Key_name
+.. _Model: http://code.google.com/appengine/docs/python/datastore/modelclass.html
+.. _Blobstore: http://code.google.com/appengine/docs/python/blobstore/
+.. _BlobInfo: http://code.google.com/appengine/docs/python/blobstore/blobinfoclass.html
+.. _BlobKey: http://code.google.com/appengine/docs/python/blobstore/blobkeyclass.html
+.. _BlobReader: http://code.google.com/appengine/docs/python/blobstore/blobreaderclass.html
+.. _Image: http://code.google.com/appengine/docs/python/images/imageclass.html
+.. _Image.format: http://code.google.com/appengine/docs/python/images/imageclass.html#Image_format
+.. _Image.width: http://code.google.com/appengine/docs/python/images/imageclass.html#Image_width
+.. _Image.height: http://code.google.com/appengine/docs/python/images/imageclass.html#Image_height
+.. _Image get_serving_url: <http://code.google.com/appengine/docs/python/images/functions.html#Image_get_serving_url
+.. _google.appengine.api.lib_config: http://code.google.com/p/googleappengine/source/browse/trunk/python/google/appengine/api/lib_config.py
+
+.. _django: http://www.djangoproject.com/
+.. _django forms: https://docs.djangoproject.com/en/dev/topics/forms/
+.. _django form class: https://docs.djangoproject.com/en/1.3/ref/forms/api/#django.forms.Form
+
+.. _webapp2: http://code.google.com/p/webapp-improved/
+.. _webapp2.Request: http://webapp-improved.appspot.com/api.html#webapp2.Request
+.. _webapp2.RequestHandler: http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler
+.. _webapp2.RequestHandler.abort: http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler.abort
+
+.. _uuid4: http://docs.python.org/library/uuid.html#uuid.uuid4
+
+.. _mime type: http://en.wikipedia.org/wiki/Internet_media_type
