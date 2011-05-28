@@ -6,7 +6,7 @@ from gaetestbed import DataStoreTestCase
 from google.appengine.ext import db
 from unittest2 import TestCase
 
-from agar.models import NamedModel
+from agar.models import NamedModel, DuplicateKeyError
 
 class NamedModelTests(DataStoreTestCase, TestCase):
 
@@ -38,7 +38,7 @@ class NamedModelTests(DataStoreTestCase, TestCase):
         try:
             TestModel.create_new_entity(string='test entity2', key_name='test_key')
             self.fail("Able to create duplicate NamedModel key_name")
-        except BadKeyError:
+        except DuplicateKeyError:
             pass
 
     def test_create_with_key_name_and_parent(self):
