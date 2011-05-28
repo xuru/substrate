@@ -75,7 +75,7 @@ class NamedModel(db.Model):
                 entity.put()
                 return entity
             else:
-                raise DuplicateKeyException("key_name '%s' is already in use" % key_name)
+                raise DuplicateKeyError("key_name '%s' is already in use" % key_name)
         
         # Function body
         entity = None
@@ -94,7 +94,7 @@ class NamedModel(db.Model):
         return entity
 
 
-class DuplicateKeyException(Exception):
+class DuplicateKeyError(BadKeyError):
     """
     The :py:class:`NamedModel` tried to create an instance with a ``key_name`` that is already in use.
     """
