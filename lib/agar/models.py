@@ -16,21 +16,9 @@ class NamedModel(db.Model):
     def key_name(self):
         """
         Return the entity's `key().name()`_ unicode value if available, otherwise ``None``.
-            
-        Use :py:attr:`key_name_str` for string (as opposed to unicode) value.
+        
         """
         return self.key().name()
-
-    @property
-    def key_name_str(self):
-        """
-        Return the entity's `key().name()`_ as a string (as opposed to a unicode) value if available, otherwise ``None``.
-
-        Use :py:attr:`key_name` for unicode value.
-        """
-        if self.key_name:
-            return str(self.key_name)
-        return None
 
     @classmethod
     def generate_key_name(cls):
@@ -75,7 +63,7 @@ class NamedModel(db.Model):
                 entity.put()
                 return entity
             else:
-                raise DuplicateKeyException("key_name '%s' is already in use" % key_name)
+                raise DuplicateKeyError("key_name '%s' is already in use" % key_name)
         
         # Function body
         entity = None
@@ -94,7 +82,7 @@ class NamedModel(db.Model):
         return entity
 
 
-class DuplicateKeyException(Exception):
+class DuplicateKeyError(BadKeyError):
     """
     The :py:class:`NamedModel` tried to create an instance with a ``key_name`` that is already in use.
     """
