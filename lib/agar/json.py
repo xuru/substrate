@@ -1,5 +1,5 @@
 """
-The ``agar.json`` module contains Requesthandlers as base classes for json web service handlers.
+The ``agar.json`` module contains classes to assist with creating json web service handlers.
 """
 
 import datetime
