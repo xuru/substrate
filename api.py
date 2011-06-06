@@ -9,7 +9,7 @@ from restler import serializers
 
 from webapp2 import WSGIApplication
 
-from models import Model1
+from tests.models import Model1
 
 
 V1_SERVICE_STRATEGY = serializers.ModelStrategy(Model1, include_all_fields=True)

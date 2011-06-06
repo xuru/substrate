@@ -5,7 +5,7 @@ from google.appengine.ext import db
 from google.appengine.api import users
 
 from restler import serializers
-from models import Model1, Model2
+from tests.models import Model1, Model2
 
 
 key = lambda obj: str(obj.key())

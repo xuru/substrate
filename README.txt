@@ -27,7 +27,7 @@ The simple case:
 # Serialize all fields in a model from a Query
 
 >>> from restler.serializers import ModelStrategy, SerializationStrategy, to_json, to_xml
->>> from models import Model1, Model2
+>>> from tests.models import Model1, Model2
 >>> json = to_json(Model1.all(), ModelStrategy(Model1, include_all_fields=True)) 
 >>> xml = to_xml(Model1.all(), ModelStrategy(Model1, include_all_fields=True))
 

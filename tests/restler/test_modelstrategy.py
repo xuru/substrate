@@ -1,7 +1,7 @@
 import unittest
 
 from restler.serializers import ModelStrategy, to_json
-from models import Model1
+from tests.models import Model1
 
 class ModelStrategyTest(unittest.TestCase):
     def test_empty_strategy(self):
