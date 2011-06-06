@@ -23,8 +23,7 @@ def validate_service(form_class):
     If the form doesn't validate, it will return a well-formed JSON response with a status code of ``400`` including an
     error dictionary describing the input errors.
 
-    Argument:
-        ``form_class`` -- The `django form class`_ to use for input validation.
+    :param form_class: The `django form class`_ to use for input validation.
     """
     def decorator(request_method):
         def wrapped(self, *args, **kwargs):

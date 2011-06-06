@@ -90,9 +90,9 @@ agar.models
     :members:
     :exclude-members: create_new_entity
 
-    .. automethod:: create_new_entity(parent=None, key_name=None, **kwargs)
+    .. automethod:: create_new_entity(key_name=None, parent=None, **kwargs)
 
-.. autoclass:: DuplicateKeyException
+.. autoclass:: DuplicateKeyError
 .. autoclass:: ModelException
 
 
@@ -140,7 +140,7 @@ Indices and tables
 .. _Image.format: http://code.google.com/appengine/docs/python/images/imageclass.html#Image_format
 .. _Image.width: http://code.google.com/appengine/docs/python/images/imageclass.html#Image_width
 .. _Image.height: http://code.google.com/appengine/docs/python/images/imageclass.html#Image_height
-.. _Image get_serving_url: <http://code.google.com/appengine/docs/python/images/functions.html#Image_get_serving_url
+.. _Image.get_serving_url: http://code.google.com/appengine/docs/python/images/functions.html#Image_get_serving_url
 .. _google.appengine.api.lib_config: http://code.google.com/p/googleappengine/source/browse/trunk/python/google/appengine/api/lib_config.py
 
 .. _django: http://www.djangoproject.com/
