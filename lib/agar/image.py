@@ -117,15 +117,14 @@ class Image(db.Model):
 
     def get_serving_url(self, size=None, crop=False):
         """
-        Returns the serving URL for the image. It works just like the `Image get_serving_url`_ function,
+        Returns the serving URL for the image. It works just like the `Image.get_serving_url`_ function,
         but adds caching. The cache timeout is controlled by the :py:attr:`.SERVING_URL_TIMEOUT` setting.
 
-        Keyword arguments
-        (see `Image get_serving_url`_ for more detailed argument information):
-        
-            ``size`` -- An integer supplying the size of resulting images.
-
-            ``crop`` -- Specify ``true`` for a cropped image, and ``false`` for a re-sized image.
+        :param size: An integer supplying the size of resulting images.
+            See `Image.get_serving_url`_ for more detailed argument information.
+        :param crop: Specify ``true`` for a cropped image, and ``false`` for a re-sized image.
+            See `Image.get_serving_url`_ for more detailed argument information.
+        :return: The serving URL for the image (see `Image.get_serving_url`_ for more detailed information).
         """
         serving_url = None
         if self.blob_key is not None:
@@ -153,6 +152,8 @@ class Image(db.Model):
     def delete(self, **kwargs):
         """
         Delete the image and its attached `Blobstore`_ storage.
+
+        :param kwargs: Parameters to be passed to parent classes ``delete()`` method.
         """
         if self.blob_info is not None:
             self.blob_info.delete()
@@ -163,6 +164,8 @@ class Image(db.Model):
         """
         Called to create a new entity. The default implementation simply creates the entity with the default constructor
         and calls ``put()``. This method allows the class to be mixed-in with :py:class:`agar.models.NamedModel`.
+
+        :param kwargs: Parameters to be passed to the constructor.
         """
         image = cls(**kwargs)
         image.put()
@@ -171,33 +174,25 @@ class Image(db.Model):
     @classmethod
     def create(cls, blob_info=None, data=None, filename=None, url=None, mime_type=None, **kwargs):
         """
-        Create an Image. Use this class method rather than creating an image with the constructor. You must provide one
+        Create an ``Image``. Use this class method rather than creating an image with the constructor. You must provide one
         of the following parameters ``blob_info``, ``data``, or ``url`` to specify the image data to use.
 
-        Keyword arguments
-            ``blob_info`` -- The `Blobstore`_ data to use as the image data. If this parameter is not ``None``, all
+        :param blob_info: The `Blobstore`_ data to use as the image data. If this parameter is not ``None``, all
             other parameters will be ignored as they are not needed.
-
-            ``data`` -- The image data that should be put in the `Blobstore`_ and used as the image data.
-
-            ``filename`` -- The filename of the image data. If not provided, the filename will be guessed from the URL
+        :param data: The image data that should be put in the `Blobstore`_ and used as the image data.
+        :param filename: The filename of the image data. If not provided, the filename will be guessed from the URL
             or, if there is no URL, it will be set to the stringified `Key`_ of the image entity.
-
-            ``url`` - The URL to fetch the image data from and then place in the `Blobstore`_ to be used as the image data.
-
-            ``mime_type`` -- The `mime type`_ to use for the `Blobstore`_ image data.
+        :param url: The URL to fetch the image data from and then place in the `Blobstore`_ to be used as the image data.
+        :param mime_type: The `mime type`_ to use for the `Blobstore`_ image data.
             If ``None``, it will attempt to guess the mime type from the url fetch response headers or the filename.
-
-        Keyword arguments inherited from `Model`_
-            ``parent`` -- The `Model`_ instance or `Key`_ instance for the entity that is the new image's parent.
-
-            ``key_name`` -- The name for the new entity. The name becomes part of the primary key.
-
-            ``**kwargs`` -- Initial values for the instance's properties, as keyword arguments.  Useful if subclassing.
-
-            ``key`` -- The explicit `Key`_ instance for the new entity.
-            Cannot be used with ``key_name`` or ``parent``.
-            If ``None``, falls back on the behavior for ``key_name`` and ``parent``.
+        :param parent:  Inherited from `Model`_. The `Model`_ instance or `Key`_ instance for the entity that is the new
+            image's parent.
+        :param key_name: Inherited from `Model`_. The name for the new entity. The name becomes part of the primary key.
+        :param key: Inherited from `Model`_. The explicit `Key`_ instance for the new entity.
+            Cannot be used with ``key_name`` or ``parent``. If ``None``, falls back on the behavior for ``key_name`` and
+            ``parent``.
+        :param kwargs: Initial values for the instance's properties, as keyword arguments.  Useful if subclassing.
+        :return: An instance of the ``Image`` class.
         """
         if filename is not None:
             filename = filename.encode('ascii', 'ignore')
