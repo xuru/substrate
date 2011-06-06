@@ -25,6 +25,10 @@ class AuthConfig(Config):
         the request can be authenticated. If the request can not be authenticated, the function should return ``None``.
         The type of the returned value can be anything, but it should be a type that your `webapp2.RequestHandler`_ expects.
         The default implementation always returns ``None``.
+
+        :param request: The `webapp2.Request`_ object to authenticate.
+        :return: A non-``None`` value if the request can be authenticated. If the request can not be authenticated, the
+            function should return ``None``.
         """
         return None
 
@@ -36,6 +40,10 @@ def https_authenticate(request):
     An authenticate function for use with the :py:func:`~agar.auth.https_authentication_required` decorator. Enforces that a request
     was made via HTTPS.  If it was a secure request, it will defer to the config function :py:meth:`~agar.auth.AuthConfig.authenticate`.
     If not, it will return ``None``.
+
+    :param request: The `webapp2.Request`_ object to authenticate.
+    :return: A non-``None`` value if the request was made via HTTPS and can be authenticated. If the request was not made
+        via HTTPS or can not be authenticated, ``None``.
     """
     import urlparse
     from agar.env import on_server
@@ -51,8 +59,7 @@ def authentication_required(authenticate=None):
     that is passed to the decorated handler. If the authenticate function returns ``None``, it will call the `webapp2.RequestHandler.abort`_
     method with a status of ``403``.
 
-    Keyword arguments:
-        ``authenticate`` -- The authenticate function to use to authenticate a request. The function should take a single
+    :param authenticate: The authenticate function to use to authenticate a request. The function should take a single
         `webapp2.Request`_ argument, and return a non-``None`` value if the request can be authenticated. If the request
         can not be authenticated, the function should return ``None``. The type of the returned value can be anything,
         but it should be a type that your `webapp2.RequestHandler`_ expects.

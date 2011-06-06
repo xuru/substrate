@@ -15,15 +15,17 @@ class NamedModel(db.Model):
     @property
     def key_name(self):
         """
-        Return the entity's `key().name()`_ unicode value if available, otherwise ``None``.
-        
+        The entity's `key().name()`_ unicode value if available, otherwise ``None``.
         """
         return self.key().name()
 
     @classmethod
     def generate_key_name(cls):
         """
-        Returns a (hopefully) unique string to be used as an identifier. The default implementation uses a `uuid4`_ hex value.
+        Creates a (hopefully) unique string to be used as an identifier. The default implementation uses a `uuid4`_ hex
+        value.
+
+        :return: A unique string to be used as an identifier.
         """
         import uuid
         return uuid.uuid4().hex
@@ -31,20 +33,17 @@ class NamedModel(db.Model):
     @classmethod
     def create_new_entity(cls, **kwargs):
         """
-        Creates a new entity unless the ``key_name`` parameter is already in use for the given entity kind, in which case it
-        raises a ``google.appengine.ext.db.BadKeyError`` exception.
-
-        Keyword arguments:
-            ``key_name`` -- Used for the entity key name, otherwise will be generated.
-
-            ``parent`` -- Optional parent key. If not supplied, defaults to ``None``.
-
-        Creates and persists an entity by (optionally) generating and setting a ``key_name``.
-        A ``key_name`` will be generated or may be provided as a keyword arg.  If a generated ``key_name`` is already in use,
+        Creates and persists an entity by (optionally) generating and setting a ``key_name``. A ``key_name`` will be
+        generated or may be provided as a keyword arg.  If a generated ``key_name`` is already in use,
         a new one will be generated.  If, after the 3rd attempt the ``key_name`` is still not unique,
-        a :py:class:`agar.models.DuplicateKeyException` will be raised. This exception will also be raised if the argument
+        a :py:class:`agar.models.DuplicateKeyError` will be raised. This exception will also be raised if the argument
         ``key_name`` is not ``None`` and not unique.
 
+        :param key_name: Used for the entity key name, otherwise will be generated.
+        :param parent: Optional parent key. If not supplied, defaults to ``None``.
+        :param kwargs: Initial values for the instance's properties, as keyword arguments.
+        :return: The newly created and persisted :py:class:`NamedModel`.
+        
         Examples::
 
             person = Person.create_new_entity()
