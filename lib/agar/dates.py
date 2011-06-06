@@ -27,6 +27,9 @@ def parse_datetime(s):
     Where ``ssssss`` represents fractional seconds.  The timezone
     is optional and may be either positive or negative
     hours/minutes east of UTC.
+
+    :param s: The string to parse into a ``datetime``.
+    :return: The ``datetime`` represented by the given string.
     """
     
     if s is None:
