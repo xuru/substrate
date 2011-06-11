@@ -25,7 +25,7 @@ Now, let's try serializing it:
 >>> to_json(jean)
 '{"first_name": "Jeanne", "last_name": "d\'Arc", "ssn": "N/A"}'
 
-How about to xML?
+How about to XML?
 
 >>> to_xml(jean)
 "<result><person><first_name>Jeanne</first_name><last_name>d'Arc</last_name><ssn>N/A</ssn></person></result>"
