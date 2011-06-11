@@ -73,7 +73,7 @@ that will be called with an instance of the model and an optional context (any o
 
 Ok, let's assume we want to include the SSN field only if it looks like a real SSN.  We'll
 do that by *overriding* the default ``ssn`` property that returns a special ``SKIP`` object
-that will tell the serializer to not include in the json output.
+that will tell the serializer to not include the field in the json output.
 
 >>> def ssn_func(obj):
 ...     if len(obj.ssn) and obj.ssn[0].isdigit():
@@ -85,11 +85,16 @@ explicitly ``override`` it.  Here, since we're explicitly saying to ``include_al
 we need to ``override`` ``ssn``
 
 >>> person_strategy = ModelStrategy(Person, include_all_fields=True).override(ssn=ssn_func)
+
+So here we see that the ``ssn`` field is skipped for Jean.
+
 >>> to_json(jean, person_strategy)
 '{"first_name": "Jeanne", "last_name": "d\'Arc"}'
 
->>> to_json(jean, ModelStrategy(Person, include_all_fields=True))
-'{"first_name": "Jeanne", "last_name": "d\'Arc", "ssn": "N/A"}'
+But in Kurt's json, ssn is included:
+
+>>> to_json(Person(first_name="Kurt", last_name="Cobain", ssn="536-90-4399"), person_strategy)
+'{"first_name": "Kurt", "last_name": "Cobain", "ssn": "536-90-4399"}'
 
 Most of the time we're not dealing with just one model but rather a collection of models
 that we want to serialize in a consistent manner -- most likely for a specific ``version`` of
