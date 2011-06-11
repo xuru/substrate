@@ -90,7 +90,7 @@ agar.models
     :members:
     :exclude-members: create_new_entity
 
-    .. automethod:: create_new_entity(key_name=None, parent=None, **kwargs)
+    .. automethod:: create_new_entity(key_name=None, parent=None, \*\*kwargs)
 
 .. autoclass:: DuplicateKeyError
 .. autoclass:: ModelException
@@ -110,6 +110,7 @@ agar.url
 =================
 restler
 =================
+.. automodule:: restler
 .. autoclass:: restler.serializers.ModelStrategy
     :members:
 .. autoclass:: restler.serializers.SerializationStrategy

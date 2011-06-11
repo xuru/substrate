@@ -6,6 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
+PYTHONPATH   := ${PYTHONPATH}:/usr/local/google_appengine/lib 
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
