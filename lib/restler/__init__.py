@@ -1,15 +1,16 @@
 """The ``restler`` package is a simple and flexible serialization to JSON and XML of App Engine Models and Queries.
 
 
-Let's start by going through some simple examples:
+A Simple Example
+----------------
 
-But first, we'll need to import some appengine and
+First, we'll need to import some appengine and
 restler package classes and functions.
 
 >>> from google.appengine.ext import db
 >>> from restler.serializers import ModelStrategy, to_json, to_xml, SKIP
 
-To help with our examples, let's create a simple db Model class that we'll later serialize.
+To help with our examples, let's create a simple ``db.Model`` class that we'll later serialize.
 
 >>> class Person(db.Model):
 ...     first_name = db.StringProperty()
@@ -29,6 +30,9 @@ How about to XML?
 
 >>> to_xml(jean)
 "<result><person><first_name>Jeanne</first_name><last_name>d'Arc</last_name><ssn>N/A</ssn></person></result>"
+
+Include/Exclude Fields
+----------------------
 
 Perfect, that's exactly what we wanted.  *Almost...*  An SSN is
 rather sensitive information that we really shouldn't expose.
@@ -59,6 +63,22 @@ of the Person model *except* for SSN.  And, in fact, we can do that as follows:
 >>> person_strategy = ModelStrategy(Person, include_all_fields=True).exclude("ssn")
 >>> to_json(jean, person_strategy)
 '{"first_name": "Jeanne", "last_name": "d\'Arc"}'
+
+To summarize, ``Restler`` will serialize all properties of a Model unless there is
+a ``ModelStrategy`` that defines which properties are to be serialized.
+
+Renaming Fields
+---------------
+
+What if we wanted to use ``family_name`` instead of ``last_name`` and ``given_name``
+instead of ``first_name``?  We do that as follows:
+
+>>> person_strategy = ModelStrategy(Person).include("ssn", given_name="first_name", family_name="last_name")
+>>> to_json(jean, person_strategy)
+'{"family_name": "d\'Arc", "ssn": "N/A", "given_name": "Jeanne"}'
+
+Derived Fields
+--------------
 
 What if we wanted one field called ``full_name`` instead of the individual ``first_name``
 and ``last_name`` properties?  We'd do that by creating a ``callable`` (generally a function)
@@ -95,6 +115,9 @@ But in Kurt's json, ssn is included:
 
 >>> to_json(Person(first_name="Kurt", last_name="Cobain", ssn="536-90-4399"), person_strategy)
 '{"first_name": "Kurt", "last_name": "Cobain", "ssn": "536-90-4399"}'
+
+Serialization Strategies
+------------------------
 
 Most of the time we're not dealing with just one model but rather a collection of models
 that we want to serialize in a consistent manner -- most likely for a specific ``version`` of

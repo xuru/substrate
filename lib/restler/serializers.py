@@ -67,7 +67,7 @@ class SerializationStrategy(object):
             self.mappings = mappings.to_dict()
         else:
             self.mappings = dict(mappings.items())
-        if style == None:
+        if style is None:
             self.style = copy.deepcopy(DEFAULT_STYLE)
         else:
             self.style = style
@@ -84,9 +84,7 @@ class SerializationStrategy(object):
             return self._new_mapping(mapping.mappings)
         elif isinstance(mapping, ModelStrategy):
             return self._new_mapping(mapping.to_dict())
-        else:
-            raise ValueError("Cannot add type: %s" % type(mapping))
-        return self
+        raise ValueError("Cannot add type: %s" % type(mapping))
 
     def __sub__(self, mapping):
         if isinstance(mapping, ModelStrategy):
@@ -104,9 +102,11 @@ class ModelStrategy(object):
 
     def __init__(self, model, include_all_fields=False, output_name=None):
         """
+        Initialize the ModelStrategy
+
         :param model: The App Engine model class to be serialized.
         :param include_all_fields: (False) Creates a strategy with all properties of the Model to be serialized.
-        param output_name: (None) [None|string|callable] The key or tag that surrounds the serialized properties for a Model.
+        :param output_name: (None) [None|string|callable] The key or tag that surrounds the serialized properties for a Model.
             The default value is the lowercase classname of the Model.
             None flattens the result structure. 
                 with name:  [{'my_class':{'prop1':'value1'}}, ...]
@@ -202,8 +202,11 @@ class ModelStrategy(object):
 
     def include(self, *args, **kwargs):
         """ Include fields for serialization
-        :param args: fields to include
-        :param kwargs: derived properties in the format property_name=callable
+
+        :param args: one of more field names (strings) to include
+        :param kwargs: renamed properties in the format ``new_name="property_name"``
+            *or* derived properties in the format ``property_name=callable``
+        :return: a new instance of a ModelStrategy
         """
         if len(kwargs):
             return self.__add__(args + (kwargs,))
@@ -220,8 +223,11 @@ class ModelStrategy(object):
             raise ValueError("Cannot add type %s" % type(other))
 
     def exclude(self, *args):
-        """ Remove fields for serialization
-        :param args: fields names to exclude
+        """ Exclude fields for serialization
+
+        :param args: one or more field names (strings) to exclude in the
+            format ``"field1", "field2",...``
+        :return: a new instance of a ``ModelStrategy``
         """
         return self.__sub__(args)
 
@@ -234,8 +240,11 @@ class ModelStrategy(object):
 
     def override(self, **kwargs):
         """
-        Hide a serialized property with a callable
-        :param kwargs: properties to be overridden in the format existing_property_name=callable
+        Change a previously exposed property either by renaming it or delegating it to a callable.
+
+        :param kwargs: properties to override either by renaming it with the format
+            ``new_name="property_name"`` *or* derived properties in the ``format property_name=callable``
+        :return: a new instance of a ModelStrategy
         """
         return self.__lshift__(kwargs.items())
 
@@ -338,10 +347,11 @@ def encoder_builder(type_, strategy=None, style=None, context={}):
 def to_json(thing, strategy=None, context={}):
     """Encode a ``db.Model`` instance or collection to a JSON string.
 
-    :param thing: a collection, iterable, or ``db.Model`` instance
+    :param thing: a collection, iterable, ``db.Query`` or ``db.Model`` instance
     :param strategy: a ``ModelStrategy`` or ``SerializationStrategy``
     :param context: an object that will be passed to every derived property (``callable``)
      that has a second parameter defined (the param is the model instance).
+    :return: a JSON encoded string
     """
     if not isinstance(strategy, (ModelStrategy, SerializationStrategy, types.NoneType)):
         raise ValueError("Serialization strategy must be a ModelStrategy, SerializationStrategy or dict")
@@ -415,10 +425,11 @@ def _encode_xml(thing, node, strategy, style, context):
 def to_xml(thing, strategy=None, context={}):
     """Encode a ``db.Model`` instance or collection to an XML string.
 
-    :param thing: a collection, iterable, or ``db.Model`` instance
+    :param thing: a collection, iterable, ``db.Query`` or ``db.Model`` instance
     :param strategy: a ``ModelStrategy`` or ``SerializationStrategy``
     :param context: an object that will be passed to every derived property (``callable``)
      that has a second parameter defined (the param is the model instance).
+    :return: a XML encoded string
     """
     if not isinstance(strategy, (ModelStrategy, SerializationStrategy, types.NoneType)):
         raise ValueError("Serialization strategy must be a ModelStrategy, SerializationStrategy or dict")
