@@ -2,7 +2,6 @@
 import copy
 import datetime
 import decimal
-import logging
 import pprint
 import simplejson
 import types
@@ -11,8 +10,6 @@ from xml.etree import ElementTree as ET
 
 from google.appengine.ext import blobstore
 from google.appengine.ext import db
-from google.appengine.api import datastore
-from google.appengine.api import datastore_types
 from google.appengine.api import users
 
 from restler import models
@@ -73,11 +70,21 @@ class SerializationStrategy(object):
             self.style = style
 
     def _new_mapping(self, other_dict):
+        """ Creates a new mapping (underlying data structure SerializationStrategy)
+
+        :param other_dict: another mapping
+        :returns: a new mapping
+        """
         maps = dict(self.mappings.items())
         maps.update(other_dict)
         return self.__class__(maps)
 
     def __add__(self, mapping):
+        """ Adds to a Serialization strategy either from an existing SerializationStrategy,
+         ModelStrategy or a mapping (dictionary structure -- not recommended).
+        :param mapping: SerializationStrategy, ModelStrategy or dictionary
+        :returns: new SerializationStrategy
+        """
         if isinstance(mapping, dict):
             return self._new_mapping(mapping)
         elif isinstance(mapping, self.__class__):
@@ -87,8 +94,12 @@ class SerializationStrategy(object):
         raise ValueError("Cannot add type: %s" % type(mapping))
 
     def __sub__(self, mapping):
+        """Removes a ModelStrategy from a SerializationStrategy.
+        :param mapping: SerializationStrategy, ModelStrategy or dictionary
+        :returns: new SerializationStrategy
+        """
         if isinstance(mapping, ModelStrategy):
-            m = self._new_mapping(mapping.to_dict())
+            self._new_mapping(mapping.to_dict())
         else:
             raise ValueError("Not of type ModelStrategy")
 
@@ -122,20 +133,20 @@ class ModelStrategy(object):
     def __name_map(self):
         # We remove 'properties' i.e. things with callables by name
         # so we create a list of names that can be deleted
-        names = {};
-        for p in self.fields:
-            if isinstance(p, dict):
-                names[p.keys()[0]] = p
-            elif isinstance(p, tuple):
-                names[p[0]] = p[1]
-            elif isinstance(p, basestring):
-                names[p] = p
+        names = {}
+        for prop in self.fields:
+            if isinstance(prop, dict):
+                names[prop.keys()[0]] = prop
+            elif isinstance(prop, tuple):
+                names[prop[0]] = prop[1]
+            elif isinstance(prop, basestring):
+                names[prop] = prop
         return names
 
     def __add(self, fields):
         names = self.__name_map()
-        m = ModelStrategy(self.model, output_name=self.name)
-        m.fields = self.fields[:]
+        model_strategy = ModelStrategy(self.model, output_name=self.name)
+        model_strategy.fields = self.fields[:]
         if isinstance(fields, (tuple, list)):
             for name in fields:
                 if isinstance(name, dict):
@@ -144,17 +155,17 @@ class ModelStrategy(object):
                     name = [name]
                 if isinstance(name, list):
                     for props in name:
-                        fname, prop = props
-                        if fname not in names:
-                            m.fields.append(props)
-                            names[fname] = prop
+                        field_name, prop = props
+                        if field_name not in names:
+                            model_strategy.fields.append(props)
+                            names[field_name] = prop
                         else:
                             raise ValueError("Cannot add field.  '%s' already exists" % name)
                 elif name not in names:
                     if (name in self.model.fields()
                             or isinstance(getattr(self.model, name, None), property)
                             or callable(getattr(self.model, name, None))):
-                        m.fields.append(name)
+                        model_strategy.fields.append(name)
                         names[name] = name
                     else:
                         raise ValueError("Cannot add field.  '%s' is not a valid field for model '%s'" % (name, self.model ))
@@ -162,25 +173,25 @@ class ModelStrategy(object):
                     raise ValueError("Cannot add field.  '%s' already exists" % (name, ))
         else:
             raise ValueError("Only lists/tuples or fields can be added")
-        return m
+        return model_strategy
 
     def __remove(self, fields):
         m = ModelStrategy(self.model, output_name=self.name) + self.fields
         names = self.__name_map()
         if isinstance(fields, (tuple, list)):
-            for f in fields:
+            for field in fields:
                 # if they're giving us the field -> callable mapping, we just want the field
-                if isinstance(f, dict):
-                    f, _ = f.items()[0]
-                if isinstance(f, tuple):
-                    f, _ = f
-                if f in names:
-                    if callable(names[f]): # Derived property
-                        m.fields.remove((f, names[f]))
+                if isinstance(field, dict):
+                    field, _ = field.items()[0]
+                if isinstance(field, tuple):
+                    field, _ = field
+                if field in names:
+                    if callable(names[field]): # Derived property
+                        m.fields.remove((field, names[field]))
                     else: # simple field
-                        m.fields.remove(names[f])
+                        m.fields.remove(names[field])
                 else:
-                    raise ValueError("'%s' cannot be removed. It is not in the current fields list (%s)" % (f, self.fields))
+                    raise ValueError("'%s' cannot be removed. It is not in the current fields list (%s)" % (field, self.fields))
         else:
             raise ValueError("Fields must be a tuple or list.")
         return m
@@ -339,9 +350,7 @@ def encoder_builder(type_, strategy=None, style=None, context={}):
         return AEEncoder
     elif type_ == "xml":
         return default_impl
-    else:
-        raise ValueError("type is required to be 'xml' or 'json'")
-    return None
+    raise ValueError("type is required to be 'xml' or 'json'")
 
 
 def to_json(thing, strategy=None, context={}):
@@ -381,7 +390,6 @@ def _encode_xml(thing, node, strategy, style, context):
         for key, value in thing.items():
             if not isinstance(key, basestring):
                 raise ValueError("key is not a valid string") # TODO better error message needed
-            e = xml_style["dict"](el, (key, value))
             e = ET.SubElement(el, key)
             if value is None:
                 xml_style["null"](e, None) 
