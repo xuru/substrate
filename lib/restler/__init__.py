@@ -116,6 +116,29 @@ But in Kurt's json, ssn is included:
 >>> to_json(Person(first_name="Kurt", last_name="Cobain", ssn="536-90-4399"), person_strategy)
 '{"first_name": "Kurt", "last_name": "Cobain", "ssn": "536-90-4399"}'
 
+Context Objects
+---------------
+
+Sometimes it's important to change how serialization is done based on some state of the system.
+For example, perhaps we want to display ``ssn`` only if the user is logged in.  We'd do that
+by passing in a ``context`` object (usually a ``dictionary``) which will be passed to each
+``callable`` that takes two parameters (the first parameter being the model instance).  Let's redo
+the above example using a ``context`` object.
+
+>>> def ssn_func(obj, context):
+...     if context.has_key('is_logged_in') and bool(context['is_logged_in']):
+...         return obj.ssn
+...     return SKIP
+
+>>> person_strategy = ModelStrategy(Person, include_all_fields=True).override(ssn=ssn_func)
+
+>>> to_json(Person(first_name="Kurt", last_name="Cobain", ssn="536-90-4399"), person_strategy, dict(is_logged_in=True))
+'{"first_name": "Kurt", "last_name": "Cobain", "ssn": "536-90-4399"}'
+
+>>> to_json(Person(first_name="Kurt", last_name="Cobain", ssn="536-90-4399"), person_strategy, dict(is_logged_in=False))
+'{"first_name": "Kurt", "last_name": "Cobain"}'
+
+
 Serialization Strategies
 ------------------------
 
