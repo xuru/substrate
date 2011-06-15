@@ -46,7 +46,7 @@ def app_id():
 
     return config.application
 
-remote_api_stub.ConfigureRemoteDatastore(app_id(), path(), auth_func, "%s.appspot.com" % app_id())
+remote_api_stub.ConfigureRemoteDatastore(None, path(), auth_func, "%s.appspot.com" % app_id())
 remote_api_stub.MaybeInvokeAuthentication()
 
 if __name__ == "__main__":
