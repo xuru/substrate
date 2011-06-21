@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from local.lib.management import *
 
 if __name__ == '__main__':
