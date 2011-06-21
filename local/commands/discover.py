@@ -1,3 +1,5 @@
+""" Run tests using unittest2 'discover' """
+
 import logging
 import os
 import sys
@@ -9,7 +11,6 @@ from google.appengine.tools import dev_appserver_main
 
 __unittest = True
 from contrib.unittest2.main import main_
-# from unittest2.main import main_
 
 
 config = matcher = None
@@ -40,11 +41,5 @@ os.environ['APPLICATION_ID'] = config.application
 
 sys.path.insert(0, os.path.abspath(os.path.curdir))
 
-runner_params = sys.argv[1:]
-
-if not runner_params:
-    sys.argv = [os.path.abspath(os.path.curdir), '-h',]
-# else:
-    # sys.argv = [os.path.abspath(os.path.curdir)] + runner_params
-
-main_()
+if __name__ == "__main__":
+    main_()
