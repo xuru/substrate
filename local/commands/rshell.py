@@ -1,6 +1,9 @@
+""" Connect to a remote datastore through an interactive console. """
+
 from google.appengine.tools import os_compat
 
 import logging
+import sys
 import os
 import traceback
 import getpass
@@ -26,7 +29,7 @@ except yaml_errors.EventListenerError, e:
 except dev_appserver.InvalidAppConfigError, e:
     logging.error('Application configuration file invalid:\n%s', e)
 
-optlist, args = getopt.getopt(sys.argv[2:], 'A:')
+optlist, args = getopt.getopt(sys.argv[1:], 'A:')
 
 def auth_func():
     return raw_input('Username:'), getpass.getpass('Password:')
@@ -46,10 +49,10 @@ def app_id():
 
     return config.application
 
-remote_api_stub.ConfigureRemoteDatastore(None, path(), auth_func, "%s.appspot.com" % app_id())
-remote_api_stub.MaybeInvokeAuthentication()
-
 if __name__ == "__main__":
+    remote_api_stub.ConfigureRemoteDatastore(None, path(), auth_func, "%s.appspot.com" % app_id())
+    remote_api_stub.MaybeInvokeAuthentication()
+
     banner = "Interactive REMOTE App Engine Shell for app-id '%s'" % app_id()
     try:
         import IPython

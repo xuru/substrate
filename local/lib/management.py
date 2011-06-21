@@ -76,6 +76,16 @@ def fix_sys_path():
     sys.path = EXTRA_PATHS + sys.path
 
 
+def print_subcommand_overviews(commands):
+    import logging
+    logging.basicConfig(level=logging.ERROR)
+    print "manage.py commands: "
+    cmd_width = max(len(command) for command in commands)
+    for command in commands:
+        module = __import__("local.commands", {}, {}, [command])
+        doc = getattr(module, command).__doc__
+        print "  ", command.ljust(cmd_width), "-" if doc else "" ,  doc or ""
+
 def run_command(command, globals_, script_dir=SCRIPT_DIR):
     """Execute the file at the specified path with the passed-in globals."""
     fix_sys_path()
@@ -86,7 +96,7 @@ def run_command(command, globals_, script_dir=SCRIPT_DIR):
         if arg in commands:
             break
     else:
-        print "Available commands: %s"% commands
+        print_subcommand_overviews(commands)
         sys.exit(1)
     command_idx = sys.argv.index(arg)
     script_name = sys.argv[command_idx]
