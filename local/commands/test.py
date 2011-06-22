@@ -50,12 +50,14 @@ import sys
 # main(plugins=[NoseGAE(), NoseExclude(), LogCapture()])
 if __name__ == "__main__":
     if len (sys.argv) < 2:
-        print "No tests specified.  Running everything..."
+    print "No tests specified.  Running everything..."
         sys.argv[0] = "."
-    else:
+else:
         print "Testing: %s"% sys.argv[1]
         sys.argv[0] = sys.argv[1]
         del sys.argv[1]
 
-    main(plugins=[NoseGAE(), NoseExclude()])
+# Would like to get the log capture working sometime...
+# main(plugins=[NoseGAE(), NoseExclude(), LogCapture()])
+main(plugins=[NoseGAE(), NoseExclude()])
 
