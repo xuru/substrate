@@ -56,4 +56,5 @@ if __name__ == "__main__":
         print "Testing: %s"% sys.argv[1]
         sys.argv[0] = sys.argv[1]
         del sys.argv[1]
+    main(plugins=[NoseGAE(), NoseExclude()])
 
