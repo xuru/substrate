@@ -48,6 +48,12 @@ agar.django.decorators
 .. automodule:: agar.django.decorators
     :members:
 
+^^^^^^^^^^^^^^^^^^^^^^
+agar.django.forms
+^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: agar.django.forms
+    :members:
+
 --------
 agar.env
 --------
@@ -107,6 +113,12 @@ agar.url
 --------
 .. automodule:: agar.url
 
+.. autofunction:: agar.url.uri_for
+
+.. autoclass:: agar.url.UrlConfig
+    :members:
+
+
 =================
 restler
 =================
@@ -152,6 +164,7 @@ Indices and tables
 .. _webapp2.Request: http://webapp-improved.appspot.com/api.html#webapp2.Request
 .. _webapp2.RequestHandler: http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler
 .. _webapp2.RequestHandler.abort: http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler.abort
+.. _webapp2.uri_for: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.uri_for
 
 .. _uuid4: http://docs.python.org/library/uuid.html#uuid.uuid4
 
