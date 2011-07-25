@@ -1,33 +1,38 @@
 """
 The ``agar.url`` module contains classes to help working with application-wide URLs.
 """
+
 from google.appengine.api import lib_config
 
 from agar.env import on_production_server
 
 
 class ConfigDefaults(object):
-    """Configurable constants.
+    """
+    :py:class:`~agar.config.Config` settings for the ``agar.url`` library.
+    Settings are under the ``agar_url`` namespace.
 
-    To override agar.url configuration values, define values like this
-    in your appengine_config.py file (in the root of your app):
+    The following settings (and defaults) are provided::
 
-        agar_url_DEBUG = True
-        agar_url_PRODUCTION_DOMAIN = 'www.mydomain.com'
-        agar_url_APPLICATIONS = ['main', 'api']
+        agar_url_DEBUG = False
+        agar_url_PRODUCTION_DOMAIN = ''
+        agar_url_APPLICATIONS = ['main']
+
+    To override ``agar.url`` settings, define values in the ``appengine_config.py`` file in the root of your app.
     """
     DEBUG = False
     PRODUCTION_DOMAIN = ''
     APPLICATIONS = ['main']
 
+#: The configuration object for ``agar.url`` settings.
 config = lib_config.register('agar_url', ConfigDefaults.__dict__)
 
 def url_for(name, *args, **kwargs):
     # todo throw exception if no url found?
     owned_domain = kwargs.pop('owned_domain', True)
-    request = kwargs.pop('request', None)
+    request = kwargs.pop('request')
     _full = kwargs.get('_full', False)
-    _netloc = kwargs.get('_netloc', None)
+    _netloc = kwargs.get('_netloc')
     if _netloc is None and _full and owned_domain and config.PRODUCTION_DOMAIN and on_production_server:
         kwargs['_netloc'] = config.PRODUCTION_DOMAIN
     if owned_domain and _full:
