@@ -7,7 +7,7 @@ from google.appengine.api import lib_config
 from agar.env import on_production_server
 
 
-class ConfigDefaults(object):
+class UrlConfig(object):
     """
     :py:class:`~agar.config.Config` settings for the ``agar.url`` library.
     Settings are under the ``agar_url`` namespace.
@@ -25,9 +25,24 @@ class ConfigDefaults(object):
     APPLICATIONS = ['main']
 
 #: The configuration object for ``agar.url`` settings.
-config = lib_config.register('agar_url', ConfigDefaults.__dict__)
+config = lib_config.register('agar_url', UrlConfig.__dict__)
 
-def url_for(name, *args, **kwargs):
+def uri_for(name, *args, **kwargs):
+    """
+    A wrapper around the `webapp2.uri_for`_ function that will search all applications defined in the
+    ``agar_url_APPLICATIONS`` configuration.
+
+    :param name: The route name.
+    :param args: Tuple of positional arguments to build the URI. All positional variables defined in the route must be
+        passed and must conform to the format set in the route. Extra arguments are ignored.
+    :param kwargs: Dictionary of keyword arguments to build the URI. All variables not set in the route default values must be passed and must conform to the format set in the route. Extra keywords are appended as a query string.
+A few keywords have special meaning:
+_full: If True, builds an absolute URI.
+_scheme: URI scheme, e.g., http or https. If defined, an absolute URI is always returned.
+_netloc: Network location, e.g., www.google.com. If defined, an absolute URI is always returned.
+_fragment: If set, appends a fragment (or “anchor”) to the generated URI.
+    :return:
+    """
     # todo throw exception if no url found?
     owned_domain = kwargs.pop('owned_domain', True)
     request = kwargs.pop('request')
@@ -48,3 +63,5 @@ def url_for(name, *args, **kwargs):
         except KeyError:
             pass
     return url
+# Alias.
+url_for = uri_for
