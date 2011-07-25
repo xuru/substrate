@@ -3,6 +3,9 @@ The ``agar.django.decorators`` module contains functions and decorators to help 
 to be used to wrap :py:class:`agar.json.JsonRequestHandler` methods that accept input.
 """
 
+from agar.django.forms import HandlerForm
+
+
 def create_error_dict(error_list):
     from django.forms.util import ErrorList
     text_errors = {}
@@ -27,7 +30,9 @@ def validate_service(form_class):
     """
     def decorator(request_method):
         def wrapped(self, *args, **kwargs):
-            form = form_class(self.request.params, handler=self)
+            form = form_class(self.request.params)
+            if isinstance(form, HandlerForm):
+                form.handler = self
             if form.is_valid():
                 self.request.form = form
                 request_method(self, *args, **kwargs)
