@@ -42,14 +42,15 @@ def uri_for(name, *args, **kwargs):
 
         A few keywords have special meaning:
             * **request**: This should be the current `webapp2.Request`_. If not passed, it will look up the current
-                request from the `webapp2.WSGIApplication`_ instance.
-            * **owned_domain**: If this is ``True`` and ``_full`` is ``True`` and ``_netloc`` is ``None``, the
-                absolute URL returned will use the ``agar_url_PRODUCTION_DOMAIN`` setting for the host rather than the
-                value from the ``request``.
+              request from the `webapp2.WSGIApplication`_ instance.
+            * **owned_domain**: If ``True`` and ``_full`` is ``True`` and ``_netloc`` is ``None`` and
+              :py:func:`~agar.env.on_production_server` is ``True``, the absolute URI returned will use the
+              ``agar_url_PRODUCTION_DOMAIN`` setting for the host rather than the value from the `webapp2.Request`_.
             * **_full**: If ``True``, builds an absolute URI. Defaults to ``False``.
             * **_scheme**: URI scheme, e.g., ``http`` or ``https``. If defined, an absolute URI is always returned.
             * **_netloc**: Network location, e.g., ``www.google.com``. If defined, an absolute URI is always returned.
             * **_fragment**: If set, appends a fragment (or "anchor") to the generated URI.
+            
     :return: An absolute or relative URI.
     """
     request = kwargs.pop('request', get_request())
@@ -60,20 +61,20 @@ def uri_for(name, *args, **kwargs):
         kwargs['_netloc'] = config.PRODUCTION_DOMAIN
     if owned_domain and _full:
         kwargs['_scheme'] = 'http'
-    url = None
+    uri = None
     error = None
     for app_name in config.APPLICATIONS:
         app_module = __import__(app_name)
         try:
             application = app_module.application
-            url = application.router.build(request, name, args, kwargs)
-            if url is not None:
+            uri = application.router.build(request, name, args, kwargs)
+            if uri is not None:
                 break
         except Exception, e:
             error = e
             pass
-    if url is None and error is not None:
+    if uri is None and error is not None:
         raise error
-    return url
+    return uri
 # Alias.
 url_for = uri_for
