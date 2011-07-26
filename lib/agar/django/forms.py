@@ -10,13 +10,22 @@ class HandlerForm(forms.Form):
     A `django form class`_ that holds a reference to the current `webapp2.RequestHandler`_ handling the request.
     """
     def __init__(self, *args, **kwargs):
-        self.handler = None
+        self._handler = None
         super(HandlerForm, self).__init__(*args, **kwargs)
 
     @property
     def request(self):
+        """
+        The `webapp2.Request`_ from the form's `webapp2.RequestHandler`_ or ``None`` if the handler is not set.
+        """
         if self.handler is not None:
             return self.handler.request
+
+    def get_handler(self):
+        return self._handler
+    def set_handler(self, handler):
+        self._handler = handler
+    handler = property(get_handler, set_handler, doc="The form's `webapp2.RequestHandler`_.")
 
 
 class StrictHandlerForm(HandlerForm):
