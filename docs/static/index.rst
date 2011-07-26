@@ -161,9 +161,10 @@ Indices and tables
 .. _django form class: https://docs.djangoproject.com/en/1.3/ref/forms/api/#django.forms.Form
 
 .. _webapp2: http://code.google.com/p/webapp-improved/
-.. _webapp2.Request: http://webapp-improved.appspot.com/api.html#webapp2.Request
-.. _webapp2.RequestHandler: http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler
-.. _webapp2.RequestHandler.abort: http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler.abort
+.. _webapp2.WSGIApplication: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.WSGIApplication
+.. _webapp2.Request: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.Request
+.. _webapp2.RequestHandler: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.RequestHandler
+.. _webapp2.RequestHandler.abort: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.RequestHandler.abort
 .. _webapp2.uri_for: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.uri_for
 
 .. _uuid4: http://docs.python.org/library/uuid.html#uuid.uuid4

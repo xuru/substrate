@@ -4,6 +4,8 @@ The ``agar.url`` module contains classes to help working with application-wide U
 
 from google.appengine.api import lib_config
 
+from webapp2 import get_request
+
 from agar.env import on_production_server
 
 
@@ -35,17 +37,23 @@ def uri_for(name, *args, **kwargs):
     :param name: The route name.
     :param args: Tuple of positional arguments to build the URI. All positional variables defined in the route must be
         passed and must conform to the format set in the route. Extra arguments are ignored.
-    :param kwargs: Dictionary of keyword arguments to build the URI. All variables not set in the route default values must be passed and must conform to the format set in the route. Extra keywords are appended as a query string.
-A few keywords have special meaning:
-_full: If True, builds an absolute URI.
-_scheme: URI scheme, e.g., http or https. If defined, an absolute URI is always returned.
-_netloc: Network location, e.g., www.google.com. If defined, an absolute URI is always returned.
-_fragment: If set, appends a fragment (or “anchor”) to the generated URI.
-    :return:
+    :param kwargs: Dictionary of keyword arguments to build the URI. All variables not set in the route default values
+        must be passed and must conform to the format set in the route. Extra keywords are appended as a query string.
+
+        A few keywords have special meaning:
+            * **request**: This should be the current `webapp2.Request`_. If not passed, it will look up the current
+                request from the `webapp2.WSGIApplication`_ instance.
+            * **owned_domain**: If this is ``True`` and ``_full`` is ``True`` and ``_netloc`` is ``None``, the
+                absolute URL returned will use the ``agar_url_PRODUCTION_DOMAIN`` setting for the host rather than the
+                value from the ``request``.
+            * **_full**: If ``True``, builds an absolute URI. Defaults to ``False``.
+            * **_scheme**: URI scheme, e.g., ``http`` or ``https``. If defined, an absolute URI is always returned.
+            * **_netloc**: Network location, e.g., ``www.google.com``. If defined, an absolute URI is always returned.
+            * **_fragment**: If set, appends a fragment (or "anchor") to the generated URI.
+    :return: An absolute or relative URI.
     """
-    # todo throw exception if no url found?
+    request = kwargs.pop('request', get_request())
     owned_domain = kwargs.pop('owned_domain', True)
-    request = kwargs.pop('request')
     _full = kwargs.get('_full', False)
     _netloc = kwargs.get('_netloc')
     if _netloc is None and _full and owned_domain and config.PRODUCTION_DOMAIN and on_production_server:
@@ -53,15 +61,19 @@ _fragment: If set, appends a fragment (or “anchor”) to the generated URI.
     if owned_domain and _full:
         kwargs['_scheme'] = 'http'
     url = None
+    error = None
     for app_name in config.APPLICATIONS:
         app_module = __import__(app_name)
         try:
             application = app_module.application
-            url = application.router.build(name, request, args, kwargs)
+            url = application.router.build(request, name, args, kwargs)
             if url is not None:
                 break
-        except KeyError:
+        except Exception, e:
+            error = e
             pass
+    if url is None and error is not None:
+        raise error
     return url
 # Alias.
 url_for = uri_for

@@ -13,6 +13,11 @@ class HandlerForm(forms.Form):
         self.handler = None
         super(HandlerForm, self).__init__(*args, **kwargs)
 
+    @property
+    def request(self):
+        if self.handler is not None:
+            return self.handler.request
+
 
 class StrictHandlerForm(HandlerForm):
     """
@@ -21,7 +26,7 @@ class StrictHandlerForm(HandlerForm):
     def clean(self):
         field_keys = self.fields.keys()
         if self.handler is not None:
-            param_keys = self.handler.request.params.keys()
+            param_keys = self.request.params.keys()
             for key in param_keys:
                 if key not in field_keys:
                     self._errors[key] = self.error_class(["Not a recognized parameter"])

@@ -7,7 +7,7 @@ from agar.json import MultiPageHandler
 
 from restler import serializers
 
-from webapp2 import WSGIApplication
+from webapp2 import WSGIApplication, Route
 
 from tests.models import Model1
 
@@ -37,8 +37,8 @@ def get_application():
     from agar.env import on_production_server
     return WSGIApplication(
         [
-            ('/api/v1/model1', V1ApiHandlerService),
-            ('/api/v2/model1', V2ApiHandlerService)
+            Route('/api/v1/model1', V1ApiHandlerService, name='api-v1'),
+            Route('/api/v2/model1', V2ApiHandlerService, name='api-v2')
         ],
         debug=not on_production_server
     )
