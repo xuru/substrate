@@ -43,9 +43,8 @@ if not hasattr(sys, 'version_info'):
 version_tuple = tuple(sys.version_info[:2])
 
 if version_tuple != (2, 5):
-    sys.stderr.write('Error: Python %d.%d is not supported. Please use '
+    sys.stderr.write('WARNING: Python %d.%d is not supported. Please use '
                      'version 2.5.\n' % version_tuple)
-    sys.exit(1)
 
 #DIR_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
