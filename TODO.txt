@@ -21,6 +21,7 @@ TODO
 
 DONE
 ====
+ * Changed python version check for 2.5 from an error to warning.
  * add documentation system
  * include decent test suite
  * move non deployed libraries to local/lib  
