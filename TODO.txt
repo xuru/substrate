@@ -3,8 +3,6 @@ TODO
 ====
  * gae sdk version check
  * look at TestBase setup for service stubs
- * doc for parameter validating HandlerForm
- * tests for parameter validating HandlerForm
  * upgrade script
  * add runserver command - not sure this is needed, use dev_appserver
  * add --datastore-path to manage.py (before command)
@@ -22,6 +20,8 @@ TODO
 DONE
 ====
  * Changed python version check for 2.5 from an error to warning.
+ * doc for parameter validating RequestForm
+ * tests for parameter validating RequestForm
  * add documentation system
  * include decent test suite
  * move non deployed libraries to local/lib  
