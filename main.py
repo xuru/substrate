@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
+from env_setup import setup_django
+setup_django()
 from env_setup import setup
 setup()
-
-# import os
-# os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-# 
-# from google.appengine.dist import use_library
-# use_library('django', '1.2')
 
 from agar.env import on_production_server
 
