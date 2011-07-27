@@ -1,6 +1,3 @@
-from env_setup import setup
-setup()
-
 from gaetestbed import WebTestCase
 from unittest2 import TestCase
 
@@ -10,7 +7,7 @@ from agar.url import uri_for, url_for
 class UriTest(WebTestCase, TestCase):
     def setUp(self):
         self.method = uri_for
-        super(WebTestCase, self).setUp()
+        super(UriTest, self).setUp()
 
     def test_get_uri(self):
         uri = self.method('api-v1')

@@ -10,7 +10,6 @@ class Model2(db.Model):
         return "I say blah!"
 
 class Model1(db.Model):
-
     string = db.StringProperty()
     bytestring = db.ByteStringProperty()
     boolean = db.BooleanProperty()
