@@ -84,7 +84,7 @@ class JsonRequestHandler(RequestHandler):
             status_text = 'NOT_FOUND'
         if code == 405:
             status_text = 'METHOD_NOT_ALLOWED'
-        return self.json_response({}, status_code=code, status_text=status_text)
+        self.json_response({}, status_code=code, status_text=status_text)
 
 class MultiPageHandler(JsonRequestHandler):
     """A RequestHandler class to help with 'page_size' and 'cursor' parsing and logic"""
