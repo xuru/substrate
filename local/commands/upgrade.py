@@ -5,6 +5,7 @@ import shutil
 # TODO add user_lib for these?
 # TODO use hg tags for releases?  major/minor/dev(default) options?
 # TODO make substrate repo public
+# TODO check to see if project to be upgraded has no uncommitted files
 
 upgrade_items = ['manage.py', 'env_setup.py', 'local/commands', 'local/lib', 'lib/agar']
 
