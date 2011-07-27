@@ -8,7 +8,7 @@ setup()
 from django import forms
 
 from agar.django.decorators import validate_service
-from agar.django.forms import RequestForm
+from agar.django.forms import StrictRequestForm
 from agar.json import MultiPageHandler
 from agar.json import config as agar_json_config
 
@@ -31,7 +31,7 @@ def create_sample_data(page_size=agar_json_config.DEFAULT_PAGE_SIZE):
         model1.put()
         count += 1
 
-class V1ApiForm(RequestForm):
+class V1ApiForm(StrictRequestForm):
     page_size = forms.IntegerField(required=False, min_value=1, max_value=agar_json_config.MAX_PAGE_SIZE)
 
     def clean_page_size(self):
