@@ -4,20 +4,21 @@ import shutil
 # TODO can we assume no user libs are in local/lib?
 # TODO add user_lib for these?
 # TODO use hg tags for releases?  major/minor/dev(default) options?
+# TODO make substrate repo public
+
 upgrade_items = ['manage.py', 'env_setup.py', 'local/commands', 'local/lib']
 
-have_dot_dir = os.path.isdir(os.path.expanduser('~/.substrate'))
 
-if not have_dot_dir:
-    os.mkdir(os.path.expanduser('~/.substrate'))
-
-
-current_dir = os.path.abspath(".")
-substrate_repo = os.path.expanduser('~/.substrate/substrate')
-repo_exists = os.path.isdir(substrate_repo)
+current_dir = os.path.abspath('.')
+substrate_home_dir = os.path.expanduser('~/.substrate')
+substrate_repo = os.path.expanduser('%s/substrate' % substrate_home_dir)
 
 
-if repo_exists:
+if not os.path.isdir(substrate_home_dir):
+    os.mkdir(os.path.expanduser(substrate_home_dir))
+
+
+if os.path.isdir(substrate_repo):
     os.chdir(substrate_repo)
     os.system('hg fetch')
     os.chdir(current_dir)
