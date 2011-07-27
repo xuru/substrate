@@ -6,7 +6,7 @@ import shutil
 # TODO use hg tags for releases?  major/minor/dev(default) options?
 # TODO make substrate repo public
 
-upgrade_items = ['manage.py', 'env_setup.py', 'local/commands', 'local/lib']
+upgrade_items = ['manage.py', 'env_setup.py', 'local/commands', 'local/lib', 'lib/agar']
 
 
 current_dir = os.path.abspath('.')
