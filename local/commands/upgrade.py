@@ -27,7 +27,7 @@ else:
 
 
 for item in upgrade_items:
-    item_path = os.path.expanduser('%s/%s' % (substrate_repo, item))
+    item_path = '%s/%s' % (substrate_repo, item)
 
     if os.path.isfile(item_path):
         shutil.copy(item_path, current_dir)
