@@ -101,6 +101,7 @@ class MultiPageHandler(JsonRequestHandler):
                 query = query.with_cursor(cursor)
             except (BadValueError, BadRequestError):
                 self.abort(400, INVALID_CURSOR)
+        results = []
         try:
             results = query.fetch(self.page_size)
         except (BadValueError, BadRequestError):
