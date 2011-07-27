@@ -27,11 +27,11 @@ else:
 
 
 for item in upgrade_items:
-    new_item = os.path.expanduser('%s/%s' % (substrate_repo, item))
+    item_path = os.path.expanduser('%s/%s' % (substrate_repo, item))
 
-    if os.path.isfile(new_item):
-        shutil.copy(new_item, current_dir)
+    if os.path.isfile(item_path):
+        shutil.copy(item_path, current_dir)
     
-    if os.path.isdir(new_item):
+    if os.path.isdir(item_path):
         shutil.rmtree('%s/%s' % (current_dir, item))
-        shutil.copytree(new_item, '%s/%s' % (current_dir, item))
+        shutil.copytree(item_path, '%s/%s' % (current_dir, item))
