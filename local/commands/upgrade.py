@@ -3,6 +3,7 @@ import shutil
 
 # TODO can we assume no user libs are in local/lib?
 # TODO add user_lib for these?
+# TODO use hg tags for releases?  major/minor/dev(default) options?
 upgrade_items = ['manage.py', 'env_setup.py', 'local/commands', 'local/lib']
 
 have_dot_dir = os.path.isdir(os.path.expanduser('~/.substrate'))
