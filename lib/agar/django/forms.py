@@ -1,5 +1,5 @@
 """
-The ``agar.django.forms`` module contains form classes to help using `django forms`_ with a `webapp2.Requesthandler`_.
+The ``agar.django.forms`` module contains form classes to help using `django forms`_ with a `webapp2.Request`_.
 """
 
 from webapp2 import get_request as get_webapp2_request
@@ -26,7 +26,7 @@ class RequestForm(forms.Form):
 
 class StrictRequestForm(RequestForm):
     """
-    A :py:class:`~agar.django.forms.HandlerForm` that validates all passed parameters are expected by the form.
+    A :py:class:`~agar.django.forms.RequestForm` that validates all passed parameters are expected by the form.
     """
     def clean(self):
         field_keys = self.fields.keys()
