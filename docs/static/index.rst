@@ -159,6 +159,7 @@ Indices and tables
 .. _django: http://www.djangoproject.com/
 .. _django forms: https://docs.djangoproject.com/en/dev/topics/forms/
 .. _django form class: https://docs.djangoproject.com/en/1.3/ref/forms/api/#django.forms.Form
+.. _django template tags: https://docs.djangoproject.com/en/dev/howto/custom-template-tags/
 
 .. _webapp2: http://code.google.com/p/webapp-improved/
 .. _webapp2.WSGIApplication: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.WSGIApplication

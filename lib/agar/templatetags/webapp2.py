@@ -1,3 +1,7 @@
+"""
+The ``agar.templatetags.webapp2`` module contains `django template tags`_.
+"""
+
 from django.template import Node, TemplateSyntaxError
 
 from google.appengine.ext.webapp import template
@@ -31,29 +35,19 @@ class URLNode(Node):
         else:
             return url
 
-def url_for(parser, token):
+def uri_for(parser, token):
     """
-    Returns an absolute URL matching given the route with its parameters.
+    Returns a URL matching given the route name with its parameters.
 
-    This is a way to define links that aren't tied to a particular URL
-    configuration::
+    See :py:func:`~agar.url.uri_for` for more detailed parameter information.
 
-        {% url_for route_name arg1,arg2,name1=value1 %}
+    For example::
 
-    The first argument is a route name. Other arguments are comma-separated values
-    that will be filled in place of positional and keyword arguments in the
-    URL. All arguments for the URL should be present.
+        {% uri_for route_name arg1,arg2,name1=value1 %}
 
-    For example if you have a route ``client`` taking client's id and
-    the corresponding line in an application looks like this::
+        {% uri_for get_client id=client.id %}
 
-        ('/client/<id>', 'client')
-
-    then in a template you can create a link for a certain client like this::
-
-        {% url_for client id=client.id %}
-
-    The URL will look like ``/client/123/``.
+        {% uri_for get_client id=client.id,_full=True %}
     """
     bits = token.split_contents()
     if len(bits) < 2:
@@ -79,10 +73,19 @@ def url_for(parser, token):
                     elif arg:
                         args.append(parser.compile_filter(arg))
     return URLNode(routename, args, kwargs, asvar)
+uri_for = register.tag(uri_for)
+# Alias.
+url_for = uri_for
 url_for = register.tag(url_for)
 
 
 def on_production_server():
+    """
+    Returns whether the code is running on a production server. See :py:func:`~agar.env.on_production_server` for
+    more information.
+    
+    :return: ``True`` if running on a production server, ``False`` otherwise.
+    """
     from agar.env import on_production_server
     return on_production_server
 on_production_server = register.tag(on_production_server)
