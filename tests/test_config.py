@@ -3,7 +3,7 @@ import unittest
 from agar.config import Config
 
 class SampleConfig(Config):
-    _namespace = 'test'
+    _prefix = 'test'
 
     STRING_CONFIG = 'defaultstring'
 
