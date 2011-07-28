@@ -1,15 +1,14 @@
 """
 The ``agar.url`` module contains classes to help working with application-wide URLs.
 """
-
-from google.appengine.api import lib_config
+from agar.config import Config
 
 from webapp2 import get_request
 
 from agar.env import on_production_server
 
 
-class UrlConfig(object):
+class UrlConfig(Config):
     """
     :py:class:`~agar.config.Config` settings for the ``agar.url`` library.
     Settings are under the ``agar_url`` namespace.
@@ -22,12 +21,14 @@ class UrlConfig(object):
 
     To override ``agar.url`` settings, define values in the ``appengine_config.py`` file in the root of your app.
     """
+    _namepace = 'agar_url'
+
     DEBUG = False
     PRODUCTION_DOMAIN = ''
     APPLICATIONS = ['main']
 
 #: The configuration object for ``agar.url`` settings.
-config = lib_config.register('agar_url', UrlConfig.__dict__)
+config = UrlConfig.get_config()
 
 def uri_for(name, *args, **kwargs):
     """

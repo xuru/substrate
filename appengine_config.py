@@ -1,3 +1,8 @@
+"""
+The configuration file used by :py:mod:`agar.config` implementations and other libraries using
+`google.appengine.api.lib_config`_ configuration. Configuration overrides go in this file.
+"""
+
 ##############################################################################
 # GOOGLE SETTINGS
 ##############################################################################
