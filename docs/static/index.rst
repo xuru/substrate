@@ -39,7 +39,7 @@ agar.config
 -----------
 .. automodule:: agar.config
 .. autoclass:: agar.config.Config
-    :members: _namespace, get_config
+    :members: _prefix, get_config, get_config_as_dict
 
 ----------
 agar.dates
