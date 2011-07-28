@@ -17,7 +17,7 @@ class AuthConfig(Config):
 
     To override ``agar.auth`` settings, define values in the ``appengine_config.py`` file in the root of your app.
     """
-    _namepace = 'agar_auth'
+    _namespace = 'agar_auth'
 
     def authenticate(request):
         """

@@ -6,6 +6,7 @@ import os
 
 from google.appengine.api import apiproxy_stub_map
 
+
 server_software = os.environ.get('SERVER_SOFTWARE', '')
 have_appserver = bool(apiproxy_stub_map.apiproxy.GetStub('datastore_v3'))
 
