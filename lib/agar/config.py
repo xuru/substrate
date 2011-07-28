@@ -10,7 +10,7 @@ class Config(object):
     Configurable constants base class for use with the excellent `google.appengine.api.lib_config`_
     configuration library.
 
-    To use this class, create a subclass that redefines :py:attr:`~agar.config.Config._namespace` to the appengine_config namespace you'd like the
+    To use this class, create a subclass that redefines :py:attr:`~agar.config.Config._prefix` to the appengine_config prefix you'd like the
     configs to appear under.  Then, simply create class-level properties/functions/default values for each constant.
 
     When instantiating an instance of this class, you can override the default values for that instance by passing
@@ -20,7 +20,7 @@ class Config(object):
     Example subclass::
 
         class SampleConfig(Config):
-            _namespace = 'test'
+            _prefix = 'test'
 
             STRING_CONFIG = 'defaultstring'
 
@@ -46,8 +46,8 @@ class Config(object):
         True
     """
 
-    #: The appengine_config namespace that the configs should appear under. Override in subclasses. The default is ``agar``.
-    _namespace = 'agar'
+    #: The appengine_config prefix that the configs should appear under. Override in subclasses. The default is ``agar``.
+    _prefix = 'agar'
 
     def __init__(self, **kwargs):
         self.defaults = {}
@@ -60,15 +60,39 @@ class Config(object):
             else:
                 raise AttributeError('Invalid config key: %s' % key)
 
+    def __iter__(self):
+        c = {}
+        config = self.get_config()
+        for key in config._defaults:
+            c[key] = config.__getattr__(key)
+        return c
+
     @classmethod
     def get_config(cls, **kwargs):
         """
-        Registers and returns the `google.appengine.api.lib_config`_ ``ConfigHandle`` for the class. Keyword arguments will override default
-        values defined in the :py:class:`~agar.config.Config` subclass (but, of course, will still defer to values in
-        the ``appengine_config.py`` file).
+        Registers and returns the `google.appengine.api.lib_config`_ ``ConfigHandle`` for the class. Keyword arguments
+        will override default values defined in the :py:class:`~agar.config.Config` subclass (but, of course,
+        will still defer to values in the ``appengine_config.py`` file).
 
         :param kwargs: Defaults to use for the config instance. Values in ``appengine_config.py`` will still override
             any values you specify.
         :return: The `google.appengine.api.lib_config`_ ``ConfigHandle`` for the class.
         """
-        return lib_config.register(cls._namespace, cls(**kwargs).defaults)
+        return lib_config.register(cls._prefix, cls(**kwargs).defaults)
+
+    @classmethod
+    def get_config_as_dict(cls, **kwargs):
+        """
+        Registers the `google.appengine.api.lib_config`_ ``ConfigHandle`` and returns its settings as a ``dict``.
+        Keyword arguments will override default values defined in the :py:class:`~agar.config.Config` subclass
+        (but, of course, will still defer to values in the ``appengine_config.py`` file).
+        
+        :param kwargs: Defaults to use for the config instance. Values in ``appengine_config.py`` will still override
+            any values you specify.
+        :return: A ``dict`` of the configurations.
+        """
+        c = {}
+        config = cls.get_config(**kwargs)
+        for key in config._defaults:
+            c[key] = config.__getattr__(key)
+        return c

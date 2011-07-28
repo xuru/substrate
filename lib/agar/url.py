@@ -21,7 +21,7 @@ class UrlConfig(Config):
 
     To override ``agar.url`` settings, define values in the ``appengine_config.py`` file in the root of your app.
     """
-    _namespace = 'agar_url'
+    _prefix = 'agar_url'
 
     DEBUG = False
     PRODUCTION_DOMAIN = ''

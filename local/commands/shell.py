@@ -1,3 +1,5 @@
+""" Run an interactive console after including AppEngine and project libraries. """
+
 from google.appengine.tools import os_compat
 
 import getopt

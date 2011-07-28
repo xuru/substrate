@@ -34,7 +34,7 @@ class JsonConfig(Config):
 
     To override ``agar.json`` settings, define values in the ``appengine_config.py`` file in the root of your app.
     """
-    _namespace = 'agar_json'
+    _prefix = 'agar_json'
 
     DEFAULT_PAGE_SIZE = 10
     MAX_PAGE_SIZE = 100

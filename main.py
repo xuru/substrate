@@ -6,6 +6,26 @@ from env_setup import setup
 setup()
 
 from agar.env import on_production_server
+from agar.config import Config
+
+
+class MainApplicationConfig(Config):
+    """
+    :py:class:`~agar.config.Config` settings for the ``main`` `webapp2.WSGIApplication`_.
+    Settings are under the ``main_application`` namespace.
+
+    The following settings (and defaults) are provided::
+
+        main_application_NOOP = None
+
+    To override ``main`` `webapp2.WSGIApplication`_ settings, define values in the ``appengine_config.py`` file in the
+    root of your app.
+    """
+    _prefix = 'main_application'
+
+    #: A no op.
+    NOOP = None
+
 
 from webapp2 import RequestHandler, WSGIApplication
 
@@ -26,7 +46,11 @@ class MainHandler(RequestHandler):
         self.response.out.write(html)
 
 def get_application():
-    return WSGIApplication([('/', MainHandler)], debug=not on_production_server)
+    return WSGIApplication(
+        [('/', MainHandler)],
+        config=MainApplicationConfig.get_config_as_dict(),
+        debug=not on_production_server
+    )
 application = get_application()
 
 def main():
