@@ -7,11 +7,21 @@ Welcome to Substrate's documentation!
 =====================================
 
 Contents:
-
+  Coming soon...
+  
 .. toctree::
    :maxdepth: 2
 
-   downloads
+=========
+env_setup
+=========
+.. automodule:: env_setup
+    :members: setup, setup_django
+
+================
+appengine_config
+================
+.. automodule:: appengine_config
 
 ====
 agar
@@ -145,6 +155,7 @@ Indices and tables
 .. _Key: http://code.google.com/appengine/docs/python/datastore/keyclass.html
 .. _key().name(): http://code.google.com/appengine/docs/python/datastore/keyclass.html#Key_name
 .. _Model: http://code.google.com/appengine/docs/python/datastore/modelclass.html
+.. _Query: http://code.google.com/appengine/docs/python/datastore/queryclass.html
 .. _Blobstore: http://code.google.com/appengine/docs/python/blobstore/
 .. _BlobInfo: http://code.google.com/appengine/docs/python/blobstore/blobinfoclass.html
 .. _BlobKey: http://code.google.com/appengine/docs/python/blobstore/blobkeyclass.html
@@ -164,6 +175,7 @@ Indices and tables
 .. _webapp2: http://code.google.com/p/webapp-improved/
 .. _webapp2.WSGIApplication: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.WSGIApplication
 .. _webapp2.Request: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.Request
+.. _webapp2.Response: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.Response
 .. _webapp2.RequestHandler: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.RequestHandler
 .. _webapp2.RequestHandler.abort: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.RequestHandler.abort
 .. _webapp2.uri_for: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.uri_for
