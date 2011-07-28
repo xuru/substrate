@@ -28,7 +28,7 @@ class ImageConfig(Config):
 
     To override ``agar.image`` settings, define values in the ``appengine_config.py`` file in the root of your app.
     """
-    _namespace = 'agar_image'
+    _prefix = 'agar_image'
 
     #: How long (in seconds) to cache the image serving URL (Default: ``60*60`` or one hour).
     SERVING_URL_TIMEOUT = 60*60
