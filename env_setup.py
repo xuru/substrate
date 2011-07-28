@@ -1,9 +1,12 @@
+"""
+Functions to initialize environment settings.
+"""
+
 def setup():
     """Adds <project_root>/lib to the python path.  
     
     Starts in current working directory and traverses up until app.yaml is found.
     Assumes app.yaml is in project root.
-
     """
     import os, sys
     start_path = os.path.abspath('.')
@@ -19,8 +22,16 @@ def setup():
     else:
         raise os.error('app.yaml not found for env_setup.setup().%sSearch started in: %s'% (os.linesep, start_path))
 
-def setup_django(settings='settings', version='1.2'):
+def setup_django(settings='settings', version='1.2', ):
+    """
+    Sets up the django libraries.
+
+    :param settings: The name of the settings file. Default: ``'settings'``.
+    :param version: The django version to set up. Default: ``'1.2'``.
+    """
     import os
     os.environ['DJANGO_SETTINGS_MODULE'] = settings
     from google.appengine.dist import use_library
     use_library('django', version)
+    from django.conf import settings
+    _ = settings.TEMPLATE_DIRS
