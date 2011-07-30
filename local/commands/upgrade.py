@@ -18,6 +18,12 @@ if __name__ == '__main__':
     substrate_home_dir = os.path.expanduser('~/.substrate')
     substrate_repo = os.path.expanduser('%s/substrate' % substrate_home_dir)
 
+    confirm = raw_input('This will delete and copy substrate files/dirs, continue?(y/n) ')
+
+    if confirm.upper() != 'Y':
+        print 'Upgrade canceled.'
+        import sys
+        sys.exit(1)
 
     if not os.path.isdir(substrate_home_dir):
         os.mkdir(os.path.expanduser(substrate_home_dir))
@@ -35,8 +41,10 @@ if __name__ == '__main__':
         item_path = '%s/%s' % (substrate_repo, item)
 
         if os.path.isfile(item_path):
+            print 'Replacing project file: %s' % item
             shutil.copy(item_path, current_dir)
         
         if os.path.isdir(item_path):
+            print 'Replacing project dir: %s' % item
             shutil.rmtree('%s/%s' % (current_dir, item))
             shutil.copytree(item_path, '%s/%s' % (current_dir, item))
