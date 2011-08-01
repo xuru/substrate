@@ -19,7 +19,7 @@ class MainApplicationConfig(Config):
         main_application_NOOP = None
 
     To override ``main`` `webapp2.WSGIApplication`_ settings, define values in the ``appengine_config.py`` file in the
-    root of your app.
+    root of your project.
     """
     _prefix = 'main_application'
 
@@ -48,7 +48,6 @@ class MainHandler(RequestHandler):
 def get_application():
     return WSGIApplication(
         [('/', MainHandler)],
-        config=MainApplicationConfig.get_config_as_dict(),
         debug=not on_production_server
     )
 application = get_application()

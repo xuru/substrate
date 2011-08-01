@@ -26,7 +26,7 @@ class ImageConfig(Config):
         agar_image_SERVING_URL_LOOKUP_TRIES = 3
         agar_image_VALID_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif']
 
-    To override ``agar.image`` settings, define values in the ``appengine_config.py`` file in the root of your app.
+    To override ``agar.image`` settings, define values in the ``appengine_config.py`` file in the root of your project.
     """
     _prefix = 'agar_image'
 
