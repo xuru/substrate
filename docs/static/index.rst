@@ -111,7 +111,12 @@ agar.models
 .. autoclass:: DuplicateKeyError
 .. autoclass:: ModelException
 
-
+-------------
+agar.sessions
+-------------
+.. automodule:: agar.sessions
+    :members:
+    
 -----------------
 agar.templatetags
 -----------------

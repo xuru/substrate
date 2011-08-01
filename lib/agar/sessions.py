@@ -1,5 +1,5 @@
 """
-The ``agar.handlers`` module contains classes to assist with creating `webapp2.RequestHandler`_s.
+The ``agar.sessions`` module contains classes to assist with creating `webapp2.RequestHandler`_ s.
 """
 
 from webapp2 import RequestHandler, cached_property
@@ -13,9 +13,9 @@ class Webapp2ExtrasSessionsConfig(Config):
     """
     :py:class:`~agar.config.Config` settings for the `webapp2_extras.sessions`_ library.
     Settings are under the ``webapp2_extras_sessions`` namespace.
-
+    
     The following settings (and defaults) are provided::
-
+    
         cookie_args = {
             'max_age': None,
             'domain': None,
@@ -31,13 +31,12 @@ class Webapp2ExtrasSessionsConfig(Config):
             'memcache': 'webapp2_extras.appengine.sessions_memcache.MemcacheSessionFactory',
             'securecookie': 'webapp2_extras.sessions.SecureCookieSessionFactory'
         }
-
+    
     To override `webapp2_extras.sessions`_ settings, define values in the ``appengine_config.py`` file in the root of
     your project.
     """
     _prefix = 'webapp2_extras_sessions'
 
-    #: `webapp2_extras.sessions`_ configuration.
     cookie_args = {
         'max_age': None,
         'domain': None,
@@ -58,7 +57,8 @@ class Webapp2ExtrasSessionsConfig(Config):
     def get_webapp2_config(cls, config=None, **kwargs):
         """
         Registers the `google.appengine.api.lib_config`_ ``ConfigHandle`` and returns its settings as a
-        `webapp2 configuration`_ ``dict`` with the `webapp2_extras.sessions`_ under the key ``webap2_extras.sessions``.
+        `webapp2 configuration`_ ``dict`` with the `webapp2_extras.sessions`_ configurations under the key
+        ``webap2_extras.sessions``.
         Keyword arguments will override default values defined in the :py:class:`~agar.config.Config` subclass
         (but, of course, will still defer to values in the ``appengine_config.py`` file).
 
@@ -74,7 +74,7 @@ class Webapp2ExtrasSessionsConfig(Config):
         config['webapp2_extras.sessions'] = cls.get_config_as_dict(**kwargs)
         return config
 
-#: The configuration object for ``agar.image`` settings.
+#: The `google.appengine.api.lib_config`_ ``ConfigHandle`` for ``webapp2_extras_sessions`` settings.
 config = Webapp2ExtrasSessionsConfig.get_config()
 
 class SessionRequestHandler(RequestHandler):
@@ -84,7 +84,7 @@ class SessionRequestHandler(RequestHandler):
     def dispatch(self):
         """
         Dispatches the request after grabbing the ``session_store`` and providing access to the current
-        `webapp2.Request`_'s session.
+        `webapp2.Request`_ 's session.
 
         This will first check if there's a handler_method defined in the matched route, and if not it'll use the
         method correspondent to the request method (``get()``, ``post()`` etc).
