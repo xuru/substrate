@@ -173,6 +173,9 @@ Indices and tables
 .. _django template tags: https://docs.djangoproject.com/en/dev/howto/custom-template-tags/
 
 .. _webapp2: http://code.google.com/p/webapp-improved/
+.. _webapp2 configuration: http://webapp-improved.appspot.com/guide/app.html#guide-app-config
+.. _webapp2 extras: http://webapp-improved.appspot.com/#api-reference-webapp2-extras
+.. _webapp2_extras.sessions: http://webapp-improved.appspot.com/api/webapp2_extras/sessions.html
 .. _webapp2.WSGIApplication: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.WSGIApplication
 .. _webapp2.Request: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.Request
 .. _webapp2.Response: http://webapp-improved.appspot.com/api/webapp2.html#webapp2.Response

@@ -19,7 +19,7 @@ class UrlConfig(Config):
         agar_url_PRODUCTION_DOMAIN = ''
         agar_url_APPLICATIONS = ['main']
 
-    To override ``agar.url`` settings, define values in the ``appengine_config.py`` file in the root of your app.
+    To override ``agar.url`` settings, define values in the ``appengine_config.py`` file in the root of your project.
     """
     _prefix = 'agar_url'
 

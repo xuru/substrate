@@ -15,7 +15,7 @@ class AuthConfig(Config):
         def agar_auth_authenticate(request):
             return None
 
-    To override ``agar.auth`` settings, define values in the ``appengine_config.py`` file in the root of your app.
+    To override ``agar.auth`` settings, define values in the ``appengine_config.py`` file in the root of your project.
     """
     _prefix = 'agar_auth'
 
