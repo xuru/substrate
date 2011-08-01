@@ -32,7 +32,7 @@ class JsonConfig(Config):
         agar_url_USE_DATA_ROOT_NODE = True
         agar_url_ADD_SUCCESS_FLAG = False
 
-    To override ``agar.json`` settings, define values in the ``appengine_config.py`` file in the root of your app.
+    To override ``agar.json`` settings, define values in the ``appengine_config.py`` file in the root of your project.
     """
     _prefix = 'agar_json'
 
