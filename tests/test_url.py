@@ -1,10 +1,7 @@
-from gaetestbed import WebTestCase
-from unittest2 import TestCase
-
 from agar.url import uri_for, url_for
+from agar.test import BaseTest
 
-
-class UriTest(WebTestCase, TestCase):
+class UriTest(BaseTest):
     def setUp(self):
         self.method = uri_for
         super(UriTest, self).setUp()
@@ -24,4 +21,4 @@ class UriTest(WebTestCase, TestCase):
 class UrlTest(UriTest):
     def setUp(self):
         self.method = url_for
-        super(WebTestCase, self).setUp()
+        super(UrlTest, self).setUp()
