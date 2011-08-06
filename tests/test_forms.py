@@ -1,15 +1,14 @@
 import urllib
 
-from gaetestbed import WebTestCase, DataStoreTestCase
-
 from unittest2 import TestCase
 
 from agar.url import uri_for
+from agar.test import BaseTest, WebTest
 
 from api import application
 
 
-class JsonWebTestCase(WebTestCase, TestCase):
+class JsonWebTestCase(BaseTest):
     def assertOK(self, response):
         self.assertValidResponse(response)
         super(JsonWebTestCase, self).assertOK(response)
@@ -52,7 +51,7 @@ class JsonWebTestCase(WebTestCase, TestCase):
         self.assertEqual(result['errors'], errors)
 
 
-class FormTest(JsonWebTestCase):
+class FormTest(JsonWebTestCase, WebTest):
     APPLICATION = application
 
     def setUp(self):

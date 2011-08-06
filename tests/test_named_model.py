@@ -2,17 +2,14 @@ from google.appengine.ext.db import BadKeyError
 from env_setup import setup
 setup()
 
-from gaetestbed import DataStoreTestCase
 from google.appengine.ext import db
 from unittest2 import TestCase
 
 from agar.models import NamedModel, DuplicateKeyError
+from agar.test import BaseTest
 
-class NamedModelTests(DataStoreTestCase, TestCase):
+class NamedModelTests(BaseTest):
 
-    def setUp(self):
-        super(DataStoreTestCase, self).setUp()
-        self.clear_datastore()
 
     def test_create_new_entity(self):
         class TestModel(NamedModel):
