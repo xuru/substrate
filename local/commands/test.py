@@ -3,6 +3,7 @@
 import logging
 import tempfile
 
+from google.appengine.api import yaml_errors
 from google.appengine.tools import dev_appserver
 from google.appengine.tools import dev_appserver_main
 
