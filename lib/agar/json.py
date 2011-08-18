@@ -102,15 +102,18 @@ class JsonRequestHandler(RequestHandler):
         :param exception: The uncaught exception.
         :param debug_mode: Whether we're running in debug mode.
         """
+        errors = None
         status_text = exception.message
         if isinstance(exception, HTTPException):
             code = exception.code
         elif isinstance(exception, ModelException):
             code = 400
-            status_text = "BAD_REQUEST: %s" % status_text
+            status_text = "BAD_REQUEST"
+            errors = exception.message
         else:
             code = 500
-            status_text = "INTERNAL_SERVER_ERROR: %s" % status_text
+            status_text = "INTERNAL_SERVER_ERROR"
+            errors = exception.message
             logging.error("API 500 ERROR: %s" % exception)
         if code == 401:
             status_text = 'UNAUTHORIZED'
@@ -120,7 +123,8 @@ class JsonRequestHandler(RequestHandler):
             status_text = 'NOT_FOUND'
         if code == 405:
             status_text = 'METHOD_NOT_ALLOWED'
-        self.json_response({}, status_code=code, status_text=status_text)
+        self.json_response({}, status_code=code, status_text=status_text, errors=errors)
+
 
 class MultiPageHandler(JsonRequestHandler):
     """
