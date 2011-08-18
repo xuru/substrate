@@ -16,7 +16,11 @@ def create_error_dict(error_list):
             text_errors[key] = value
     return text_errors
 
-def validate_service(form_class, log_errors=config.LOG_SERVICE_VALIDATION_ERRORS, log_values=config.LOG_SERVICE_VALIDATION_VALUES):
+def validate_service(form_class,
+    form_kwargs=None,
+    log_errors=config.LOG_SERVICE_VALIDATION_ERRORS,
+    log_values=config.LOG_SERVICE_VALIDATION_VALUES,
+):
     """
     A decorator that validates input matches with a `django form class`_.
 
@@ -27,6 +31,7 @@ def validate_service(form_class, log_errors=config.LOG_SERVICE_VALIDATION_ERRORS
     error dictionary describing the input errors.
 
     :param form_class: The `django form class`_ to use for input validation.
+    :param form_kwargs: The kwargs to be passed to the form initialization.
     :param log_errors: The logging level for form validation errors.  Defaults to `agar_django_LOG_SERVICE_VALIDATION_ERRORS` (off).
     :param log_values: `True` if the raw request parameter values should be logged for fields with validation errors. Defaults to 
         `agar_django_LOG_SERVICE_VALIDATION_VALUE`.
@@ -50,7 +55,8 @@ def validate_service(form_class, log_errors=config.LOG_SERVICE_VALIDATION_ERRORS
 
     def decorator(request_method):
         def wrapped(handler, *args, **kwargs):
-            form = form_class(handler.request.params)
+            form_init_kwargs = form_kwargs or {}
+            form = form_class(handler.request.params, **form_init_kwargs)
             if form.is_valid():
                 handler.request.form = form
                 request_method(handler, *args, **kwargs)
