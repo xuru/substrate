@@ -66,7 +66,7 @@ class JsonRequestHandler(RequestHandler):
         data['status_text'] = status_text
         data['timestamp'] = datetime.datetime.now(pytz.utc)
         if config.ADD_SUCCESS_FLAG:
-            if status_code in [200, 302]:
+            if status_code < 400:
                 data['sucess'] = True
             else:
                 data['sucess'] = False
@@ -106,6 +106,8 @@ class JsonRequestHandler(RequestHandler):
         status_text = exception.message
         if isinstance(exception, HTTPException):
             code = exception.code
+            status_text = "BAD_REQUEST"
+            errors = exception.message
         elif isinstance(exception, ModelException):
             code = 400
             status_text = "BAD_REQUEST"
