@@ -1,7 +1,9 @@
 """ Pulls the latest version of substrate to ~/.substrate and replaces the project files."""
 
+import argparse
 import os
 import shutil
+import yaml
 
 # TODO can we assume no user libs are in local/lib?
 # TODO add user_lib for these?
@@ -10,6 +12,11 @@ import shutil
 # TODO check to see if project to be upgraded has no uncommitted files
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--url', help='The url of the hg repository to use for upgrading substrate.')
+parser.add_argument('--reset', help='Uses the default repository for upgrades.')
+args = parser.parse_args()
+
 if __name__ == '__main__':
     upgrade_items = ['manage.py', 'env_setup.py', 'local/commands', 'local/lib', 'lib/agar']
 
@@ -17,6 +24,40 @@ if __name__ == '__main__':
     current_dir = os.path.abspath('.')
     substrate_home_dir = os.path.expanduser('~/.substrate')
     substrate_repo = os.path.expanduser('%s/substrate' % substrate_home_dir)
+    settings_yaml = '%s/%s' % (substrate_home_dir, 'settings.yaml')
+
+    if not os.path.isfile(settings_yaml):
+        _file = open(settings_yaml, 'w')
+        y = yaml.load('version: 1')
+        yaml.dump(y, stream=_file, default_flow_style=False)
+        _file.close()
+    
+    if args.url:
+        _file = open(settings_yaml, 'r+')
+        y = yaml.load(_file)
+        y['url'] = os.path.expanduser(args.url)
+        _file.seek(0)
+        _file.truncate()
+        yaml.dump(y, stream=_file, default_flow_style=False)
+        _file.close()
+
+    if args.reset:
+        _file = open(settings_yaml, 'r+')
+        y = yaml.load(_file)
+        if y.get('url'):
+            del y['url']
+            _file.seek(0)
+            _file.truncate()
+            yaml.dump(y, stream=_file, default_flow_style=False)
+        _file.close()
+    
+    settings = yaml.load(open(settings_yaml, 'r'))
+    if settings.get('url'):
+        upgrade_url = settings.get('url')
+    else:
+        upgrade_url = 'default url'
+    
+    print 'URL of merurial repo to be used for upgrade: %s' % upgrade_url
 
     confirm = raw_input('This will delete and copy substrate files/dirs, continue?(y/n) ')
 
@@ -31,7 +72,11 @@ if __name__ == '__main__':
 
     if os.path.isdir(substrate_repo):
         os.chdir(substrate_repo)
-        os.system('hg fetch')
+        if settings.get('url'):
+            os.system('hg pull %s' % settings.get('url'))
+        else:
+            os.system('hg pull')
+        os.system('hg up -C')
         os.chdir(current_dir)
     else:
         os.system('hg clone ssh://hg@bitbucket.org/garykoelling/substrate %s' % substrate_repo)
