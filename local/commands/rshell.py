@@ -29,7 +29,6 @@ except yaml_errors.EventListenerError, e:
 except dev_appserver.InvalidAppConfigError, e:
     logging.error('Application configuration file invalid:\n%s', e)
 
-optlist, args = getopt.getopt(sys.argv[1:], 'A:')
 
 def auth_func():
     return raw_input('Username:'), getpass.getpass('Password:')
@@ -50,6 +49,8 @@ def app_id():
     return config.application
 
 if __name__ == "__main__":
+    optlist, args = getopt.getopt(sys.argv[1:], 'A:')
+    
     remote_api_stub.ConfigureRemoteDatastore(None, path(), auth_func, "%s.appspot.com" % app_id())
     remote_api_stub.MaybeInvokeAuthentication()
 

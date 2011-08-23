@@ -102,6 +102,7 @@ def run_command(command, globals_, script_dir=SCRIPT_DIR):
     command_idx = sys.argv.index(arg)
     script_name = sys.argv[command_idx]
     management_args = sys.argv[:command_idx]
+
     command_args = sys.argv[command_idx:]
     sys.argv = command_args
     script_path = os.path.join('./%s/commands' % local_path, script_name + ".py")

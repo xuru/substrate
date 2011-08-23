@@ -14,13 +14,14 @@ from subprocess import call
 # TODO check to see if project to be upgraded has no uncommitted files
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--url', help='The hg repository url to use for upgrading substrate.')
-parser.add_argument('--reset-url', help='Uses the default repository for upgrades.')
-parser.add_argument('--local-only', help='Substrate env files only (manage.py, local/*, etc)')
-args = parser.parse_args()
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--url', help='The hg repository url to use for upgrading substrate.')
+    parser.add_argument('--reset-url', help='Uses the default repository for upgrades.')
+    parser.add_argument('--local-only', help='Substrate env files only (manage.py, local/*, etc)')
+    args = parser.parse_args()
+    
     agar = ['env_setup.py', 'lib/agar']
     upgrade_items = ['manage.py', 'local/commands', 'local/lib']
 
