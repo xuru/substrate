@@ -28,6 +28,9 @@ if __name__ == '__main__':
     substrate_repo = os.path.expanduser('%s/substrate' % substrate_home_dir)
     settings_yaml = '%s/%s' % (substrate_home_dir, 'settings.yaml')
 
+    if not os.path.isdir(substrate_home_dir):
+        os.mkdir(os.path.expanduser(substrate_home_dir))
+
     if not os.path.isfile(settings_yaml):
         _file = open(settings_yaml, 'w')
         y = yaml.load('version: 1')
@@ -67,10 +70,6 @@ if __name__ == '__main__':
         print 'Upgrade canceled.'
         import sys
         sys.exit(1)
-
-    if not os.path.isdir(substrate_home_dir):
-        os.mkdir(os.path.expanduser(substrate_home_dir))
-
 
     if os.path.isdir(substrate_repo):
         pull = ['hg', 'pull']
