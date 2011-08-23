@@ -16,7 +16,7 @@ from subprocess import call
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--url', help='The url of the hg repository to use for upgrading substrate.')
-parser.add_argument('--reset', help='Uses the default repository for upgrades.')
+parser.add_argument('--reset-url', help='Uses the default repository for upgrades.')
 args = parser.parse_args()
 
 if __name__ == '__main__':
