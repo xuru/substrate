@@ -21,11 +21,11 @@ parser.add_argument('--local-only', help='Substrate env files only (manage.py, l
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    upgrade_items = ['env_setup.py', 'lib/agar']
-    local_only = ['manage.py', 'local/commands', 'local/lib']
+    agar = ['env_setup.py', 'lib/agar']
+    upgrade_items = ['manage.py', 'local/commands', 'local/lib']
 
     if not args.local_only:
-        upgrade_items += local_only
+        upgrade_items += agar
 
     current_dir = os.path.abspath('.')
     substrate_home_dir = os.path.expanduser('~/.substrate')
