@@ -45,8 +45,8 @@ if __name__ == '__main__':
         _file.truncate()
         yaml.dump(y, stream=_file, default_flow_style=False)
         _file.close()
-
-    if args.reset:
+    
+    if args.reset_url:
         _file = open(settings_yaml, 'r+')
         y = yaml.load(_file)
         if y.get('url'):
