@@ -5,6 +5,8 @@ import os
 import shutil
 import yaml
 
+from subprocess import call
+
 # TODO can we assume no user libs are in local/lib?
 # TODO add user_lib for these?
 # TODO use hg tags for releases?  major/minor/dev(default) options?
@@ -71,15 +73,18 @@ if __name__ == '__main__':
 
 
     if os.path.isdir(substrate_repo):
-        os.chdir(substrate_repo)
+        pull = ['hg', 'pull']
+        up = ['hg', 'update', '-C']
+
         if settings.get('url'):
-            os.system('hg pull %s' % settings.get('url'))
-        else:
-            os.system('hg pull')
-        os.system('hg up -C')
-        os.chdir(current_dir)
+            pull.append(settings.get('url'))
+
+        call(pull, cwd=substrate_repo)
+        call(up, cwd=substrate_repo)
     else:
-        os.system('hg clone ssh://hg@bitbucket.org/garykoelling/substrate %s' % substrate_repo)
+        url = 'ssh://hg@bitbucket.org/garykoelling/substrate %s' % substrate_repo
+        clone = ['hg', 'clone', url]
+        call(clone, cwd=substrate_repo)
 
 
     for item in upgrade_items:
