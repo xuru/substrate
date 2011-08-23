@@ -1,8 +1,13 @@
 
-=================
+=======
 restler
-=================
+=======
 .. automodule:: restler
+
+^^^^^^^^^^^^^
+API Reference
+^^^^^^^^^^^^^
+
 .. autoclass:: restler.serializers.ModelStrategy
     :members:
 .. autoclass:: restler.serializers.SerializationStrategy
