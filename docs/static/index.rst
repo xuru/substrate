@@ -11,6 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   substrate
    env_setup
    appengine_config
    agar
