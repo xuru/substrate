@@ -64,7 +64,7 @@ if __name__ == '__main__':
     
     print 'URL of merurial repo to be used for upgrade: %s' % upgrade_url
 
-    confirm = raw_input('This will delete and copy substrate files/dirs, continue?(y/n) ')
+    confirm = raw_input('This will delete and copy substrate files/dirs, continue? (y/n) ')
 
     if confirm.upper() != 'Y':
         print 'Upgrade canceled.'
