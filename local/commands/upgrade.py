@@ -15,13 +15,17 @@ from subprocess import call
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--url', help='The url of the hg repository to use for upgrading substrate.')
+parser.add_argument('--url', help='The hg repository url to use for upgrading substrate.')
 parser.add_argument('--reset-url', help='Uses the default repository for upgrades.')
+parser.add_argument('--local-only', help='Substrate env files only (manage.py, local/*, etc)')
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    upgrade_items = ['manage.py', 'env_setup.py', 'local/commands', 'local/lib', 'lib/agar']
+    upgrade_items = ['env_setup.py', 'lib/agar']
+    local_only = ['manage.py', 'local/commands', 'local/lib']
 
+    if not args.local_only:
+        upgrade_items += local_only
 
     current_dir = os.path.abspath('.')
     substrate_home_dir = os.path.expanduser('~/.substrate')
