@@ -29,3 +29,12 @@ upgrade
 |     --local-only LOCAL_ONLY
 |                           Substrate env files only (manage.py, local/\*, etc)
 
+^^^^^^^^^^^^
+Dependencies
+^^^^^^^^^^^^
+
+The mercurial binary (hg) is available on the system path.
+
+On Mac OS X using the default easy_install to install mercurial will cause problems with the upgrade command.
+ * The current fix is to use the python version specific easy_install, i.e. easy_install-2.6 -U mercurial.
+
