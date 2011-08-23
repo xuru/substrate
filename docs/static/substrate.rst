@@ -1,6 +1,7 @@
 Substrate Commands
 ==================
 
+
 --------
 overview
 --------
@@ -12,6 +13,27 @@ overview
 |      shell     -  Run an interactive console after including AppEngine and project libraries. 
 |      test      -  Run tests using 'nose' for discovery 
 |      upgrade   -  Pulls the latest version of substrate to ~/.substrate and replaces the project files.
+
+
+--------
+discover
+--------
+|   >% python2.5 manage.py discover --help
+|   Usage: unit2 discover [options]
+|   
+|   Options:
+|     -h, --help            show this help message and exit
+|     -v, --verbose         Verbose output
+|     -f, --failfast        Stop on first fail or error
+|     -c, --catch           Catch ctrl-C and display results so far
+|     -b, --buffer          Buffer stdout and stderr during tests
+|     -s START, --start-directory=START
+|                           Directory to start discovery ('.' default)
+|     -p PATTERN, --pattern=PATTERN
+|                           Pattern to match tests ('test*.py' default)
+|     -t TOP, --top-level-directory=TOP
+|                           Top level directory of project (defaults to start
+|                           directory)
 
 
 ---------
