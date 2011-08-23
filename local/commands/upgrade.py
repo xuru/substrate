@@ -15,13 +15,17 @@ from subprocess import call
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--url', help='The url of the hg repository to use for upgrading substrate.')
+parser.add_argument('--url', help='The hg repository url to use for upgrading substrate.')
 parser.add_argument('--reset-url', help='Uses the default repository for upgrades.')
+parser.add_argument('--local-only', help='Substrate env files only (manage.py, local/*, etc)')
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    upgrade_items = ['manage.py', 'env_setup.py', 'local/commands', 'local/lib', 'lib/agar']
+    agar = ['env_setup.py', 'lib/agar']
+    upgrade_items = ['manage.py', 'local/commands', 'local/lib']
 
+    if not args.local_only:
+        upgrade_items += agar
 
     current_dir = os.path.abspath('.')
     substrate_home_dir = os.path.expanduser('~/.substrate')
@@ -64,9 +68,9 @@ if __name__ == '__main__':
     
     print 'URL of merurial repo to be used for upgrade: %s' % upgrade_url
 
-    confirm = raw_input('This will delete and copy substrate files/dirs, continue? (y/n) ')
+    confirm = raw_input('This will delete and copy substrate files/dirs, continue? (y/N) ')
 
-    if confirm.upper() != 'Y':
+    if not confirm or confirm.upper() != 'Y':
         print 'Upgrade canceled.'
         import sys
         sys.exit(1)
