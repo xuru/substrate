@@ -83,7 +83,7 @@ if __name__ == '__main__':
     else:
         url = 'ssh://hg@bitbucket.org/garykoelling/substrate %s' % substrate_repo
         clone = ['hg', 'clone', url]
-        call(clone, cwd=substrate_repo)
+        call(clone, cwd=substrate_home_dir)
 
 
     for item in upgrade_items:
