@@ -1,24 +1,24 @@
 
 TODO
 ====
+ * add copyright file headers
  * gae sdk version check
  * look at TestBase setup for service stubs
- * upgrade script
  * add runserver command - not sure this is needed, use dev_appserver
  * add --datastore-path to manage.py (before command)
- * consistent way to fix up sys.args to pass to commands
  * verify some edge case serialization AE properties
  * add rate limiting
  * add oauth server support
  * add gaema authentication
- * add copyright file headers
- * add tests for transient model serialization
  * add tests for session middleware
- * figure out a way to define one or more int,prod servers, allow for non standard naming - see agar.env
+ * figure out a way to define one or more int, prod servers, allow for non standard naming - see agar.env
  * create starter templates? Starter handlers for "quickstart" command - html, api, etc.
 
 DONE
 ====
+ * consistent way to fix up sys.args to pass to commands
+ * upgrade script
+ * add tests for transient model serialization
  * Changed python version check for 2.5 from an error to warning.
  * doc for parameter validating RequestForm
  * tests for parameter validating RequestForm
