@@ -9,7 +9,6 @@ TODO
  * verify some edge case serialization AE properties
  * add rate limiting
  * add oauth server support
- * add gaema authentication
  * add tests for session middleware
  * figure out a way to define one or more int, prod servers, allow for non standard naming - see agar.env
  * create starter templates? Starter handlers for "quickstart" command - html, api, etc.
