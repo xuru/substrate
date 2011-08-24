@@ -86,7 +86,7 @@ if __name__ == '__main__':
         call(pull, cwd=substrate_repo)
         call(up, cwd=substrate_repo)
     else:
-        url = 'ssh://hg@bitbucket.org/garykoelling/substrate'
+        url = 'ssh://hg@bitbucket.org/gumptioncom/substrate'
         clone = ['hg', 'clone', url, substrate_repo]
         call(clone, cwd=substrate_home_dir)
 
