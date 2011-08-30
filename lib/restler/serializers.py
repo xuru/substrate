@@ -288,7 +288,7 @@ def encoder_builder(type_, strategy=None, style=None, context={}):
         if isinstance(obj, db.IM):
             return "%s %s" % (obj.protocol, obj.address)
         if isinstance(obj, users.User):
-            return user_id() or obj.email()
+            return obj.user_id() or obj.email()
         if isinstance(obj, blobstore.BlobInfo):
             return str(obj.key()) # TODO is this correct?
         ret = {} # What we're most likely going to return (populated, of course)
