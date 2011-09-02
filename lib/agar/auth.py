@@ -12,6 +12,7 @@ class AuthConfig(Config):
 
     The following settings (and defaults) are provided::
 
+        agar_auth_AUTHENTICATION_PROPERTY = 'user'
         def agar_auth_authenticate(request):
             return None
 
@@ -19,6 +20,9 @@ class AuthConfig(Config):
     """
     _prefix = 'agar_auth'
 
+    #: The property name under which to place the authentication object on the request.
+    AUTHENTICATION_PROPERTY = 'user'
+    
     def authenticate(request):
         """
         The authenticate function. It takes a single `webapp2.Request`_ argument, and returns a non-``None`` value if
@@ -69,9 +73,9 @@ def authentication_required(authenticate=None):
         authenticate = config.authenticate
     def decorator(request_method):
         def wrapped(self, *args, **kwargs):
-            account = authenticate(self.request)
-            if account is not None:
-                self.request.account = account
+            authentication = authenticate(self.request)
+            if authentication is not None:
+                setattr(self.request, config.AUTHENTICATION_PROPERTY, authentication)
                 request_method(self, *args, **kwargs)
             else:
                 self.abort(403)
