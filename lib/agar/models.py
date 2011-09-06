@@ -27,8 +27,8 @@ class NamedModel(db.Model):
 
         :return: A unique string to be used as an identifier.
         """
-        import uuid
-        return uuid.uuid4().hex
+        from agar.keygen import gen_short_key 
+        return gen_short_key()
 
     @classmethod
     def create_new_entity(cls, **kwargs):
