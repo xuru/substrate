@@ -11,7 +11,7 @@ for root, dirs, files in os.walk("."):
             if f.endswith(".doctest"):
                 DOCTEST_FILES.append(f)
 
-DOCTEST_FILES = ["../../README.txt", "../../lib/restler/__init__.py"] + DOCTEST_FILES
+DOCTEST_FILES = ["../../lib/restler/__init__.py"] + DOCTEST_FILES
 print "Running ", DOCTEST_FILES
 
 #DOCTEST_FILES = []
