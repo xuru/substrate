@@ -23,7 +23,7 @@ else:
         appid = None
 
 #: ``True`` if running in the dev server, ``False`` otherwise.
-on_development_server = have_appserver and server_software.lower().startswith('devel')
+on_development_server = bool(have_appserver and (not server_software or server_software.lower().startswith('devel')))
 #: ``True`` if running on a google server, ``False`` otherwise.
 on_server = bool(have_appserver and appid and server_software and not on_development_server)
 #: ``True`` if running on a google server and the application ID ends in ``-int``, ``False`` otherwise.
