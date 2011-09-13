@@ -16,7 +16,7 @@ def main():
     cmd = args[0]
     directory = args[1]
 
-    command = getattr(substrate, cmd)
+    command = getattr(substrate, cmd, None)
 
     if command:
         command(directory)
