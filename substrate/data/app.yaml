@@ -9,8 +9,6 @@ builtins:
 handlers:
 - url: /
   script: main.py
-- url: /api/.*
-  script: api.py
 
 - url: /lib_config
   script: $$PYTHON_LIB/google/appengine/api/lib_config.py
