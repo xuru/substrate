@@ -7,6 +7,9 @@ script, testing framework with unittest2 and gaetestbed, a set of
 common helper functions (agar), and a serialization library
 (restler). It also comes with webapp2 and pytz.
 
+Substrate is based on best practices for Google App Engine learned in
+developing several real-world applications with many users.
+
 For more documentation see: http://substrate-docs.appspot.com
 
 Installation
@@ -41,7 +44,8 @@ Upgrading an existing application
 ---------------------------
 
 If you have an existing application, you can upgrade it to the latest
-substrate code with:
+substrate code by updating the substrate package (see "Installation",
+above) and then running:
 
    substrate new app_name
 
@@ -52,3 +56,4 @@ This command will NOT touch any of your application's files. Only
 substrate files in the local/ and lib/ directories will be
 overwritten. You can add new files to those directories, but do not
 edit existing files.
+
