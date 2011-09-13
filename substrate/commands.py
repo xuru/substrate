@@ -1,6 +1,7 @@
 import os
 from string import Template
 from distutils.dir_util import copy_tree
+from shutil import copy2
 
 def new(directory):
     target_dir = os.path.join(os.getcwd(), directory)
@@ -20,12 +21,11 @@ def new(directory):
     file = open(os.path.join(target_dir, "app.yaml"), "w")
     file.write(result)
     file.close()
-    
-    update(directory)
 
 def update(directory):
     target_dir = os.path.join(os.getcwd(), directory)
     package_dir, this_filename = os.path.split(__file__)
+    data_dir = os.path.join(package_dir, "data")
 
-    # TODO: figure out where to put local and lib
-
+    copy_tree(os.path.join(data_dir, "local"), os.path.join(target_dir, "local"))
+    copy_tree(os.path.join(data_dir, "lib"), os.path.join(target_dir, "lib"))
