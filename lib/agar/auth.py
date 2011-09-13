@@ -59,9 +59,9 @@ def https_authenticate(request):
 def authentication_required(authenticate=None):
     """
     A decorator to authenticate a `RequestHandler <http://webapp-improved.appspot.com/api.html#webapp2.RequestHandler>`_.
-    If the authenticate function returns a non-``None`` value, it will assign it to the request ``account`` attribute,
-    that is passed to the decorated handler. If the authenticate function returns ``None``, it will call the `webapp2.RequestHandler.abort`_
-    method with a status of ``403``.
+    If the authenticate function returns a non-``None`` value, it will assign it to the request ``user`` attribute
+    (or any re-configured name), that is passed to the decorated handler. If the authenticate function returns ``None``,
+    it will call the `webapp2.RequestHandler.abort`_ method with a status of ``403``.
 
     :param authenticate: The authenticate function to use to authenticate a request. The function should take a single
         `webapp2.Request`_ argument, and return a non-``None`` value if the request can be authenticated. If the request
