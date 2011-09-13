@@ -32,18 +32,7 @@ from webapp2 import RequestHandler, WSGIApplication
 
 class MainHandler(RequestHandler):
     def get(self):
-        html = """
-        <html>
-            <body>
-              <ul>
-                <li><a href="/lib_config">lib_config settings</a></li>
-                <li><a href="/api/v1/model1">/api/v1/model1</a></li>
-                <li><a href="/api/v2/model1">/api/v2/model1</a></li>
-              </ul>
-            </body>
-        </html>
-        """
-        self.response.out.write(html)
+        self.response.out.write("hello world")
 
 def get_application():
     return WSGIApplication(
