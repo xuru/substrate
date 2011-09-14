@@ -1,6 +1,7 @@
 """
 The ``agar.auth`` module contains classes, functions, and decorators to help secure a `webapp2.Requesthandler`_.
 """
+from functools import wraps
 
 from agar.config import Config
 
@@ -72,6 +73,7 @@ def authentication_required(authenticate=None):
     if authenticate is None:
         authenticate = config.authenticate
     def decorator(request_method):
+        @wraps(request_method)
         def wrapped(self, *args, **kwargs):
             authentication = authenticate(self.request)
             if authentication is not None:
