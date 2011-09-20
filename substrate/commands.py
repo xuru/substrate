@@ -3,6 +3,8 @@ from string import Template
 from distutils.dir_util import copy_tree
 from shutil import copy2
 
+from substrate import sanitize_app_id
+
 def new(directory):
     target_dir = os.path.join(os.getcwd(), directory)
 
@@ -15,7 +17,7 @@ def new(directory):
     copy_tree(data_dir, target_dir)
 
     app_yaml = open(os.path.join(target_dir, "app.yaml")).read()
-    app_yaml = app_yaml.replace("YOUR_APP_ID", os.path.basename(os.path.abspath(target_dir)))
+    app_yaml = app_yaml.replace("YOUR_APP_ID", sanitize_app_id(os.path.basename(os.path.abspath(target_dir))))
 
     file = open(os.path.join(target_dir, "app.yaml"), "w")
     file.write(app_yaml)
