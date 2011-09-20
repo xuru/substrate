@@ -3,6 +3,7 @@ The ``agar.django.decorators`` module contains functions and decorators to help 
 to be used to wrap :py:class:`agar.json.JsonRequestHandler` methods that accept input.
 """
 import logging
+from functools import wraps
 
 from agar.auth import config as agar_auth_config
 from agar.django import config
@@ -55,6 +56,7 @@ def validate_service(form_class,
             })
 
     def decorator(request_method):
+        @wraps(request_method)
         def wrapped(handler, *args, **kwargs):
             if pass_handler:
                 form = form_class(handler.request.params, handler=handler)

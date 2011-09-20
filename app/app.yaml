@@ -1,4 +1,4 @@
-application: $app_name
+application: YOUR_APP_ID
 version: 1
 runtime: python
 api_version: 1
@@ -11,7 +11,7 @@ handlers:
   script: main.py
 
 - url: /lib_config
-  script: $$PYTHON_LIB/google/appengine/api/lib_config.py
+  script: $PYTHON_LIB/google/appengine/api/lib_config.py
 
 skip_files:
 - ^local/.*

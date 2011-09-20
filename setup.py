@@ -1,5 +1,6 @@
 import os
 from setuptools import setup, find_packages
+from distutils.dir_util import copy_tree
 
 def package_data():
     """
@@ -21,6 +22,17 @@ def package_data():
     
     return data
 
+
+def build():
+    # remove all files in data/
+    # copy files from app/ to data/
+    # make app.yaml a template file
+    root_dir, this_filename = os.path.split(__file__)
+    app_dir = os.path.join(root_dir, "app")
+    data_dir = os.path.join(root_dir, "substrate", "data")
+    copy_tree(app_dir, data_dir)
+
+build()
 setup(name='substrate',
       version='0.1',
       description='A set of libraries and a base application for making Google App Engine development easier.',

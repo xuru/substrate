@@ -15,11 +15,10 @@ def new(directory):
     copy_tree(data_dir, target_dir)
 
     app_yaml = open(os.path.join(target_dir, "app.yaml")).read()
-    template = Template(app_yaml)
-    result = template.substitute(app_name=os.path.basename(os.path.abspath(target_dir)))
+    app_yaml = app_yaml.replace("YOUR_APP_ID", os.path.basename(os.path.abspath(target_dir)))
 
     file = open(os.path.join(target_dir, "app.yaml"), "w")
-    file.write(result)
+    file.write(app_yaml)
     file.close()
 
 def update(directory):
