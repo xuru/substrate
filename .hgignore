@@ -22,3 +22,4 @@ docs/static/_build/*
 build/*
 *.egg-info
 substrate/data/*
+dist/*
