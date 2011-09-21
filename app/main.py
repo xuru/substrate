@@ -32,7 +32,7 @@ from webapp2 import RequestHandler, WSGIApplication
 
 class MainHandler(RequestHandler):
     def get(self):
-        self.response.out.write("hello world")
+        self.response.out.write("hello world. value of NOOP: %s" % MainApplicationConfig.get_config().NOOP)
 
 def get_application():
     return WSGIApplication(
