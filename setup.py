@@ -24,9 +24,6 @@ def package_data():
 
 
 def build():
-    # remove all files in data/
-    # copy files from app/ to data/
-    # make app.yaml a template file
     root_dir, this_filename = os.path.split(__file__)
     app_dir = os.path.join(root_dir, "app")
     data_dir = os.path.join(root_dir, "substrate", "data")
@@ -35,12 +32,22 @@ def build():
 build()
 setup(name='substrate',
       version='0.1',
-      description='A set of libraries and a base application for making Google App Engine development easier.',
+      description='A base application with a collection of libraries for making Google App Engine development easier.',
+      long_description=open("README.txt").read(),
+      license="MIT",
       author='Thomas Bombach, Jr.',
       author_email='thomasbohmbach@gmail.com',
       url='http://substrate-docs.appspot.com/',
       zip_safe=False,
       packages=find_packages(exclude=['tests', 'tests.*']),
       package_data={'': package_data()},
-      scripts=['bin/substrate']
+      scripts=['bin/substrate'],
+      classifiers=[
+          "Development Status :: 3 - Alpha",
+          "Environment :: Web Environment",
+          "Intended Audience :: Developers",
+          "Topic :: Internet :: WWW/HTTP",
+          "Topic :: Utilities",
+          "License :: OSI Approved :: MIT License"
+          ]
       )
