@@ -11,7 +11,7 @@ from google.appengine.tools import dev_appserver_main
 
 
 __unittest = True
-from contrib.unittest2.main import main_
+from unittest2.main import main_
 
 
 config = matcher = None
@@ -43,5 +43,5 @@ os.environ['APPLICATION_ID'] = 'dev~%s' % app_identity.get_application_id()
 sys.path.insert(0, os.path.abspath(os.path.curdir))
 
 if __name__ == "__main__":
-    sys.argv = ['unit2'] + sys.argv
+    sys.argv = ['unit2', 'discover', '--start-directory', 'tests']
     main_()
