@@ -81,3 +81,9 @@ It has the following commands:
 
 ``test``
   run your application's tests
+
+License
+-------
+
+Substrate is mostly a packaging of other libraries, which have their
+own licenses. Original code in Substrate is under the MIT license.
