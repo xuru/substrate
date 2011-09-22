@@ -34,12 +34,8 @@ class MainHandler(RequestHandler):
     def get(self):
         self.response.out.write("hello world. value of NOOP: %s" % MainApplicationConfig.get_config().NOOP)
 
-def get_application():
-    return WSGIApplication(
-        [('/', MainHandler)],
-        debug=not on_production_server
-    )
-application = get_application()
+application = WSGIApplication([('/', MainHandler)],
+                              debug=not on_production_server)
 
 def main():
     from google.appengine.ext.webapp import util
