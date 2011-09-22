@@ -82,6 +82,15 @@ It has the following commands:
 ``test``
   run your application's tests
 
+Testing
+-------
+
+As noted above, ``manage.py`` has a ``test`` command. This runs all
+the tests in the ``tests`` directory of your application using
+unittest2. Included with the Substrate base app is a simple "hello
+world" test that you can run to verify your installation. It is
+located in ``tests/handlers/test_main.py``.
+  
 License
 -------
 
