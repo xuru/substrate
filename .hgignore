@@ -19,3 +19,7 @@ _generated_media/*
 htmlcov/*
 .idea/*
 docs/static/_build/*
+build/*
+*.egg-info
+substrate/data/*
+dist/*
