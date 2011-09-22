@@ -1,39 +1,19 @@
 #!/usr/bin/env python
-#
-# Copyright 2007 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-"""Convenience wrapper for starting an appengine tool."""
-
+""" Substrate management interface. Fixes up appengine and substrate paths and runs substrate commands."""
 
 import os
 import sys
 
 # Only works for UNIXy style OSes.
 # Find App Engine SDK
-SDKPATH_CFG = "sdkpath.cfg"
 DIR_PATH = ""
-if os.path.isfile(SDKPATH_CFG):
-    DIR_PATH = open(SDKPATH_CFG).read()
-else:
-    sys.stderr.write('Scanning for App Engine SDK...\n')
-    for d in os.environ["PATH"].split(":"):
-        dev_appserver = os.path.join(d, "dev_appserver.py")
-        if os.path.isfile(dev_appserver):
-            DIR_PATH = os.path.abspath(os.path.dirname(os.path.realpath(dev_appserver)))
-            open(SDKPATH_CFG, "w").write(DIR_PATH)
-            sys.stderr.write('Found SDK Path: %s\n' % DIR_PATH)
+for d in os.environ["PATH"].split(":"):
+    dev_appserver_path = os.path.join(d, "dev_appserver.py")
+    if os.path.isfile(dev_appserver_path):
+        DIR_PATH = os.path.abspath(os.path.dirname(os.path.realpath(dev_appserver_path)))
+        sys.path.append(DIR_PATH)
+        import dev_appserver
+        sys.path.pop()
 
 
 if not hasattr(sys, 'version_info'):
@@ -46,8 +26,6 @@ if version_tuple != (2, 5):
     sys.stderr.write('Warning: Python %d.%d is not supported. Please use '
                      'version 2.5.\n' % version_tuple)
 
-#DIR_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-
 if not DIR_PATH:
     sys.stderr.write("Could not find SDK path.  Make sure dev_appserver.py is in your PATH")
     sys.exit(1)
@@ -56,26 +34,15 @@ if not DIR_PATH:
 local_path = 'local'
 SCRIPT_DIR = os.path.join(DIR_PATH, 'google', 'appengine', 'tools')
 
-EXTRA_PATHS = [
-    DIR_PATH,
-    os.path.join(DIR_PATH, 'lib', 'antlr3'),
-    os.path.join(DIR_PATH, 'lib', 'django_0_96'),
-    os.path.join(DIR_PATH, 'lib', 'fancy_urllib'),
-    os.path.join(DIR_PATH, 'lib', 'ipaddr'),
-    os.path.join(DIR_PATH, 'lib', 'protorpc'), 
-    os.path.join(DIR_PATH, 'lib', 'webob'),
-    os.path.join(DIR_PATH, 'lib', 'yaml', 'lib'),
-    os.path.join(DIR_PATH, 'lib', 'simplejson'),
-    os.path.join(DIR_PATH, 'lib', 'graphy'),
-    os.path.join(DIR_PATH, 'lib', 'whoosh'),
+EXTRA_PATHS = dev_appserver.EXTRA_PATHS[:]
+SUBSTRATE_PATHS = [
     os.path.join(".", 'local', 'lib'),
     os.path.join(".", 'lib'),
 ]
 
 def fix_sys_path():
     """Fix the sys.path to include our extra paths."""
-    sys.path = EXTRA_PATHS + sys.path
-
+    sys.path = EXTRA_PATHS + SUBSTRATE_PATHS + sys.path
 
 def print_subcommand_overviews(commands):
     import logging
