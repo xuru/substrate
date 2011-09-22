@@ -11,7 +11,7 @@ setup()
 ##############################################################################
 
 # Root level WSGI application modules that 'agar.url.uri_for()' will search
-agar_url_APPLICATIONS = ['main', 'api']
+agar_url_APPLICATIONS = ['main']
 
 # Configure the service validation error logging level for the validate_service decorator
 # import logging
