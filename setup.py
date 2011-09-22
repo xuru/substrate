@@ -1,6 +1,6 @@
 import os
 from setuptools import setup, find_packages
-from distutils.dir_util import copy_tree
+from shutil import copytree, rmtree
 
 def package_data():
     """
@@ -27,7 +27,11 @@ def build():
     root_dir, this_filename = os.path.split(__file__)
     app_dir = os.path.join(root_dir, "app")
     data_dir = os.path.join(root_dir, "substrate", "data")
-    copy_tree(app_dir, data_dir)
+
+    if os.path.exists(data_dir):
+        rmtree(data_dir)
+    
+    copytree(app_dir, data_dir)
 
 build()
 setup(name='substrate',
