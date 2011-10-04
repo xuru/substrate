@@ -35,7 +35,7 @@ def build():
 
 build()
 setup(name='substrate',
-      version='0.1',
+      version='0.2',
       description='A base application with a collection of libraries for making Google App Engine development easier.',
       long_description=open("README.txt").read(),
       license="MIT",
