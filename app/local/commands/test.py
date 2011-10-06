@@ -43,5 +43,7 @@ os.environ['APPLICATION_ID'] = 'dev~%s' % app_identity.get_application_id()
 sys.path.insert(0, os.path.abspath(os.path.curdir))
 
 if __name__ == "__main__":
-    sys.argv = ['unit2', 'discover', '--start-directory', 'tests']
+    argv = ['unit2', 'discover', '--start-directory', 'tests']
+    argv.extend(sys.argv[1:])
+    sys.argv = argv
     main_()
