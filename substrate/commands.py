@@ -1,4 +1,5 @@
 import os
+import stat
 from string import Template
 from distutils.dir_util import copy_tree
 from shutil import copy2
@@ -22,6 +23,10 @@ def new(directory):
     file = open(os.path.join(target_dir, "app.yaml"), "w")
     file.write(app_yaml)
     file.close()
+
+    # permissions don't get saved in zip files. Make manage.py executable.
+    # chmod 755 manage.py
+    os.chmod(os.path.join(target_dir, "manage.py"), stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
 
 def update(directory):
     target_dir = os.path.join(os.getcwd(), directory)
