@@ -1,13 +1,13 @@
-substrate
+Substrate
 =========
 
-Substrate is a base application and set of libraries for making Google
-App Engine development easier. It includes a base app with management
+Substrate is a base application and set of libraries for making
+`Google App Engine python`_ development easier. It includes a base app with management
 script, testing already set up, a set of common helper functions
-(agar), and a serialization library (restler). It also comes with
-common libraries like webapp2 and pytz ready to go.
+(`agar`_), and a serialization library (`restler`_). It also comes with
+common libraries like `webapp2`_ and `pytz`_ ready to go.
 
-Substrate is based on best practices for Google App Engine learned in
+Substrate is based on best practices for `Google App Engine python`_ learned in
 developing several real-world applications with many users.
 
 We are tired of seeing App Engine frameworks languish unsupported. For
@@ -53,9 +53,9 @@ If you have an existing application, you can upgrade it to the latest
 substrate code by updating the substrate package (see "Installation",
 above) and then running::
 
-   $ substrate new app_name
+   $ substrate update app_directory
 
-Where app_name is the name of the directory. (For example, you could
+Where ``app_directory`` is the name of the application directory to upgrade. (For example, you could
 run this in the current directory with .)
 
 This command will NOT touch any of your application's files. Only
@@ -72,7 +72,7 @@ Management Console
 
   $ ./manage.py shell
 
-Runs a shell against your local application (requires iPython)
+Runs a shell against your local application (requires `iPython`_)
 
 ::
 
@@ -102,4 +102,19 @@ License
 -------
 
 Substrate is mostly a packaging of other libraries, which have their
-own licenses. Original code in Substrate is under the MIT license.
+own licenses. Original code in Substrate is under the `MIT license`_.
+
+.. Links
+
+.. _agar: http://packages.python.org/substrate/agar.html
+.. _restler: http://packages.python.org/substrate/restler.html
+
+.. _Google App Engine python: http://code.google.com/appengine/docs/python/overview.html
+
+.. _webapp2: http://code.google.com/p/webapp-improved/
+
+.. _pytz: http://pytz.sourceforge.net/
+
+.. _iPython: http://ipython.org/
+
+.. _MIT License: http://www.opensource.org/licenses/mit-license.php
