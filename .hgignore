@@ -18,8 +18,9 @@ _generated_media/*
 .coverage
 htmlcov/*
 .idea/*
-docs/static/_build/*
+docs/_build/*
 build/*
 *.egg-info
 substrate/data/*
 dist/*
+.hgcheck/*
