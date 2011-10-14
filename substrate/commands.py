@@ -18,7 +18,7 @@ def new(directory):
     copy_tree(data_dir, target_dir)
 
     app_yaml = open(os.path.join(target_dir, "app.yaml")).read()
-    app_yaml = app_yaml.replace("YOUR_APP_ID", sanitize_app_id(os.path.basename(os.path.abspath(target_dir))))
+    app_yaml = app_yaml.replace("your-app-id", sanitize_app_id(os.path.basename(os.path.abspath(target_dir))))
 
     file = open(os.path.join(target_dir, "app.yaml"), "w")
     file.write(app_yaml)
