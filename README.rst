@@ -10,33 +10,33 @@ common libraries like webapp2 and pytz ready to go.
 Substrate is based on best practices for Google App Engine learned in
 developing several real-world applications with many users.
 
-We are tired of seeing App Engine frameworks langish unsupported. For
+We are tired of seeing App Engine frameworks languish unsupported. For
 that reason, Substrate is **NOT** a framework. It is a base
 application with a set of libraries and helpers. No more, no less.
 
-For more documentation see: http://substrate-docs.appspot.com
+For more documentation see: http://packages.python.org/substrate/
 
 Installation
 ------------
 
-To install substrate, run:
+To install substrate, run::
 
-   easy_install substrate
+   $ easy_install substrate
 
-or
+or::
 
-   pip install substrate
+   $ pip install substrate
 
-or download the package, and run:
+or download the package, and run::
 
-   python setup.py install
+   $ python setup.py install
 
 Creating a new application
 --------------------------
 
-To create a new application, run:
+To create a new application, run::
 
-   substrate new app_name
+   $ substrate new app_name
 
 This will create a new directory "app_name" and unpack the substrate
 application libraries in it. The application name in app.yaml will be
@@ -51,9 +51,9 @@ Upgrading an existing application
 
 If you have an existing application, you can upgrade it to the latest
 substrate code by updating the substrate package (see "Installation",
-above) and then running:
+above) and then running::
 
-   substrate new app_name
+   $ substrate new app_name
 
 Where app_name is the name of the directory. (For example, you could
 run this in the current directory with .)
@@ -90,7 +90,7 @@ the tests in the ``tests`` directory of your application using
 unittest2. Included with the Substrate base app is a simple "hello
 world" test that you can run to verify your installation. It is
 located in ``tests/handlers/test_main.py``.
-  
+
 License
 -------
 
