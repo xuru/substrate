@@ -70,18 +70,14 @@ Management Console
 
 It has the following commands:
 
-  ``shell``
-    Run a shell against your local application (requires iPython)
+  ``shell``       Run a shell against your local application (requires iPython)
 
-  ``rshell``
-    Run a remote shell against your application on Google App
-    Engine. To specify a different application ID than what is in your
-    ``app.yaml``, use ``-A``. If your remote API endpoint is not at
-    the default location, you can pass the path as an argument.
+  ``rshell``      Run a remote shell against your application on Google App
+                  Engine. To specify a different application ID than what is in your
+                  ``app.yaml``, use ``-A``. If your remote API endpoint is not at
+                  the default location, you can pass the path as an argument.
 
-  ``test``
-    Run your application's tests
-
+  ``test``        Run your application's tests
 
 Testing
 -------
