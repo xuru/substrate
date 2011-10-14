@@ -66,18 +66,28 @@ edit existing files.
 Management Console
 ------------------
 
-``manage.py`` is a management console for your app.
+``manage.py`` is a management console for your app. It can invoke several commands.
 
-It has the following commands:
+::
 
-  ``shell``       Run a shell against your local application (requires iPython)
+  $ ./manage.py shell
 
-  ``rshell``      Run a remote shell against your application on Google App
-                  Engine. To specify a different application ID than what is in your
-                  ``app.yaml``, use ``-A``. If your remote API endpoint is not at
-                  the default location, you can pass the path as an argument.
+Runs a shell against your local application (requires iPython)
 
-  ``test``        Run your application's tests
+::
+
+  $ ./manage.py rshell
+
+Runs a remote shell against your application on Google App
+Engine. To specify a different application ID than what is in your
+``app.yaml``, use ``-A``. If your remote API endpoint is not at
+the default location, you can pass the path as an argument.
+
+::
+
+  $ ./manage.py test
+
+Runs your application's tests.
 
 Testing
 -------
