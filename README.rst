@@ -21,22 +21,22 @@ Installation
 
 To install substrate, run::
 
-   $ easy_install substrate
+  $ easy_install substrate
 
 or::
 
-   $ pip install substrate
+  $ pip install substrate
 
 or download the package, and run::
 
-   $ python setup.py install
+  $ python setup.py install
 
 Creating a new application
 --------------------------
 
 To create a new application, run::
 
-   $ substrate new app_name
+  $ substrate new app_name
 
 This will create a new directory "app_name" and unpack the substrate
 application libraries in it. The application name in app.yaml will be
@@ -73,14 +73,17 @@ It has the following commands:
 ``shell``
   run a shell against your local application (requires iPython)
 
+
 ``rshell``
   run a remote shell against your application on Google App
-  Engine. To specify a different application ID than what is in your
-  ``app.yaml``, use ``-A``. If your remote API endpoint is not at
-  the default location, you can pass the path as an argument.
+    Engine. To specify a different application ID than what is in your
+    ``app.yaml``, use ``-A``. If your remote API endpoint is not at
+    the default location, you can pass the path as an argument.
+
 
 ``test``
   run your application's tests
+
 
 Testing
 -------
