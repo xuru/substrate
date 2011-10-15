@@ -14,7 +14,12 @@ We are tired of seeing App Engine frameworks languish unsupported. For
 that reason, Substrate is **NOT** a framework. It is a base
 application with a set of libraries and helpers. No more, no less.
 
-For more documentation see: http://packages.python.org/substrate/
+Resources
+---------
+
+* `Documentation`_
+* `PyPI Package`_
+* `Bitbucket Mercurial Repository`_
 
 Installation
 ------------
@@ -105,6 +110,10 @@ Substrate is mostly a packaging of other libraries, which have their
 own licenses. Original code in Substrate is under the `MIT license`_.
 
 .. Links
+
+.. _PyPI Package: http://pypi.python.org/pypi/substrate
+.. _Bitbucket Mercurial Repository: http://bitbucket.org/gumptioncom/substrate
+.. _Documentation: http://packages.python.org/substrate
 
 .. _agar: http://packages.python.org/substrate/agar.html
 .. _restler: http://packages.python.org/substrate/restler.html
