@@ -82,7 +82,25 @@ the default location, you can pass the path as an argument.
 
   $ ./manage.py test
 
-Runs your application's tests.
+Runs your application's tests. Any additional parameters are passed to the `unitetest2 discover`_ command::
+
+  $ ./manage.py test --help
+  
+  Usage: unit2 discover [options]
+
+  Options:
+    -h, --help            show this help message and exit
+    -v, --verbose         Verbose output
+    -f, --failfast        Stop on first fail or error
+    -c, --catch           Catch ctrl-C and display results so far
+    -b, --buffer          Buffer stdout and stderr during tests
+    -s START, --start-directory=START
+                          Directory to start discovery ('.' default)
+    -p PATTERN, --pattern=PATTERN
+                          Pattern to match tests ('test*.py' default)
+    -t TOP, --top-level-directory=TOP
+                          Top level directory of project (defaults to start
+                          directory)
 
 Testing
 -------
@@ -100,5 +118,6 @@ located in ``tests/handlers/test_main.py``.
 .. _substrate repository: http://bitbucket.org/gumptioncom/substrate
 
 .. _unittest2: http://pypi.python.org/pypi/unittest2
+.. _unitetest2 discover: http://docs.python.org/library/unittest.html#test-discovery
 
 .. _iPython: http://ipython.org/
