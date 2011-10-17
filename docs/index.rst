@@ -43,6 +43,7 @@ Contents
    appengine_config
    agar
    restler
+   changes
 
 
 
