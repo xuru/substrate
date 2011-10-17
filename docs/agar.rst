@@ -9,7 +9,7 @@ agar
 agar.auth
 ---------
 .. automodule:: agar.auth
-    :members: authentication_required, https_authentication_required, https_authenticate, AuthConfig
+    :members: authentication_required, https_authentication_required, AuthConfig
 
 -----------
 agar.config
