@@ -12,4 +12,5 @@ def sanitize_app_id(name):
     return name.translate(table)
 
 from commands import *
+from _version import __version__
 
