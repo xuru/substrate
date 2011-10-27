@@ -6,8 +6,7 @@ import substrate
 def main():
     usage = "usage: %prog [options] command directory"
     
-    parser = OptionParser(usage)
-
+    parser = OptionParser(usage, version="%%prog %s" % substrate.__version__)
     (options, args) = parser.parse_args()
 
     if len(args) != 2:
