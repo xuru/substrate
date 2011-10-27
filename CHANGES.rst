@@ -4,9 +4,6 @@ Changes
 * **Pre 0.3** (Development Version) -- Not released
 
   * Updated `WebTest`_ to version 1.3.1
-  * Added ``assertUnauthorized`` to ``WebTest``
-  * Implemented ``get_tasks`` and ``assertTasksInQueue``
-  * Added ``delete()`` method to ``agar.test.web_test.WebTest``
 
   * `agar`_ changes:
 
@@ -27,6 +24,16 @@ Changes
         
       * Updated default `authenticate function`_ to retain ``403`` behavior out of the box.
 
+    * `agar.test`_
+
+      * Added ``assertUnauthorized`` to ``WebTest``
+
+      * Implemented ``get_tasks`` and ``assertTasksInQueue``
+
+      * Added ``put()`` and ``delete()`` method to ``agar.test.web_test.WebTest``
+
+      * Added ``clear_datastore()`` to ``BaseTest``
+
 * **0.2** (First Public Release) -- 2011-10-14
 
   * Updated docs
@@ -44,6 +51,7 @@ Changes
 
 .. _agar: http://packages.python.org/substrate/agar.html
 .. _agar.auth: http://packages.python.org/substrate/agar.html#module-agar.auth
+.. _agar.test: http://packages.python.org/substrate/agar.html#module-agar.test
 .. _AuthConfig: http://packages.python.org/substrate/agar.html#agar.auth.AuthConfig
 .. _authentication_required: http://packages.python.org/substrate/agar.html#agar.auth.authentication_required
 .. _authenticate function: http://packages.python.org/substrate/agar.html#agar.auth.AuthConfig.authenticate
