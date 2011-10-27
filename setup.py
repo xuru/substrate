@@ -35,13 +35,13 @@ def build():
 
 build()
 setup(name='substrate',
-      version='0.2',
+      version='0.3d',
       description='A base application with a collection of libraries for making Google App Engine development easier.',
       long_description=open("README.rst").read(),
       license="MIT",
       author='Thomas Bombach, Jr.',
-      author_email='thomasbohmbach@gmail.com',
-      url='http://bitbucket.org/gumptionthomas/substrate',
+      author_email='thomas@gumption.com',
+      url='http://bitbucket.org/gumptioncom/substrate',
       zip_safe=False,
       packages=find_packages(exclude=['tests', 'tests.*']),
       package_data={'': package_data()},
