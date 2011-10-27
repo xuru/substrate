@@ -13,11 +13,12 @@ Changes
     * `agar.auth`_
 
       * **Breaking Changes**
+      
         * Changed `authentication_required`_ decorator to **not** `abort`_ with status ``403`` if the
-        `authenticate function`_ returns ``None``. Instead, the decorator will simply set the request ``user`` attribute
-        (or any `re-configured property`_) to ``None``. This is useful for handlers where authentication is optional.
-        Users will have to update their `authenticate function`_ to `abort`_ if they still wish to keep the
-        previous behavior.
+          `authenticate function`_ returns ``None``. Instead, the decorator will simply set the request ``user`` attribute
+          (or any `re-configured property`_) to ``None``. This is useful for handlers where authentication is optional.
+          Users will have to update their `authenticate function`_ to `abort`_ if they still wish to keep the
+          previous behavior.
 
         * The `authenticate function`_ will be passed the current `RequestHandler`_ rather than the
           `Request`_. The `Request`_ can still be accessed from the `RequestHandler`_ via ``handler.request``.

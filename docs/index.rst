@@ -38,12 +38,12 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   changes
    substrate
    env_setup
    appengine_config
    agar
    restler
-   changes
 
 
 
