@@ -13,4 +13,3 @@ def sanitize_app_id(name):
 
 from commands import *
 from _version import __version__
-
