@@ -54,6 +54,8 @@ if __name__ == "__main__":
     remote_api_stub.ConfigureRemoteDatastore(None, path(), auth_func, "%s.appspot.com" % app_id())
     remote_api_stub.MaybeInvokeAuthentication()
 
+    os.environ['HTTP_HOST'] = "%s.appspot.com" % app_id()
+
     banner = "Interactive REMOTE App Engine Shell for app-id '%s'" % app_id()
     try:
         import IPython
