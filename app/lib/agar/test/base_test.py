@@ -4,6 +4,7 @@ import unittest2
 from google.appengine.api import users
 from google.appengine.ext import testbed
 
+
 class BaseTest(unittest2.TestCase):
     """
     A base class for App Engine unit tests that sets up API proxy
@@ -17,9 +18,9 @@ class BaseTest(unittest2.TestCase):
         import agar
 
         from models import MyModel
-        
+
         class MyTestCase(agar.test.BaseTest):
-            
+
             def test_datastore(self):
                 model = MyModel(foo='foo')
                 model.put()
@@ -39,7 +40,7 @@ class BaseTest(unittest2.TestCase):
 
         self.testbed = testbed.Testbed()
         self.testbed.activate()
-        
+
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
         self.testbed.init_taskqueue_stub()
@@ -59,6 +60,30 @@ class BaseTest(unittest2.TestCase):
         # environment variables set during the test.
         self.testbed.deactivate()
 
+    def clear_datastore(self):
+        """
+        Clear the Data Store of all its data.
+
+        This method can be used inside your tests to clear the Data Store mid-test.
+
+        For example::
+
+            import unittest
+
+            from agar.test import BaseTest
+
+            class MyTestCase(BaseTest):
+                def test_clear_datastore(self):
+                    # Add something to the Data Store
+                    models.MyModel(field="value").put()
+                    self.assertLength(models.MyModel.all(), 1)
+
+                    # And then empty the Data Store
+                    self.clear_datastore()
+                    self.assertLength(models.MyModel.all(), 0)
+        """
+        self.testbed.get_stub('datastore_v3').Clear()
+
     def log_in_user(self, email):
         """
         Log in a `User`_ with the given email address. This will cause
@@ -74,7 +99,7 @@ class BaseTest(unittest2.TestCase):
         os.environ['USER_ID'] = user_id
 
         return users.User(email=email, _user_id=user_id)
-    
+
     def get_sent_messages(self, to=None, sender=None, subject=None, body=None, html=None):
         """
         Return a list of email messages matching the given criteria.
@@ -137,14 +162,14 @@ class BaseTest(unittest2.TestCase):
         actual) order for parameters. However, this is the reverse of
         `gaetestbed`_.
 
-        :param exepcted: an integer representing the expected lenght
+        :param expected: an integer representing the expected length
         :param iterable: an iterable which will be converted to a list.
         :param message: optional message for assertion.
         """
         length = len(list(iterable))
         message = message or 'Expected length: %s but was length: %s' % (expected, length)
         self.assertEqual(expected, length, message)
-    
+
     def assertEmpty(self, iterable):
         """
         Assert that ``iterable`` is of length 0. Equivalent to
@@ -169,19 +194,14 @@ class BaseTest(unittest2.TestCase):
         tasks = self.get_tasks(url=url, name=name, queue_names=queue_names)
 
         self.assertEqual(n or 0, len(tasks))
-    
+
     def get_tasks(self, url=None, name=None, queue_names=None):
         """
         Returns a list of `Task`_ objects with the specified criteria.
-        
+
         :param url: URL criteria tasks must match. If ``url`` is ``None``, all tasks will be matched.
         :param name: name criteria tasks must match. If ``name`` is ``None``, all tasks will be matched.
         :param queue_names: queue name criteria tasks must match. If ``queue_name`` is ``None`` tasks in all queues will be matched.
 
         """
         return self.testbed.get_stub('taskqueue').get_filtered_tasks(url=url, name=name, queue_names=queue_names)
-
-
-    
-        
-
