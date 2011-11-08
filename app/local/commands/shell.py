@@ -33,7 +33,6 @@ except dev_appserver.InvalidAppConfigError, e:
 
 
 dev_appserver.SetupStubs(config.application, **dev_appserver_main.DEFAULT_ARGS)
-#os.environ['APPLICATION_ID'] = config.application
 
 """
 datastore_path = dev_appserver.DEFAULT_ARGS[dev_appserver.ARG_DATASTORE_PATH]

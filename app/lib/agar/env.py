@@ -4,6 +4,7 @@ The ``agar.env`` module contains a number of constants to help determine which e
 
 import os
 
+from google.appengine.api.app_identity import get_application_id
 from google.appengine.api import apiproxy_stub_map
 
 
@@ -12,7 +13,7 @@ have_appserver = bool(apiproxy_stub_map.apiproxy.GetStub('datastore_v3'))
 
 appid = None
 if have_appserver:
-    appid = os.environ.get('APPLICATION_ID')
+    appid = get_application_id()
 else:
     try:
         project_dir = os.path.dirname(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))

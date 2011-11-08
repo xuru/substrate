@@ -35,10 +35,7 @@ args[dev_appserver_main.ARG_PROSPECTIVE_SEARCH_PATH] = os.path.join(
 args[dev_appserver_main.ARG_HISTORY_PATH] = os.path.join(
         tempfile.gettempdir(), 'dev_appserver.test.datastore.history')
 
-from google.appengine.api import app_identity
 dev_appserver.SetupStubs(config.application, **args)
-os.environ['APPLICATION_ID'] = 'dev~%s' % app_identity.get_application_id()
-
 
 sys.path.insert(0, os.path.abspath(os.path.curdir))
 
