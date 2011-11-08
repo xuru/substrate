@@ -17,7 +17,7 @@ else:
     try:
         project_dir = os.path.dirname(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
         from google.appengine.tools import dev_appserver
-        appconfig, unused = dev_appserver.LoadAppConfig(project_dir, {})
+        appconfig, matcher, from_cache = dev_appserver.LoadAppConfig(project_dir, {})
         appid = appconfig.application
     except ImportError:
         appid = None

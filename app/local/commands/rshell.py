@@ -22,7 +22,7 @@ from google.appengine.ext.remote_api import remote_api_stub
 config = matcher = None
 
 try:
-    config, matcher = dev_appserver.LoadAppConfig(".", {})
+    config, matcher, from_cache = dev_appserver.LoadAppConfig(".", {})
 except yaml_errors.EventListenerError, e:
     logging.error('Fatal error when loading application configuration:\n' +
                                     str(e))

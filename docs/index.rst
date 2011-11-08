@@ -45,8 +45,6 @@ Contents
    agar
    restler
 
-
-
 Indices and tables
 ==================
 

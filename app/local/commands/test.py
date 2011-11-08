@@ -17,7 +17,7 @@ from unittest2.main import main_
 config = matcher = None
 
 try:
-    config, matcher = dev_appserver.LoadAppConfig(".", {})
+    config, matcher, from_cache = dev_appserver.LoadAppConfig(".", {})
 except yaml_errors.EventListenerError, e:
     logging.error('Fatal error when loading application configuration:\n' + str(e))
 except dev_appserver.InvalidAppConfigError, e:

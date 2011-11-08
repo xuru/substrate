@@ -24,7 +24,7 @@ from google.appengine.tools import dev_appserver_main
 config = matcher = None
 
 try:
-    config, matcher = dev_appserver.LoadAppConfig(".", {})
+    config, matcher, from_cache = dev_appserver.LoadAppConfig(".", {})
 except yaml_errors.EventListenerError, e:
     logging.error('Fatal error when loading application configuration:\n' +
                                     str(e))
