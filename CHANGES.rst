@@ -7,6 +7,8 @@ Changes
 
   * Updated to `agar-0.3dev`_. **This includes break fixes.** See `agar CHANGES`_ for more information.
 
+  * Fix SDK 1.6 changes to ``dev_appserver.LoadAppConfig()``.
+
 * **0.2** (First Public Release) -- 2011-10-14
 
   * Updated docs
