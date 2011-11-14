@@ -53,9 +53,9 @@ where ``~/development/your-app-id`` is the application directory
 (For example, you could run this in the current directory with ``.``)
 
 This command will NOT touch any of your application's files. Only
-"substrate files" in the ``local/`` and ``lib/`` directories plus
+"substrate files" in the ``local/substrate`` and ``lib/substrate`` directories plus
 ``manage.py`` and ``env_setup.py`` in the application directory will be
-overwritten. You can add new files to ``local/`` and ``lib/``, but do not
+overwritten. You can add new files to ``local/usr`` and ``lib/usr``, but do not
 edit existing "substrate files" or your changes will be lost when upgrading.
 
 Management Console

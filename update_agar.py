@@ -14,7 +14,7 @@ def main():
 
     
     agar_module_dir = os.path.join(agar_location, 'agar')
-    substrate_agar_module_dir = os.path.join("app", "lib", "agar")
+    substrate_agar_module_dir = os.path.join("app", "lib", "substrate", "agar")
 
     if not os.path.exists(substrate_agar_module_dir):
         print "sanity check failure! agar module not found in substrate"

@@ -6,6 +6,7 @@ import sys
 
 # Only works for UNIXy style OSes.
 # Find App Engine SDK
+dev_appserver = None
 DIR_PATH = ""
 for d in os.environ["PATH"].split(":"):
     dev_appserver_path = os.path.join(d, "dev_appserver.py")
@@ -31,18 +32,23 @@ if not DIR_PATH:
     sys.exit(1)
 
 # local 'helper' scripts
-local_path = 'local'
 SCRIPT_DIR = os.path.join(DIR_PATH, 'google', 'appengine', 'tools')
 
 EXTRA_PATHS = dev_appserver.EXTRA_PATHS[:]
 SUBSTRATE_PATHS = [
-    os.path.join(".", 'local', 'lib'),
-    os.path.join(".", 'lib'),
+    os.path.join('.', 'lib', 'substrate'),
+    os.path.join('.', 'local', 'substrate', 'lib'),
+    os.path.join('.', 'local', 'substrate', 'manage'),
+]
+USR_PATHS = [
+    os.path.join('.', 'lib', 'usr'),
+    os.path.join('.', 'local', 'usr', 'lib'),
+    os.path.join('.', 'local', 'usr', 'manage'),
 ]
 
 def fix_sys_path():
     """Fix the sys.path to include our extra paths."""
-    sys.path = EXTRA_PATHS + SUBSTRATE_PATHS + sys.path
+    sys.path = EXTRA_PATHS + SUBSTRATE_PATHS + USR_PATHS + sys.path
 
 def print_subcommand_overviews(commands):
     import logging
@@ -50,21 +56,21 @@ def print_subcommand_overviews(commands):
     print "manage.py commands: "
     cmd_width = max(len(command) for command in commands)
     for command in commands:
-        module = __import__("local.commands", {}, {}, [command])
+        module = __import__("commands", {}, {}, [command])
         doc = getattr(module, command).__doc__
         print "  ", command.ljust(cmd_width), "-" if doc else "" ,  doc or ""
 
 def run_command(command, globals_, script_dir=SCRIPT_DIR):
     """Execute the file at the specified path with the passed-in globals."""
     fix_sys_path()
-    import pkgutil, local.commands
-    pkgpath = os.path.dirname(local.commands.__file__)
-    commands = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
+    import pkgutil, commands
+    pkgpath = os.path.dirname(commands.__file__)
+    comms = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
     for arg in sys.argv:
-        if arg in commands:
+        if arg in comms:
             break
     else:
-        print_subcommand_overviews(commands)
+        print_subcommand_overviews(comms)
         sys.exit(1)
     command_idx = sys.argv.index(arg)
     script_name = sys.argv[command_idx]
@@ -72,7 +78,7 @@ def run_command(command, globals_, script_dir=SCRIPT_DIR):
 
     command_args = sys.argv[command_idx:]
     sys.argv = command_args
-    script_path = os.path.join('./%s/commands' % local_path, script_name + ".py")
+    script_path = os.path.join('./local/substrate/manage/commands', script_name + ".py")
     execfile(script_path, globals_)
 
 

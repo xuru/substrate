@@ -14,7 +14,7 @@ def main():
 
     
     restler_module_dir = os.path.join(restler_location, 'restler')
-    substrate_restler_module_dir = os.path.join("app", "lib", "restler")
+    substrate_restler_module_dir = os.path.join("app", "lib", "substrate", "restler")
 
     if not os.path.exists(substrate_restler_module_dir):
         print "sanity check failure! restler module not found in substrate"
