@@ -1,7 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-omit = manage*, lib/pytz/*, local/lib/*, tests/*, /Applications/GoogleAppEngineLauncher.app/*, /Library/Python/*
+omit = manage*, lib/substrate/pytz/*, local/substrate/lib/*, tests/*, /Applications/GoogleAppEngineLauncher.app/*, /Library/Python/*
 
 [report]
 # Regexes for lines to exclude from consideration
