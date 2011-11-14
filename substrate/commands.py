@@ -64,15 +64,16 @@ def update(directory):
         old_target_lib = os.path.join(target_dir, "lib")
         os.remove(os.path.join(old_target_lib, "__init__.py"))
         for filename in os.listdir(old_target_lib):
+            working_path = os.path.join(old_target_lib, filename)
             if filename != "substrate" and filename != "usr":
                 if not filename.endswith(".pyc") and filename not in os.listdir(target_lib_substrate):
-                    move(os.path.join(old_target_lib, filename), target_lib_usr)
+                    new_path = os.path.join(target_lib_usr, filename)
+                    move(working_path, new_path)
                 else:
-                    file_to_delete = os.path.join(old_target_lib, filename)
-                    if os.path.isdir(file_to_delete):
-                        rmtree(file_to_delete)
+                    if os.path.isdir(working_path):
+                        rmtree(working_path)
                     else:
-                        os.remove(file_to_delete)
+                        os.remove(working_path)
 
     if create_local_usr:
         os.mkdir(target_local_usr)
@@ -83,8 +84,10 @@ def update(directory):
         old_target_local_lib = os.path.join(target_dir, "local", "lib")
         new_target_local_substrate_lib = os.path.join(target_local_substrate, "lib")
         for filename in os.listdir(old_target_local_lib):
+            working_path = os.path.join(old_target_local_lib, filename)
             if not filename.endswith(".pyc") and filename != "__init__.py" and filename not in os.listdir(new_target_local_substrate_lib):
-                move(os.path.join(old_target_local_lib, filename), new_target_usr_lib)
+                new_path = os.path.join(new_target_usr_lib, filename)
+                move(working_path, new_path)
         rmtree(old_target_local_lib)
         rmtree(os.path.join(target_dir, "local", "commands"))
         if os.path.exists(os.path.join(target_dir, "local", "__init__.py")):
