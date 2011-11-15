@@ -62,6 +62,10 @@ if __name__ == "__main__":
         sh = IPython.Shell.IPShellEmbed(argv='', banner=banner)
         sh(global_ns={}, local_ns={})
     except:
-        import code
-        console = code.InteractiveConsole()
-        console.interact(banner)
+        try:
+            from IPython import embed
+            embed()
+        except:
+            import code
+            console = code.InteractiveConsole()
+            console.interact(banner)
