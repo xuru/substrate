@@ -40,13 +40,6 @@ def update(directory):
     target_lib_usr = os.path.join(target_dir, "lib", "usr")
     target_local_usr = os.path.join(target_dir, "local", "usr")
 
-    create_lib_usr = False
-    if not os.path.exists(target_lib_usr):
-        create_lib_usr = True
-    create_local_usr = False
-    if not os.path.exists(target_local_usr):
-        create_local_usr = True
-
     data_lib_substrate = os.path.join(data_dir, "lib", "substrate")
     data_local_substrate = os.path.join(data_dir, "local", "substrate")
 
@@ -59,29 +52,39 @@ def update(directory):
     copy_tree(data_lib_substrate, target_lib_substrate)
     copy_tree(data_local_substrate, target_local_substrate)
 
-    if create_lib_usr:
+    if not os.path.exists(target_lib_usr):
         os.mkdir(target_lib_usr)
-        old_target_lib = os.path.join(target_dir, "lib")
-        os.remove(os.path.join(old_target_lib, "__init__.py"))
-        for filename in os.listdir(old_target_lib):
-            working_path = os.path.join(old_target_lib, filename)
-            if filename != "substrate" and filename != "usr":
-                if not filename.endswith(".pyc") and filename not in os.listdir(target_lib_substrate):
-                    new_path = os.path.join(target_lib_usr, filename)
-                    move(working_path, new_path)
-                else:
-                    if os.path.isdir(working_path):
-                        rmtree(working_path)
-                    else:
-                        os.remove(working_path)
 
-    if create_local_usr:
+    old_target_lib = os.path.join(target_dir, "lib")
+    old_lib_init = os.path.join(old_target_lib, "__init__.py")
+    if os.path.exists(old_lib_init):
+        os.remove(old_lib_init)
+
+    for filename in os.listdir(old_target_lib):
+        working_path = os.path.join(old_target_lib, filename)
+        if filename != "substrate" and filename != "usr":
+            if not filename.endswith(".pyc") and filename not in os.listdir(target_lib_substrate):
+                new_path = os.path.join(target_lib_usr, filename)
+                move(working_path, new_path)
+            else:
+                if os.path.isdir(working_path):
+                    rmtree(working_path)
+                else:
+                    os.remove(working_path)
+
+    if not os.path.exists(target_local_usr):
         os.mkdir(target_local_usr)
-        new_target_usr_lib = os.path.join(target_local_usr, "lib")
+
+    new_target_usr_lib = os.path.join(target_local_usr, "lib")
+    if not os.path.exists(new_target_usr_lib):
         os.mkdir(new_target_usr_lib)
-        new_target_usr_manage = os.path.join(target_local_usr, "manage")
+
+    new_target_usr_manage = os.path.join(target_local_usr, "manage")
+    if not os.path.exists(new_target_usr_manage):
         os.mkdir(new_target_usr_manage)
-        old_target_local_lib = os.path.join(target_dir, "local", "lib")
+
+    old_target_local_lib = os.path.join(target_dir, "local", "lib")
+    if os.path.exists(old_target_local_lib):
         new_target_local_substrate_lib = os.path.join(target_local_substrate, "lib")
         for filename in os.listdir(old_target_local_lib):
             working_path = os.path.join(old_target_local_lib, filename)
@@ -89,11 +92,18 @@ def update(directory):
                 new_path = os.path.join(new_target_usr_lib, filename)
                 move(working_path, new_path)
         rmtree(old_target_local_lib)
-        rmtree(os.path.join(target_dir, "local", "commands"))
-        if os.path.exists(os.path.join(target_dir, "local", "__init__.py")):
-            os.remove(os.path.join(target_dir, "local", "__init__.py"))
-        if os.path.exists(os.path.join(target_dir, "local", "__init__.pyc")):
-            os.remove(os.path.join(target_dir, "local", "__init__.pyc"))
+
+    old_local_commands = os.path.join(target_dir, "local", "commands")
+    if os.path.exists(old_local_commands):
+        rmtree(old_local_commands)
+
+    old_target_local_init = os.path.join(target_dir, "local", "__init__.py")
+    if os.path.exists(old_target_local_init):
+        os.remove(old_target_local_init)
+
+    old_target_local_init_pyc = os.path.join(target_dir, "local", "__init__.pyc")
+    if os.path.exists(old_target_local_init_pyc):
+        os.remove(old_target_local_init_pyc)
 
     copy2(os.path.join(data_dir, "env_setup.py"), os.path.join(target_dir, "env_setup.py"))
     copy2(os.path.join(data_dir, "manage.py"), os.path.join(target_dir, "manage.py"))
