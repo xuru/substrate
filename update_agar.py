@@ -23,7 +23,6 @@ def main():
     if os.path.exists(agar_module_dir) and os.path.isdir(agar_module_dir):
         shutil.rmtree(substrate_agar_module_dir)
         shutil.copytree(agar_module_dir, substrate_agar_module_dir)
-        shutil.copy(os.path.join(agar_location, 'docs', 'agar.rst'), 'docs')
     else:
         print "usage: update_agar.py [path_to_agar_project]\n"
         print "agar module not found in directory %s" % agar_location
