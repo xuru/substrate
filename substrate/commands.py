@@ -56,9 +56,14 @@ def update(directory):
         os.mkdir(target_lib_usr)
 
     old_target_lib = os.path.join(target_dir, "lib")
+
     old_lib_init = os.path.join(old_target_lib, "__init__.py")
     if os.path.exists(old_lib_init):
         os.remove(old_lib_init)
+
+    old_lib_init_pyc = os.path.join(old_target_lib, "__init__.pyc")
+    if os.path.exists(old_lib_init_pyc):
+        os.remove(old_lib_init_pyc)
 
     for filename in os.listdir(old_target_lib):
         working_path = os.path.join(old_target_lib, filename)
