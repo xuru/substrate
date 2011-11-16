@@ -14,9 +14,12 @@ def setup():
     while search_path:
         app_yaml_path = os.path.join(search_path, 'app.yaml')
         if os.path.exists(app_yaml_path):
-            lib_path = os.path.join(search_path, 'lib')
-            if lib_path not in sys.path:
-                sys.path.insert(0, lib_path)
+            lib_substrate_path = os.path.join(search_path, 'lib', 'substrate')
+            if lib_substrate_path not in sys.path:
+                sys.path.insert(0, lib_substrate_path)
+            lib_usr_path = os.path.join(search_path, 'lib', 'usr')
+            if lib_usr_path not in sys.path:
+                sys.path.insert(0, lib_usr_path)
             break
         search_path, last_dir = os.path.split(search_path)
     else:
