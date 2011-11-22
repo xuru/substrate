@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """ Substrate management interface. Fixes up appengine and substrate paths and runs substrate commands."""
 
+from glob import glob
 import os
 import sys
 
@@ -46,57 +47,60 @@ USR_PATHS = [
     os.path.join('.', 'local', 'usr', 'manage'),
 ]
 
+COMMAND_FILE_PATTERN = '[a-z]*.py'
+SUBSTRATE_COMMAND_DIR=os.path.join('.', 'local', 'substrate', 'manage', 'substrate_manage', 'commands')
+USR_COMMAND_DIR=os.path.join('.', 'local', 'usr', 'manage', 'substrate_manage_usr', 'commands')
+
+
+substrate_commands = []
+usr_commands = []
+
 def fix_sys_path():
     """Fix the sys.path to include our extra paths."""
     sys.path = EXTRA_PATHS + SUBSTRATE_PATHS + USR_PATHS + sys.path
 
-def print_subcommand_overviews(sub_comms, usr_comms):
+def print_command_doc(cmd, cmd_width):
+    doc = open(cmd).read().split('"""')[1]
+    cmd_name = os.path.splitext(os.path.basename(cmd))[0]
+    print "  ", cmd_name.ljust(cmd_width), "-" if doc else "" ,  doc or ""
+
+def print_subcommand_overviews(substrate_commands, usr_commands):
     import logging
     logging.basicConfig(level=logging.ERROR)
+    cmd_width = max(len(os.path.splitext(os.path.basename(command))[0]) 
+                    for command in (substrate_commands + usr_commands))
+
     print "manage.py built-in commands: "
-    cmd_width = max(len(command) for command in sub_comms)
-    for command in sub_comms:
-        module = __import__("substrate_manage.commands", {}, {}, [command])
-        doc = getattr(module, command).__doc__
-        print "  ", command.ljust(cmd_width), "-" if doc else "" ,  doc or ""
-    print "manage.py project commands: "
-    cmd_width = max(len(command) for command in usr_comms)
-    for command in usr_comms:
-        module = __import__("substrate_manage_usr.commands", {}, {}, [command])
-        doc = getattr(module, command).__doc__
-        print "  ", command.ljust(cmd_width), "-" if doc else "" ,  doc or ""
+    for command in substrate_commands:
+        print_command_doc(command, cmd_width)
+    if usr_commands:
+        print "manage.py project commands: "
+        for command in usr_commands:
+            print_command_doc(command, cmd_width)
 
 
 def run_command(command, globals_, script_dir=SCRIPT_DIR):
     """Execute the file at the specified path with the passed-in globals."""
     fix_sys_path()
-    import pkgutil
-    from substrate_manage import commands as substrate_commands
-    script_path = None
-    pkgpath = os.path.dirname(substrate_commands.__file__)
-    sub_comms = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
+    global substrate_commands, usr_commands 
+    substrate_commands = glob(os.path.join(SUBSTRATE_COMMAND_DIR, COMMAND_FILE_PATTERN))
+    usr_commands = glob(os.path.join(USR_COMMAND_DIR, COMMAND_FILE_PATTERN))
+
+    command_names = [os.path.splitext(os.path.basename(command))[0]  for command in substrate_commands + usr_commands]
     for arg in sys.argv:
-        if arg in sub_comms:
-            script_path = './local/substrate/manage/substrate_manage/commands'
+        if arg in command_names:
             break
     else:
-        from substrate_manage_usr import commands as usr_commands
-        pkgpath = os.path.dirname(usr_commands.__file__)
-        usr_comms = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
-        for arg in sys.argv:
-            if arg in usr_comms:
-                script_path = './local/usr/manage/substrate_manage_usr/commands'
-                break
-        else:
-            print_subcommand_overviews(sub_comms, usr_comms)
-            sys.exit(1)
+        print_subcommand_overviews(substrate_commands , usr_commands)
+        sys.exit(1)
     command_idx = sys.argv.index(arg)
     script_name = sys.argv[command_idx]
     management_args = sys.argv[:command_idx]
+    script_path = (glob(os.path.join(SUBSTRATE_COMMAND_DIR, arg + '.py')) 
+            or glob(os.path.join(USR_COMMAND_DIR, arg + '.py')))[0]
 
     command_args = sys.argv[command_idx:]
     sys.argv = command_args
-    script_path = os.path.join(script_path, script_name + ".py")
     execfile(script_path, globals_)
 
 
