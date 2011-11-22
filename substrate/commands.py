@@ -98,6 +98,19 @@ def update(directory):
                 move(working_path, new_path)
         rmtree(old_target_local_lib)
 
+    new_local_usr_manage_substrate_manage_usr = os.path.join(target_local_usr, "manage", "substrate_manage_usr")
+    if not os.path.exists(new_local_usr_manage_substrate_manage_usr):
+        os.mkdir(new_local_usr_manage_substrate_manage_usr)
+        init_filename = os.path.join(new_local_usr_manage_substrate_manage_usr, "__init__.py")
+        if not os.path.exists(init_filename):
+            init_file = open(init_filename, 'w')
+            init_file.close()
+
+    old_local_usr_manage_commands = os.path.join(target_local_usr, "manage", "commands")
+    if os.path.exists(old_local_usr_manage_commands):
+        new_local_usr_manage_substrate_manage_usr_commands = os.path.join(new_local_usr_manage_substrate_manage_usr, "commands")
+        move(old_local_usr_manage_commands, new_local_usr_manage_substrate_manage_usr_commands)
+
     old_local_commands = os.path.join(target_dir, "local", "commands")
     if os.path.exists(old_local_commands):
         rmtree(old_local_commands)

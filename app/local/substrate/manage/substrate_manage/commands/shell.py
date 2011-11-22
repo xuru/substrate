@@ -34,10 +34,6 @@ if __name__ == "__main__":
             from IPython import embed
             embed()
         except:
-            try:
-                from IPython import embed
-                embed()
-            except:
-                import code
-                console = code.InteractiveConsole()
-                console.interact(banner)
+            import code
+            console = code.InteractiveConsole()
+            console.interact(banner)

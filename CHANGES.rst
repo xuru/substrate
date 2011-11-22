@@ -1,6 +1,12 @@
 Changes
 -------
 
+* **0.5.1** -- 2011-11-22
+
+  * Moved manage commands to new package structure. Project specific commands should go in
+    ``local/usr/manage/substrate_manage_usr/commands/``. The substrate ``update`` command has been modified to move
+    ``local/usr/manage/commands/`` to ``local/usr/manage/substrate_manage_usr/commands/``.
+
 * **0.5** -- 2011-11-15
 
   * Updated to `agar-0.5`_. See `agar CHANGES`_ for more information.
