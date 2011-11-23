@@ -3,6 +3,8 @@ Changes
 
 * **0.5.1** -- 2011-11-22
 
+  * Updated to `agar-0.5.1`_. See `agar CHANGES`_ for more information.
+
   * Moved manage commands to new package structure. Project specific commands should go in
     ``local/usr/manage/substrate_manage_usr/commands/``. The substrate ``update`` command has been modified to move
     ``local/usr/manage/commands/`` to ``local/usr/manage/substrate_manage_usr/commands/``.
@@ -48,3 +50,4 @@ Changes
 .. _agar-0.4: http://pypi.python.org/pypi/agar/0.4
 .. _agar CHANGES: http://packages.python.org/agar/changes.html
 .. _agar-0.5: http://pypi.python.org/pypi/agar/0.5
+.. _agar-0.5.1: http://pypi.python.org/pypi/agar/0.5.1
