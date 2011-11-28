@@ -144,7 +144,7 @@ world" test that you can run to verify your installation. It is
 located in ``tests/handlers/test_main.py``.
 
 Substrate includes test helpers located in the `agar.test`_
-package. ``agar.test`` is uses ``google.appengine.ext.testbed`` to set up your
+package. ``agar.test`` uses ``google.appengine.ext.testbed`` to set up your
 Google App Engine environment fresh before each test run. It is mostly
 API compatable with the old `gaetestbed`_ project, plus new additions.
 
