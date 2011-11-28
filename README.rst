@@ -114,6 +114,25 @@ Runs your application's tests. Any additional parameters are passed to the `unit
                           Top level directory of project (defaults to start
                           directory)
 
+Adding Your Own Commands
+------------------------
+
+``manage.py`` will add .py files in the
+``local/usr/manage/substrate_manage_usr/commands`` directory as
+commands.
+
+Adding New Libraries to Your App
+--------------------------------
+
+Substrate stores its libraries in ``lib/substrate`` and
+``local/substrate/lib`` (for libraries that should not be deployed to
+Google App Engine). Do not add new libraries to these directories as
+they are removed and re-copied on upgrade.
+
+User libraries can be placed in ``lib/usr`` and
+``local/usr/lib``. These paths are added to ``sys.path`` by
+``env_setup.setup``
+
 
 Testing
 -------
