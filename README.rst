@@ -32,10 +32,6 @@ To update your substrate installation to the newest release::
 
   $ easy_install --upgrade substrate
 
-or::
-
-  $ pip install --upgrade substrate
-
 To install or update manually, `download the PyPI package`_,
 (or to stay on the bleeding edge, clone the `substrate repository`_) and run::
 
