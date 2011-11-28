@@ -79,7 +79,7 @@ Management Console
 
   $ ./manage.py shell
 
-Runs a shell against your local application (requires `iPython`_).
+Runs a shell against your local application (uses `iPython`_ if available).
 
 ::
 
