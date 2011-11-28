@@ -28,17 +28,9 @@ To install substrate, run::
 
   $ easy_install substrate
 
-or::
-
-  $ pip install substrate
-
 To update your substrate installation to the newest release::
 
   $ easy_install --upgrade substrate
-
-or::
-
-  $ pip install --upgrade substrate
 
 To install or update manually, `download the PyPI package`_,
 (or to stay on the bleeding edge, clone the `substrate repository`_) and run::
@@ -87,7 +79,7 @@ Management Console
 
   $ ./manage.py shell
 
-Runs a shell against your local application (requires `iPython`_).
+Runs a shell against your local application (uses `iPython`_ if available).
 
 ::
 
@@ -122,6 +114,25 @@ Runs your application's tests. Any additional parameters are passed to the `unit
                           Top level directory of project (defaults to start
                           directory)
 
+Adding Your Own Commands
+------------------------
+
+``manage.py`` will add .py files in the
+``local/usr/manage/substrate_manage_usr/commands`` directory as
+commands.
+
+Adding New Libraries to Your App
+--------------------------------
+
+Substrate stores its libraries in ``lib/substrate`` and
+``local/substrate/lib`` (for libraries that should not be deployed to
+Google App Engine). Do not add new libraries to these directories as
+they are removed and re-copied on upgrade.
+
+User libraries can be placed in ``lib/usr`` and
+``local/usr/lib``. These paths are added to ``sys.path`` by
+``env_setup.setup``
+
 
 Testing
 -------
@@ -131,6 +142,11 @@ the tests in the ``tests`` directory of your application using
 `unittest2`_. Included with the Substrate base app is a simple "hello
 world" test that you can run to verify your installation. It is
 located in ``tests/handlers/test_main.py``.
+
+Substrate includes test helpers located in the `agar.test`_
+package. ``agar.test`` uses ``google.appengine.ext.testbed`` to set up your
+Google App Engine environment fresh before each test run. It is mostly
+API compatable with the old `gaetestbed`_ project, plus new additions.
 
 License
 -------
@@ -163,3 +179,7 @@ own licenses. Original code in Substrate is under the `MIT license`_.
 .. _iPython: http://ipython.org/
 
 .. _MIT License: http://www.opensource.org/licenses/mit-license.php
+
+.. _agar.test: http://packages.python.org/agar/agar.html#module-agar.test
+
+.. _gaetestbed: https://github.com/jgeewax/gaetestbed
