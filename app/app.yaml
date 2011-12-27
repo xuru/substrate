@@ -21,9 +21,6 @@ handlers:
 - url: /js
   static_dir: static/js
 
-- url: /lib_config
-  script: $PYTHON_LIB/google/appengine/api/lib_config.py
-
 - url: .*
   script: main.application
 
