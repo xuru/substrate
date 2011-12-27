@@ -25,6 +25,8 @@ def setup():
     else:
         raise os.error('app.yaml not found for env_setup.setup().%sSearch started in: %s'% (os.linesep, start_path))
 
+
+#  TODO remove and test against py2.7
 def setup_django(settings='settings', version='1.2', ):
     """
     Sets up the django libraries.
