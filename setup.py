@@ -62,7 +62,7 @@ setup(name='substrate',
       zip_safe=False,
       packages=find_packages(exclude=['tests', 'tests.*']),
       package_data={'': package_data()},
-      scripts=['bin/substrate'],
+      scripts=['bin/substrate-2.7'],
       classifiers=[
           "Development Status :: 3 - Alpha",
           "Environment :: Web Environment",
