@@ -1,5 +1,14 @@
 Changes
 -------
+ **0.6** -- 2012-01-01
+
+  * First support for py2.7
+
+  * Renamed substrate script to substrate-2.5 and substrate-2.7
+
+  * Updated to `agar-0.6`_. See `agar CHANGES`_ for more information.
+
+  * Added django template rendering using agar templatetags to demo app
 
 * **0.5.1** -- 2011-11-22
 
