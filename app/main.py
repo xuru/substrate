@@ -3,7 +3,7 @@
 import env_setup; env_setup.setup(); env_setup.setup_django()
 
 from django.template import add_to_builtins
-add_to_builtins('agar.templatetags.webapp2')
+add_to_builtins('agar.django.templatetags')
 
 from webapp2 import RequestHandler, Route, WSGIApplication
 
