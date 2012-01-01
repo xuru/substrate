@@ -45,7 +45,7 @@ application = WSGIApplication(
 
 def main():
     from google.appengine.ext.webapp import template, util
-    template.register_template_library('agar.templatetags.webapp2')
+    template.register_template_library('agar.django.templatetags')
     util.run_wsgi_app(application)
 
 if __name__ == '__main__':
