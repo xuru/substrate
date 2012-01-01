@@ -5,10 +5,11 @@ setup_django()
 from env_setup import setup
 setup()
 
-from webapp2 import RequestHandler, WSGIApplication
+from webapp2 import RequestHandler, Route, WSGIApplication
 
 from agar.env import on_production_server
 from agar.config import Config
+from agar.django.templates import render_template
 
 
 class MainApplicationConfig(Config):
@@ -28,17 +29,23 @@ class MainApplicationConfig(Config):
     #: A no op.
     NOOP = None
 
+config = MainApplicationConfig.get_config()
+
 
 class MainHandler(RequestHandler):
     def get(self):
-        self.response.out.write("hello world. value of NOOP: %s" % MainApplicationConfig.get_config().NOOP)
+        render_template(self.response, 'index.html')
 
-application = WSGIApplication([('/', MainHandler)],
-                              debug=not on_production_server)
+application = WSGIApplication(
+    [
+        Route('/', MainHandler, name='main'),
+    ],
+    debug=not on_production_server)
 
 
 def main():
-    from google.appengine.ext.webapp import util
+    from google.appengine.ext.webapp import template, util
+    template.register_template_library('agar.templatetags.webapp2')
     util.run_wsgi_app(application)
 
 if __name__ == '__main__':
