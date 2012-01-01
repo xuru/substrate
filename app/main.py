@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
-from env_setup import setup
-setup()
+import env_setup; env_setup.setup(); env_setup.setup_django()
 
-from webapp2 import RequestHandler, WSGIApplication
+from django.template import add_to_builtins
+add_to_builtins('agar.templatetags.webapp2')
+
+from webapp2 import RequestHandler, Route, WSGIApplication
 
 from agar.env import on_production_server
 from agar.config import Config
+from agar.django.templates import render_template
 
 
 class MainApplicationConfig(Config):
@@ -26,12 +29,18 @@ class MainApplicationConfig(Config):
     #: A no op.
     NOOP = None
 
+config = MainApplicationConfig.get_config()
+
 
 class MainHandler(RequestHandler):
     def get(self):
-        self.response.write("hello world. value of NOOP: %s" % MainApplicationConfig.get_config().NOOP)
+        # self.response.write("hello world. value of NOOP: %s" % config.NOOP)
+        render_template(self.response, 'index.html')
+
 
 application = WSGIApplication(
-    [('/', MainHandler)],
+    [
+        Route('/', MainHandler, name='main'),
+    ],
     debug=not on_production_server
 )
