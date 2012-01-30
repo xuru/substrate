@@ -24,8 +24,7 @@ config = matcher = None
 try:
     config, matcher, from_cache = dev_appserver.LoadAppConfig(".", {})
 except yaml_errors.EventListenerError, e:
-    logging.error('Fatal error when loading application configuration:\n' +
-                                    str(e))
+    logging.error('Fatal error when loading application configuration:\n' + str(e))
 except dev_appserver.InvalidAppConfigError, e:
     logging.error('Application configuration file invalid:\n%s', e)
 
@@ -36,7 +35,7 @@ def auth_func():
 DEFAULT_PATH = '/_ah/remote_api'
 
 def path():
-    if len(args) == 0:
+    if not len(args):
         return DEFAULT_PATH
     else:
         return args[0]

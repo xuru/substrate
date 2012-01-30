@@ -10,6 +10,8 @@ Changes
 
   * Added django template rendering using agar templatetags to demo app
 
+  * Added command line parameters to the 'shell' command to allow setting the local data directories.
+
 * **0.5.1** -- 2011-11-22
 
   * Updated to `agar-0.5.1`_. See `agar CHANGES`_ for more information.
@@ -60,3 +62,4 @@ Changes
 .. _agar CHANGES: http://packages.python.org/agar/changes.html
 .. _agar-0.5: http://pypi.python.org/pypi/agar/0.5
 .. _agar-0.5.1: http://pypi.python.org/pypi/agar/0.5.1
+.. _agar-0.6: http://pypi.python.org/pypi/agar/0.6
