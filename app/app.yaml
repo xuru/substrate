@@ -1,10 +1,17 @@
 application: your-app-id
 version: 1
-runtime: python
+runtime: python27
 api_version: 1
+threadsafe: true
 
 builtins:
 - remote_api: on
+
+libraries:
+- name: django
+  version: "1.2"
+- name: webapp2
+  version: "2.3"
 
 handlers:
 - url: /(robots\.txt|favicon\.ico)
@@ -20,11 +27,8 @@ handlers:
 - url: /js
   static_dir: static/js
 
-- url: /lib_config
-  script: $PYTHON_LIB/google/appengine/api/lib_config.py
-
 - url: .*
-  script: main.py
+  script: main.application
 
 skip_files:
 - ^local/.*

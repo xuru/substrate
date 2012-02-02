@@ -46,7 +46,7 @@ def extract_version():
     if mo:
         version = mo.group(1)
     else:
-        raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
+        raise RuntimeError("Unable to find version string in substrate/_version.py.")
 
     return version
 
@@ -62,7 +62,7 @@ setup(name='substrate',
       zip_safe=False,
       packages=find_packages(exclude=['tests', 'tests.*']),
       package_data={'': package_data()},
-      scripts=['bin/substrate-2.5'],
+      scripts=['bin/substrate-2.7'],
       classifiers=[
           "Development Status :: 3 - Alpha",
           "Environment :: Web Environment",
