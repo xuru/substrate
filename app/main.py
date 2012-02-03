@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from env_setup import setup_django
-setup_django()
-from env_setup import setup
-setup()
+import env_setup; env_setup.setup(); env_setup.setup_django()
+
+from django.template import add_to_builtins
+add_to_builtins('agar.django.templatetags')
 
 from webapp2 import RequestHandler, Route, WSGIApplication
 
