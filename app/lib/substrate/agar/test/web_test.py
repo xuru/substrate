@@ -1,7 +1,11 @@
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 import webtest
-from unittest2 import TestCase
 
-class WebTest(TestCase):
+
+class WebTest(unittest.TestCase):
     """
     A base class for testing web requests. Provides a wrapper around
     the `WebTest`_ package that is mostly compatable with `gaetestbed`_'s.
