@@ -1,6 +1,5 @@
-from unittest2 import TestCase
+from env_setup import setup_tests; setup_tests()
 
-from agar.url import uri_for
 from agar.test import BaseTest, WebTest
 
 import main

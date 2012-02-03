@@ -24,9 +24,9 @@ if not hasattr(sys, 'version_info'):
     sys.exit(1)
 version_tuple = tuple(sys.version_info[:2])
 
-if version_tuple != (2, 5):
+if version_tuple != (2, 5) and version_tuple != (2, 7):
     sys.stderr.write('Warning: Python %d.%d is not supported. Please use '
-                     'version 2.5.\n' % version_tuple)
+                     'version 2.5 or 2.7.\n' % version_tuple)
 
 if not DIR_PATH:
     sys.stderr.write("Could not find SDK path.  Make sure dev_appserver.py is in your PATH")
