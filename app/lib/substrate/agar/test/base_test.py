@@ -1,12 +1,15 @@
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 import os
 import hashlib
-import unittest2
 from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.ext import testbed
 
 
-class BaseTest(unittest2.TestCase):
+class BaseTest(unittest.TestCase):
     """
     A base class for App Engine unit tests that sets up API proxy
     stubs for all available services using `testbed`_ and clears them

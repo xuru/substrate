@@ -11,7 +11,10 @@ from google.appengine.tools import dev_appserver_main
 
 
 __unittest = True
-from unittest2.main import main_
+try:
+    from unittest2.main import main_ as main
+except ImportError:
+    from unittest.main import main
 
 
 config = matcher = None
@@ -43,4 +46,4 @@ if __name__ == "__main__":
     argv = ['unit2', 'discover', '--start-directory', 'tests']
     argv.extend(sys.argv[1:])
     sys.argv = argv
-    main_()
+    main()
