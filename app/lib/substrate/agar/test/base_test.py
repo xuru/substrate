@@ -2,8 +2,10 @@ try:
     import unittest2 as unittest
 except ImportError:
     import unittest
+
 import os
 import hashlib
+import unittest2
 from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.ext import testbed

@@ -2,8 +2,8 @@ try:
     import unittest2 as unittest
 except ImportError:
     import unittest
-import webtest
 
+import webtest
 
 class WebTest(unittest.TestCase):
     """
