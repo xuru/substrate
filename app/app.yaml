@@ -6,7 +6,13 @@ api_version: 1
 builtins:
 - remote_api: on
 
+inbound_services:
+- warmup
+
 handlers:
+- url: /_ah/warmup
+  script: warmup.py
+
 - url: /(robots\.txt|favicon\.ico)
   static_files: static/\1
   upload: static/(.*)
