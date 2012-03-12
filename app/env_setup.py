@@ -2,6 +2,7 @@
 Functions to initialize environment settings.
 """
 
+
 def get_project_root():
     """
     Returns the project root path.
@@ -21,6 +22,7 @@ def get_project_root():
         raise os.error('app.yaml not found for env_setup.get_project_root().%sSearch started in: %s' % (os.linesep, start_path))
     return search_path
 
+
 def setup():
     """Adds <project_root>/lib/substrate and <project_root>/lib/usr to the python path."""
     import os
@@ -34,6 +36,7 @@ def setup():
         if lib_usr_path not in sys.path:
             sys.path.insert(0, lib_usr_path)
 
+
 def setup_django(settings='settings'):
     """
     Sets up the django settings.
@@ -42,10 +45,9 @@ def setup_django(settings='settings'):
     """
     import os
     os.environ['DJANGO_SETTINGS_MODULE'] = settings
-    from google.appengine.dist import use_library
-    use_library('django', '1.2')
     from django.conf import settings
     _ = settings.TEMPLATE_DIRS
+
 
 def setup_tests():
     """Fix the sys.path to include our extra paths."""
