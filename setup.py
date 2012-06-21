@@ -46,7 +46,7 @@ def extract_version():
     if mo:
         version = mo.group(1)
     else:
-        raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
+        raise RuntimeError("Unable to find version string in substrate/_version.py.")
 
     return version
 
@@ -56,13 +56,13 @@ setup(name='substrate',
       description='A base application with a collection of libraries for making Google App Engine development easier.',
       long_description=open("README.rst").read(),
       license="MIT",
-      author='Thomas Bombach, Jr.',
+      author='Thomas Bohmbach, Jr.',
       author_email='thomas@gumption.com',
       url='http://bitbucket.org/gumptioncom/substrate',
       zip_safe=False,
       packages=find_packages(exclude=['tests', 'tests.*']),
       package_data={'': package_data()},
-      scripts=['bin/substrate-2.5'],
+      scripts=['bin/substrate'],
       classifiers=[
           "Development Status :: 3 - Alpha",
           "Environment :: Web Environment",

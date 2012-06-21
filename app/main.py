@@ -36,17 +36,10 @@ class MainHandler(RequestHandler):
     def get(self):
         render_template(self.response, 'index.html')
 
+
 application = WSGIApplication(
     [
         Route('/', MainHandler, name='main'),
     ],
-    debug=not on_production_server)
-
-
-def main():
-    from google.appengine.ext.webapp import template, util
-    template.register_template_library('agar.django.templatetags')
-    util.run_wsgi_app(application)
-
-if __name__ == '__main__':
-    main()
+    debug=not on_production_server
+)

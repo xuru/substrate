@@ -1,4 +1,4 @@
-import env_setup; env_setup.setup(); env_setup.setup_django()
+import env_setup; env_setup.setup()
 
 from webapp2 import WSGIApplication, RequestHandler, Route
 
@@ -10,20 +10,9 @@ class WarmupHandler(RequestHandler):
         self.response.out.write("Warmed Up")
 
 
-def get_application():
-    return WSGIApplication(
-        [
-            #Documentation
-            Route('/_ah/warmup', handler=WarmupHandler, name='warmup'),
-        ],
-        debug=not on_production_server
-    )
-application = get_application()
-
-
-def main():
-    from google.appengine.ext.webapp import util
-    util.run_wsgi_app(application)
-
-if __name__ == '__main__':
-    main()
+application = WSGIApplication(
+    [
+        Route('/_ah/warmup', WarmupHandler, name='warmup'),
+    ],
+    debug=not on_production_server
+)

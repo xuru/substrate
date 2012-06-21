@@ -1,6 +1,11 @@
 Changes
 -------
- **0.6** -- 2012-01-01
+* **0.7** -- 2012-06-21
+
+  * Remove support for python older than 2.7
+  * Renamed substrate script to back to substrate
+
+* **0.6** -- 2012-01-01
 
   * First support for py2.7
 
