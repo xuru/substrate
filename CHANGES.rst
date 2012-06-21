@@ -3,7 +3,10 @@ Changes
 * **0.7** -- 2012-06-21
 
   * Remove support for python older than 2.7
+
   * Renamed substrate script to back to substrate
+
+  * Updated to `agar-0.7`_. See `agar CHANGES`_ for more information.
 
 * **0.6** -- 2012-01-01
 
@@ -68,3 +71,4 @@ Changes
 .. _agar-0.5: http://pypi.python.org/pypi/agar/0.5
 .. _agar-0.5.1: http://pypi.python.org/pypi/agar/0.5.1
 .. _agar-0.6: http://pypi.python.org/pypi/agar/0.6
+.. _agar-0.7: http://pypi.python.org/pypi/agar/0.7
