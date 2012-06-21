@@ -9,11 +9,15 @@ import mimetypes
 import urlparse
 
 from google.appengine.api import images, memcache, files, urlfetch
+from google.appengine.api.images import NotImageError
 
-from google.appengine.ext import db, blobstore
-from google.appengine.ext.ndb import model
+from google.appengine.ext import db, blobstore, ndb
 
 from agar.config import Config
+
+
+IMAGE_HEADER_SIZE = 50000
+TESTBED_INSTANCE = None
 
 
 class ImageConfig(Config):
@@ -59,7 +63,12 @@ class BaseImage(object):
         If there is no image data, this will be ``None``.
         """
         if self.image is not None:
-            return self.image.format
+            try:
+                return self.image.format
+            except NotImageError:
+                data = blobstore.fetch_data(self.blob_key, 0, IMAGE_HEADER_SIZE)
+                img = images.Image(image_data=data)
+                return img.format
         return None
 
     @property
@@ -69,7 +78,12 @@ class BaseImage(object):
         If there is no image data, this will be ``None``.
         """
         if self.image is not None:
-            return self.image.width
+            try:
+                return self.image.width
+            except NotImageError:
+                data = blobstore.fetch_data(self.blob_key, 0, IMAGE_HEADER_SIZE)
+                img = images.Image(image_data=data)
+                return img.width
         return None
 
     @property
@@ -79,7 +93,12 @@ class BaseImage(object):
         If there is no image data, this will be ``None``.
         """
         if self.image is not None:
-            return self.image.height
+            try:
+                return self.image.height
+            except NotImageError:
+                data = blobstore.fetch_data(self.blob_key, 0, IMAGE_HEADER_SIZE)
+                img = images.Image(image_data=data)
+                return img.height
         return None
 
     @property
@@ -92,7 +111,7 @@ class BaseImage(object):
             return blobstore.BlobReader(self.blob_key).read()
         return None
 
-    def get_serving_url(self, size=None, crop=False):
+    def get_serving_url(self, size=None, crop=False, secure_url=None):
         """
         Returns the serving URL for the image. It works just like the `Image.get_serving_url`_ function,
         but adds caching. The cache timeout is controlled by the :py:attr:`.SERVING_URL_TIMEOUT` setting.
@@ -100,6 +119,8 @@ class BaseImage(object):
         :param size: An integer supplying the size of resulting images.
             See `Image.get_serving_url`_ for more detailed argument information.
         :param crop: Specify ``true`` for a cropped image, and ``false`` for a re-sized image.
+            See `Image.get_serving_url`_ for more detailed argument information.
+        :param secure_url: Specify ``true`` for a https url.
             See `Image.get_serving_url`_ for more detailed argument information.
         :return: The serving URL for the image (see `Image.get_serving_url`_ for more detailed information).
         """
@@ -114,7 +135,7 @@ class BaseImage(object):
                 while tries < config.SERVING_URL_LOOKUP_TRIES:
                     try:
                         tries += 1
-                        serving_url = images.get_serving_url(str(self.blob_key), size=size, crop=crop)
+                        serving_url = images.get_serving_url(str(self.blob_key), size=size, crop=crop, secure_url=secure_url)
                         if serving_url is not None:
                             break
                     except Exception, e:
@@ -141,13 +162,15 @@ class BaseImage(object):
         return image
 
     @classmethod
-    def create(cls, blob_info=None, data=None, filename=None, url=None, mime_type=None, **kwargs):
+    def create(cls, blob_key=None, blob_info=None, data=None, filename=None, url=None, mime_type=None, **kwargs):
         """
         Create an ``Image``. Use this class method rather than creating an image with the constructor. You must provide one
         of the following parameters ``blob_info``, ``data``, or ``url`` to specify the image data to use.
 
+        :param blob_key: The `Blobstore`_ data to use as the image data. If this parameter is not ``None``, all
+            other parameters will be ignored as they are not needed (Only use with `NdbImage`).
         :param blob_info: The `Blobstore`_ data to use as the image data. If this parameter is not ``None``, all
-            other parameters will be ignored as they are not needed.
+            other parameters will be ignored as they are not needed (Do not use with `NdbImage`).
         :param data: The image data that should be put in the `Blobstore`_ and used as the image data.
         :param filename: The filename of the image data. If not provided, the filename will be guessed from the URL
             or, if there is no URL, it will be set to the stringified `Key`_ of the image entity.
@@ -168,7 +191,16 @@ class BaseImage(object):
         if url is not None:
             url = url.encode('ascii', 'ignore')
         if blob_info is not None:
-            kwargs['blob_info'] = blob_info
+            if issubclass(cls, Image):
+                kwargs['blob_info'] = blob_info
+            else:
+                kwargs['blob_key'] = blob_info.key()
+            return cls.create_new_entity(**kwargs)
+        if blob_key is not None:
+            if issubclass(cls, NdbImage):
+                kwargs['blob_key'] = blob_key
+            else:
+                kwargs['blob_info'] = blob_key
             return cls.create_new_entity(**kwargs)
         if data is None:
             if url is not None:
@@ -181,24 +213,36 @@ class BaseImage(object):
         if data is None:
             raise db.Error("No image data")
         image = cls.create_new_entity(source_url=url, **kwargs)
-        filename = filename or str(image.model_key)
+        filename = filename or image.model_key_string
         mime_type = mime_type or mimetypes.guess_type(filename)[0] or 'application/octet-stream'
         if mime_type not in ImageConfig.get_config(_cache=True).VALID_MIME_TYPES:
             message = "The image mime type (%s) isn't valid" % mime_type
             logging.warning(message)
             image.delete()
             raise images.BadImageError(message)
-        blob_file_name = files.blobstore.create(mime_type=mime_type, _blobinfo_uploaded_filename=filename)
-        with files.open(blob_file_name, 'a') as f:
-            f.write(data)
-        files.finalize(blob_file_name)
-        image.blob_key = files.blobstore.get_blob_key(blob_file_name)
+        gae_image = images.Image(data)
+        format = gae_image.format
+        new_format = None
+        if mime_type == 'image/jpeg' and format != images.JPEG:
+            new_format = images.JPEG
+        if mime_type == 'image/png' and format != images.PNG:
+            new_format = images.PNG
+        if new_format is not None:
+            data = images.crop(data, 0.0, 0.0, 1.0, 1.0, output_encoding=new_format, quality=100)
+        try:
+            blob_file_name = files.blobstore.create(mime_type=mime_type, _blobinfo_uploaded_filename=filename)
+            with files.open(blob_file_name, 'a') as f:
+                f.write(data)
+            files.finalize(blob_file_name)
+            image.blob_key = files.blobstore.get_blob_key(blob_file_name)
+        except AssertionError:
+            # Needed to create an Image from url or image_data in a unittest.
+            # Hopefully we can remove this when this bug is fixed:
+            # http://code.google.com/p/googleappengine/issues/detail?id=5301
+            global TESTBED_INSTANCE
+            _ = TESTBED_INSTANCE.get_stub('blobstore').CreateBlob(filename, data)
+            image.blob_key = blobstore.BlobKey(filename)
         image.put()
-        image = cls.get_entity(image.model_key)
-        if image is not None and image.blob_info is None:
-            logging.error("Failed to create image: %s" % filename)
-            image.delete()
-            image = None
         return image
 
 
@@ -221,6 +265,10 @@ class Image(db.Model, BaseImage):
     def model_key(self):
         return self.key()
 
+    @property
+    def model_key_string(self):
+        return str(self.model_key)
+
     def get_blob_key(self):
         if self.blob_info is not None:
             return self.blob_info.key()
@@ -229,6 +277,9 @@ class Image(db.Model, BaseImage):
         self.blob_info = blob_key
     #: The `BlobKey`_ entity for the image's `Blobstore`_ value.
     blob_key = property(get_blob_key, set_blob_key)
+
+    def fetch_data(self, *args, **kwargs):
+        return blobstore.fetch_data(self.blob_key, *args, **kwargs)
 
     def delete(self, **kwargs):
         """
@@ -241,41 +292,55 @@ class Image(db.Model, BaseImage):
         super(Image, self).delete(**kwargs)
 
 
-class NdbImage(model.Model, BaseImage):
+class NdbImage(ndb.model.Model, BaseImage):
     """
     An NDB model class that helps create and work with images stored in the `Blobstore`_.
     Please note that you should never call the constructor for this class directly when creating an image.
     Instead, use the :py:meth:`create` method.
     """
     #: The `BlobKey`_ entity for the image's `Blobstore`_ value.
-    blob_key = model.BlobKeyProperty(required=False)
+    blob_key = ndb.model.BlobKeyProperty(required=False)
     #: The original URL that the image data was fetched from, if applicable.
-    source_url = model.StringProperty(required=False, default=None)
+    source_url = ndb.model.StringProperty(required=False, default=None)
     #: The create timestamp.
-    created = model.DateTimeProperty(auto_now_add=True)
+    created = ndb.model.DateTimeProperty(auto_now_add=True)
     #: The last modified timestamp.
-    modified = model.DateTimeProperty(auto_now=True)
+    modified = ndb.model.DateTimeProperty(auto_now=True)
 
     @property
     def model_key(self):
         return self.key
 
+    @property
+    def model_key_string(self):
+        return self.model_key.urlsafe()
+
     def get_blob_info(self):
         if self.blob_key is not None:
-            return blobstore.BlobInfo(self.blob_key)
+            return blobstore.BlobInfo.get(self.blob_key)
         return None
     def set_blob_info(self, blob_info):
         self.blob_key = blob_info.key()
     #: The `BlobInfo`_ entity for the image's `Blobstore`_ value.
     blob_info = property(get_blob_info, set_blob_info)
 
-    def delete(self):
+    def fetch_data(self, *args, **kwargs):
+        return blobstore.fetch_data(self.blob_info, *args, **kwargs)
+
+    #noinspection PyUnusedLocal
+    def delete(self, **kwargs):
         """
         Delete the image and its attached `Blobstore`_ storage.
+
+        :param kwargs: Ignored.
         """
-        if self.blob_info is not None:
-            self.blob_info.delete()
-        self.model_key.delete()
+        self.key.delete()
+
+    @classmethod
+    def _pre_delete_hook(cls, key):
+        image = key.get()
+        if image.blob_info is not None:
+            image.blob_info.delete()
 
     @classmethod
     def get_entity(cls, key):
