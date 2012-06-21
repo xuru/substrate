@@ -21,6 +21,7 @@ def get_project_root():
         raise os.error('app.yaml not found for env_setup.get_project_root().%sSearch started in: %s' % (os.linesep, start_path))
     return search_path
 
+
 def setup():
     """Adds <project_root>/lib/substrate and <project_root>/lib/usr to the python path."""
     import os
@@ -34,18 +35,18 @@ def setup():
         if lib_usr_path not in sys.path:
             sys.path.insert(0, lib_usr_path)
 
+
 def setup_django(settings='settings'):
     """
     Sets up the django settings.
 
-    :param settings: The name of the settings file. Default: ``'settings'``.
+    :param settings: The name of the settings file. Default-- ``'settings'``.
     """
     import os
     os.environ['DJANGO_SETTINGS_MODULE'] = settings
-    from google.appengine.dist import use_library
-    use_library('django', '1.2')
     from django.conf import settings
     _ = settings.TEMPLATE_DIRS
+
 
 def setup_tests():
     """Fix the sys.path to include our extra paths."""
@@ -64,12 +65,12 @@ def setup_tests():
             sys.path.pop()
     if not hasattr(sys, 'version_info'):
         sys.stderr.write('Very old versions of Python are not supported. Please '
-                         'use version 2.5 or greater.\n')
+                         'use version 2.7 or greater.\n')
         sys.exit(1)
     version_tuple = tuple(sys.version_info[:2])
-    if version_tuple != (2, 5) and version_tuple != (2, 7):
+    if version_tuple != (2, 7):
         sys.stderr.write('Warning: Python %d.%d is not supported. Please use '
-                         'version 2.5 or 2.7.\n' % version_tuple)
+                         'version 2.7.\n' % version_tuple)
     if not dir_path:
         sys.stderr.write("Could not find SDK path.  Make sure dev_appserver.py is in your PATH")
         sys.exit(1)

@@ -1,17 +1,25 @@
 application: your-app-id
 version: 1
-runtime: python
+runtime: python27
 api_version: 1
+threadsafe: on
 
 builtins:
+- deferred: on
 - remote_api: on
 
 inbound_services:
 - warmup
 
+libraries:
+- name: webapp2
+  version: latest
+- name: webob
+  version: latest
+
 handlers:
 - url: /_ah/warmup
-  script: warmup.py
+  script: warmup.application
 
 - url: /(robots\.txt|favicon\.ico)
   static_files: static/\1
@@ -26,11 +34,8 @@ handlers:
 - url: /js
   static_dir: static/js
 
-- url: /lib_config
-  script: $PYTHON_LIB/google/appengine/api/lib_config.py
-
 - url: .*
-  script: main.py
+  script: main.application
 
 skip_files:
 - ^local/.*
@@ -41,3 +46,4 @@ skip_files:
 - ^.*\.py[co]
 - ^.*\.po
 - ^.*\.pot
+- ^\.DS_Store.*
