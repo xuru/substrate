@@ -90,12 +90,15 @@ class BaseTest(unittest.TestCase):
         """
         self.testbed.get_stub('datastore_v3').Clear()
 
-    def log_in_user(self, email):
+    def log_in_user(self, email, is_admin=False):
         """
         Log in a `User`_ with the given email address. This will cause
         `users.get_current_user`_ to return a `User`_ with the same
         email address and user_id as if it was entered into the SDK's
         log in prompt.
+
+        :param email: the user to be logged in
+        :param is_admin: True if the user is an google admin
         """
         # stolen from dev_appserver_login
         user_id_digest = hashlib.md5(email.lower()).digest()
@@ -103,6 +106,7 @@ class BaseTest(unittest.TestCase):
 
         os.environ['USER_EMAIL'] = email
         os.environ['USER_ID'] = user_id
+        os.environ['USER_IS_ADMIN'] = '1' if is_admin else '0'
 
         return users.User(email=email, _user_id=user_id)
 
