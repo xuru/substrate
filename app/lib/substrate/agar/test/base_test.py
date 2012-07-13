@@ -46,14 +46,18 @@ class BaseTest(unittest.TestCase):
         self.testbed = testbed.Testbed()
         self.testbed.activate()
 
+        self.testbed.init_app_identity_stub()
+        self.testbed.init_blobstore_stub()
+        self.testbed.init_capability_stub()
+        self.testbed.init_channel_stub()
         self.testbed.init_datastore_v3_stub()
+        self.testbed.init_files_stub()
+        self.testbed.init_mail_stub()
         self.testbed.init_memcache_stub()
         self.testbed.init_taskqueue_stub()
         self.testbed.init_urlfetch_stub()
         self.testbed.init_user_stub()
         self.testbed.init_xmpp_stub()
-        self.testbed.init_mail_stub()
-        self.testbed.init_blobstore_stub()
 
         try:
             from google.appengine.api.images import images_stub
