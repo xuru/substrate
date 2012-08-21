@@ -56,7 +56,6 @@ if __name__ == "__main__":
         elif opt in ("-mu", "--mysql_user"):
             appserver_args[dev_appserver_main.ARG_MYSQL_USER] = arg
         elif opt in ("-mp", "--mysql_password"):
-            print("IN PASSWORD")
             appserver_args[dev_appserver_main.ARG_MYSQL_PASSWORD] = arg
 
     dev_appserver.SetupStubs(config.application, **appserver_args)
