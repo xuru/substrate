@@ -24,6 +24,7 @@ except dev_appserver.InvalidAppConfigError, e:
 
 appserver_args = dev_appserver_main.DEFAULT_ARGS.copy()
 
+
 def usage():
     print """%s
 
@@ -33,12 +34,14 @@ Options:
   -b DIR, --blobstore_path=DIR          Path to directory to use for storing Blobstore file stub data.
   -d DS_FILE, --datastore_path=DS_FILE  Path to file to use for storing Datastore file stub data.
                                         (Default %s)
+  -mu USER --mysql_user=USER            The MySQL user
+  -mp USER --mysql_password=PASSWORD    The MySQL password
   -h, --help                            Show this help.
 """ % (__doc__, appserver_args[dev_appserver_main.ARG_DATASTORE_PATH])
 
 if __name__ == "__main__":
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hd:b:", ["help", "datastore_path=", "blobstore_path="])
+        opts, args = getopt.getopt(sys.argv[1:], "hd:b:mu:mp:", ["help", "datastore_path=", "blobstore_path=", "mysql_user=", "mysql_password="])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -50,6 +53,11 @@ if __name__ == "__main__":
             appserver_args[dev_appserver_main.ARG_DATASTORE_PATH] = arg
         elif opt in ("-b", "--blobstore_path"):
             appserver_args[dev_appserver_main.ARG_BLOBSTORE_PATH] = arg
+        elif opt in ("-mu", "--mysql_user"):
+            appserver_args[dev_appserver_main.ARG_MYSQL_USER] = arg
+        elif opt in ("-mp", "--mysql_password"):
+            print("IN PASSWORD")
+            appserver_args[dev_appserver_main.ARG_MYSQL_PASSWORD] = arg
 
     dev_appserver.SetupStubs(config.application, **appserver_args)
 
