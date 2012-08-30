@@ -1,10 +1,5 @@
 Changes
 -------
-* **0.7.1** -- 2012-06-21
-  * Added mysql params to shell to support cloud sql
-
-  * Updated to latest restler
-
 * **0.7** -- 2012-06-21
 
   * Remove support for python older than 2.7
@@ -12,6 +7,10 @@ Changes
   * Renamed substrate script to back to substrate
 
   * Updated to `agar-0.7`_. See `agar CHANGES`_ for more information.
+
+  * Added mysql params to shell to support cloud sql
+
+  * Updated to latest restler
 
 * **0.6** -- 2012-01-01
 
