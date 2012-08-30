@@ -1,5 +1,10 @@
 Changes
 -------
+* **0.7.1** -- 2012-06-21
+  * Added mysql params to shell to support cloud sql
+
+  * Updated to latest restler
+
 * **0.7** -- 2012-06-21
 
   * Remove support for python older than 2.7
