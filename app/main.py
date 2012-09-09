@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-
-import env_setup; env_setup.setup(); env_setup.setup_django()
+import env_setup; env_setup.setup()
 
 from django.template import add_to_builtins
 add_to_builtins('agar.django.templatetags')

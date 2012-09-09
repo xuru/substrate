@@ -1,8 +1,9 @@
-from env_setup import setup_tests; setup_tests()
+import env_setup; env_setup.setup_tests(); env_setup.setup_django()
 
 from agar.test import BaseTest, WebTest
 
 import main
+
 
 class MainTest(BaseTest, WebTest):
 
