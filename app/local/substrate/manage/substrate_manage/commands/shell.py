@@ -61,15 +61,5 @@ if __name__ == "__main__":
     dev_appserver.SetupStubs(config.application, **appserver_args)
 
     banner = "Interactive App Engine Shell for app-id '%s'" % config.application
-    try:
-        import IPython
-        sh = IPython.Shell.IPShellEmbed(argv='', banner=banner)
-        sh(global_ns={}, local_ns={})
-    except:
-        try:
-            from IPython import embed
-            embed()
-        except:
-            import code
-            console = code.InteractiveConsole()
-            console.interact(banner)
+    from IPython import embed
+    embed(header=banner)
