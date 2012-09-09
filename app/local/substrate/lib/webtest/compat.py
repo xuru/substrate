@@ -6,6 +6,8 @@ if sys.version_info[0] > 2:
     string_types = (str,)
     text_type = str
     binary_type = bytes
+    from json import loads
+    from json import dumps
     from io import StringIO
     from io import BytesIO
     from urllib.parse import urlencode
@@ -53,6 +55,16 @@ else:
         from StringIO import StringIO
     BytesIO = StringIO
     import urlparse
+    try:
+        from json import loads
+        from json import dumps
+    except ImportError:
+        try:
+            from simplejson import loads
+            from simplejson import dumps
+        except ImportError:
+            loads = None
+            dumps = None
 
     def to_bytes(s):
         return str(s)
@@ -69,4 +81,38 @@ def print_stderr(value):
     if PY3:
         exec('print(value, file=sys.stderr)')
     else:
-        exec('print >> sys.stderr, value')
+        if isinstance(value, text_type):
+            # not really clean but this must *never* fail
+            try:
+                value = value.encode('utf-8')
+            except:
+                value = repr(value)
+        sys.stderr.write(value)
+
+try:
+    next = next
+except NameError:
+    # python < 2.6
+    def next(iterator):
+        return iterator.next()
+
+try:
+    from collections import OrderedDict
+except ImportError:
+    OrderedDict = dict
+
+try:
+    from unittest import TestCase
+    from unittest import skipIf
+except ImportError:
+    try:
+        from unittest2 import TestCase
+        from unittest2 import skipIf
+    except ImportError:
+        from unittest import TestCase
+        def skipIf(condition, message):
+            if condition:
+                return None
+            def wrapper(func):
+                return func
+            return wrapper
