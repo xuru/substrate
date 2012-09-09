@@ -34,11 +34,13 @@ def auth_func():
 
 DEFAULT_PATH = '/_ah/remote_api'
 
+
 def path():
     if not len(args):
         return DEFAULT_PATH
     else:
         return args[0]
+
 
 def app_id():
     for opt in optlist:
@@ -49,22 +51,12 @@ def app_id():
 
 if __name__ == "__main__":
     optlist, args = getopt.getopt(sys.argv[1:], 'A:')
-    
+
     remote_api_stub.ConfigureRemoteDatastore(None, path(), auth_func, "%s.appspot.com" % app_id())
     remote_api_stub.MaybeInvokeAuthentication()
 
     os.environ['HTTP_HOST'] = "%s.appspot.com" % app_id()
 
     banner = "Interactive REMOTE App Engine Shell for app-id '%s'" % app_id()
-    try:
-        import IPython
-        sh = IPython.Shell.IPShellEmbed(argv='', banner=banner)
-        sh(global_ns={}, local_ns={})
-    except:
-        try:
-            from IPython import embed
-            embed()
-        except:
-            import code
-            console = code.InteractiveConsole()
-            console.interact(banner)
+    from IPython import embed
+    embed(header=banner)
