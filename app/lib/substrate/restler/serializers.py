@@ -6,15 +6,9 @@ import json
 import pprint
 import types
 
-from webapp2 import cached_property
-
 from xml.etree import ElementTree as ET
 
-from google.appengine.api import users
-from google.appengine.ext import blobstore, db, ndb
-
 from restler import models
-
 
 import datetime_safe
 
@@ -24,7 +18,7 @@ TIME_FORMAT = "%H:%M:%S"
 DEFAULT_STYLE = {
     'xml': {
         "root": lambda thing: ET.Element("result"),
-        "model": lambda el, thing: ET.SubElement(el, get_kind(thing).lower()),
+        "model": lambda el, thing: ET.SubElement(el, thing.restler_kind(thing)),
         "list": lambda el, thing: None,  # top level element for a list
         "list_item": lambda el, thing: ET.SubElement(el, "item"),  # An item in a list
         "dict": lambda el, thing: None,  # top level element for a dict
@@ -43,23 +37,6 @@ class SkipField(object):
     pass
 
 SKIP = SkipField()
-
-
-def get_kind(obj):
-    try:
-        return obj.kind()  # For db.model
-    except:  # For ndb.model
-        try:
-            return obj.__class__.__name__
-        except:
-            return obj.__name__
-
-
-def get_properties(obj):
-    try:
-        return obj.properties()
-    except AttributeError:
-        return obj._properties
 
 
 def json_response(response, model_or_query, strategy=None, status_code=200, context={}):
@@ -148,10 +125,7 @@ class ModelStrategy(object):
         """
         self.model = model
         if include_all_fields:
-            try:
-                self.fields = list(model.properties().iterkeys())  # For db.model
-            except AttributeError:
-                self.fields = list(model._properties.iterkeys())  # For ndb.model
+            self.fields = model.restler_properties(model)
         else:
             self.fields = []
         self.name = output_name
@@ -169,12 +143,12 @@ class ModelStrategy(object):
                 names[prop] = prop
         return names
 
-    def __add(self, fields):
+    def __add(self, new_fields):
         names = self.__name_map()
         model_strategy = ModelStrategy(self.model, output_name=self.name)
         model_strategy.fields = self.fields[:]
-        if isinstance(fields, (tuple, list)):
-            for name in fields:
+        if isinstance(new_fields, (tuple, list)):
+            for name in new_fields:
                 if isinstance(name, dict):
                     name = name.items()
                 if isinstance(name, tuple):
@@ -188,14 +162,11 @@ class ModelStrategy(object):
                         else:
                             raise ValueError("Cannot add field.  '%s' already exists" % name)
                 elif name not in names:
-                    try:
-                        fields = self.model.fields()  # For db.model
-                    except AttributeError:
-                        fields = set(self.model._properties.iterkeys())  # For ndb.model
+                    fields = self.model.restler_properties(self.model)
                     if (name in fields
                             or isinstance(getattr(self.model, name, None), property)
-                            or isinstance(getattr(self.model, name, None), cached_property)
-                            or callable(getattr(self.model, name, None))):
+                            or callable(getattr(self.model, name, None))
+                            or self.model.restler_extra_types(getattr(self.model, name, None))):
                         model_strategy.fields.append(name)
                         names[name] = name
                     else:
@@ -297,47 +268,40 @@ class ModelStrategy(object):
 def encoder_builder(type_, strategy=None, style=None, context={}):
     def default_impl(obj):
         # Load objects from the datastore (could be done in parallel)
-        if isinstance(obj, db.Query):
-            return [o for o in obj]
-        if isinstance(obj, ndb.query.Query):
-            return [o for o in obj]
+        if strategy:
+            for stat in strategy:
+                if hasattr(stat, 'restler_collection_types'):
+                    if stat.restler_collection_types(obj):
+                        return [o for o in obj]
+
+                if hasattr(stat, 'restler_encoder'):
+                        encoded_obj = stat.restler_encoder(obj)
+                        if encoded_obj is not None:
+                            return encoded_obj
 
         if isinstance(obj, datetime.datetime):
             d = datetime_safe.new_datetime(obj)
             return d.strftime("%s %s" % (DATE_FORMAT, TIME_FORMAT))
-        elif isinstance(obj, datetime.date):
+        if isinstance(obj, datetime.date):
             d = datetime_safe.new_date(obj)
             return d.strftime(DATE_FORMAT)
-        elif isinstance(obj, datetime.time):
+        if isinstance(obj, datetime.time):
             return obj.strftime(TIME_FORMAT)
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime("%s %s" % (DATE_FORMAT, TIME_FORMAT))
-        elif isinstance(obj, datetime.date):
-            return obj.strftime(DATE_FORMAT)
-        elif isinstance(obj, datetime.time):
-            return obj.strftime(TIME_FORMAT)
-        elif isinstance(obj, decimal.Decimal):
+        if isinstance(obj, decimal.Decimal):
             return str(obj)
-        if isinstance(obj, db.GeoPt):
-            return "%s %s" % (obj.lat, obj.lon)
-        if isinstance(obj, db.IM):
-            return "%s %s" % (obj.protocol, obj.address)
-        if isinstance(obj, users.User):
-            return obj.user_id() or obj.email()
-        if isinstance(obj, blobstore.BlobInfo):
-            return str(obj.key())  # TODO is this correct?
+
         ret = {}  # What we're most likely going to return (populated, of course)
-        if isinstance(obj, (db.Model, models.TransientModel, ndb.Model)):
+        if hasattr(obj, 'restler_kind') or isinstance(obj, models.TransientModel):
             model = {}
-            kind = get_kind(obj).lower()
+            kind = obj.restler_kind(obj)
             # User the model's properties
             if strategy is None:
-                fields = get_properties(obj).keys()
+                fields = obj.restler_properties(obj)
             else:
                 # Load the customized mappings
                 fields = strategy.get(obj.__class__, None)
                 if fields is None:
-                    fields = get_properties(obj).keys()
+                    fields = obj.restler_properties(obj)
                 # If it's a dict, we're changing the output_name for the model
                 elif isinstance(fields, dict):
                     if len(fields.keys()) != 1:
@@ -441,7 +405,7 @@ def _encode_xml(thing, node, strategy, style, context):
         el = xml_style["list"](node, thing)
         if el is None: el = node
         for value in thing:
-            if isinstance(value, db.Model):
+            if hasattr(value, 'restler_kind'):
                 # Note: we don't create an item in this circumstance
                 _encode_xml(encoder(value), el, strategy, style, context)
                 continue

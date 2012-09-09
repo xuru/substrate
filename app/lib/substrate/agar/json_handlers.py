@@ -1,5 +1,5 @@
 """
-The ``agar.json`` module contains classes to assist with creating json web service handlers.
+The ``agar.json_handlers`` module contains classes to assist with creating json web service handlers.
 """
 
 import datetime
@@ -22,8 +22,8 @@ INVALID_CURSOR = 'INVALID_CURSOR'
 
 class JsonConfig(Config):
     """
-    :py:class:`~agar.config.Config` settings for the ``agar.json`` library.
-    Settings are under the ``agar_json`` namespace.
+    :py:class:`~agar.config.Config` settings for the ``agar.json_handlers`` library.
+    Settings are under the ``agar_json_handlers`` namespace.
 
     The following settings (and defaults) are provided::
 
@@ -32,9 +32,9 @@ class JsonConfig(Config):
         agar_url_USE_DATA_ROOT_NODE = True
         agar_url_ADD_SUCCESS_FLAG = False
 
-    To override ``agar.json`` settings, define values in the ``appengine_config.py`` file in the root of your project.
+    To override ``agar.json_handlers`` settings, define values in the ``appengine_config.py`` file in the root of your project.
     """
-    _prefix = 'agar_json'
+    _prefix = 'agar_json_handlers'
 
     DEFAULT_PAGE_SIZE = 10
     MAX_PAGE_SIZE = 100
@@ -50,6 +50,7 @@ def string_to_int(s, default=10):
     except:
         return default
 
+
 class JsonRequestHandler(RequestHandler):
     """
     A `webapp2.RequestHandler`_ implementation to help with json web service handlers, including error handling.
@@ -59,7 +60,7 @@ class JsonRequestHandler(RequestHandler):
             context = {}
         context['request'] = self.request
         return context
-    
+
     def _setup_data(self, model_or_query, status_code, status_text, errors=None):
         data = dict()
         data['status_code'] = status_code
@@ -74,7 +75,7 @@ class JsonRequestHandler(RequestHandler):
             data['errors'] = errors
         if config.USE_DATA_ROOT_NODE:
             data['data'] = model_or_query
-        else:    
+        else:
             data.update(model_or_query)
         return data
 
@@ -130,13 +131,13 @@ class JsonRequestHandler(RequestHandler):
 
 class MultiPageHandler(JsonRequestHandler):
     """
-    A :py:class:`~agar.json.JsonRequestHandler` class to help with ``page_size`` and ``cursor`` parsing and logic.
+    A :py:class:`~agar.json_handlers.JsonRequestHandler` class to help with ``page_size`` and ``cursor`` parsing and logic.
     """
     @property
     def page_size(self):
         """
-        The requested ``page_size`` constrained between ``1`` and the configuration value ``agar_json_MAX_PAGE_SIZE``.
-        If ``page_size`` isn't passed in, it will default to the configuration value ``agar_json_DEFAULT_PAGE_SIZE``.
+        The requested ``page_size`` constrained between ``1`` and the configuration value ``agar_json_handlers_MAX_PAGE_SIZE``.
+        If ``page_size`` isn't passed in, it will default to the configuration value ``agar_json_handlers_DEFAULT_PAGE_SIZE``.
 
         :return: The requested page size for fetching.
         """
@@ -146,7 +147,7 @@ class MultiPageHandler(JsonRequestHandler):
 
     def fetch_page(self, query):
         """
-        Fetches a page of the passed ``query`` using the :py:attr:`~agar.json.MultiPageHandler.page_size` and the
+        Fetches a page of the passed ``query`` using the :py:attr:`~agar.json_handlers.MultiPageHandler.page_size` and the
         ``cursor`` request parameter.
 
         :param query: The `Query`_ to fetch from.
@@ -171,29 +172,28 @@ class MultiPageHandler(JsonRequestHandler):
 
 class CorsMultiPageHandler(MultiPageHandler):
     """
-    A :py:class:`~agar.json.MultiPageHandler` to help with Cross-Origin Resource sharing .
+    A :py:class:`~agar.json_handlers.MultiPageHandler` to help with Cross-Origin Resource sharing .
     """
     def options(self):
         origin = self.request.headers.get('Origin', 'unknown origin')
         self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
-        self.response.headers['Access-Control-Max-Age'] = 1728000 
+        self.response.headers['Access-Control-Max-Age'] = 1728000
         self.response.headers['Access-Control-Allow-Credentials'] = \
             self.request.headers.get('Access-Credentials', 'true')
-        self.response.headers['Access-Control-Allow-Origin']= ':'.join(origin.split(':')[0:2])
-        self.response.headers['Access-Control-Allow-Origin']= origin.strip()
+        self.response.headers['Access-Control-Allow-Origin'] = ':'.join(origin.split(':')[0:2])
+        self.response.headers['Access-Control-Allow-Origin'] = origin.strip()
         self.response.headers['Access-Control-Allow-Headers'] = \
-            self.request.headers.get('Access-Control-Request-Headers', '') 
+            self.request.headers.get('Access-Control-Request-Headers', '')
 
     def json_response(self, model_or_query, strategy=None, status_code=200, status_text='OK', errors=None, context=None):
         context = self._setup_context(context)
         data = self._setup_data(model_or_query, status_code, status_text, errors=errors)
-        origin = self.request.headers.get('Origin', '') 
+        origin = self.request.headers.get('Origin', '')
         if origin:
             self.response.headers['Access-Control-Allow-Origin'] = origin
         else:
-            self.response.headers['Access-Control-Allow-Origin'] = "/".join(self.request.headers.get("Referer", "").split("/")[0:3]) 
+            self.response.headers['Access-Control-Allow-Origin'] = "/".join(self.request.headers.get("Referer", "").split("/")[0:3])
         self.response.headers['Access-Control-Allow-Headers'] = "true"
         self.response.headers['Access-Control-Allow-Credentials'] = "true"
 
         return restler_json_response(self.response, data, strategy=strategy, status_code=status_code, context=context)
-

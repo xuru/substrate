@@ -23,7 +23,7 @@ class URLNode(Node):
                        for k, v in self.kwargs.items()])
         url = None
         try:
-            from agar.url import uri_for
+            from webapp2 import uri_for
             url = uri_for(self.route_name, *args, **kwargs)
         except Exception, e:
             if self.asvar is None:
@@ -41,7 +41,7 @@ def uri_for(parser, token):
     """
     Returns a URL matching given the route name with its parameters.
 
-    See :py:func:`~agar.url.uri_for` for more detailed parameter information.
+    See :py:func:`~webapp2.uri_for` for more detailed parameter information.
 
     For example::
 
