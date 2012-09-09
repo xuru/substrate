@@ -1,6 +1,8 @@
 Changes
 -------
-* **0.7** -- 2012-06-21
+* **0.7** -- 2012-09-09
+
+  * Changed project status from Alpha to Beta
 
   * Remove support for python older than 2.7
 
@@ -8,9 +10,9 @@ Changes
 
   * Updated to `agar-0.7`_. See `agar CHANGES`_ for more information.
 
-  * Added mysql params to shell to support cloud sql
+  * Added mysql params to shell to support cloud sql (local mysql)
 
-  * Updated to latest restler
+  * Updated to restler 0.3
 
 * **0.6** -- 2012-01-01
 

@@ -90,6 +90,6 @@ class DuplicateKeyError(BadKeyError):
 
 class ModelException(Exception):
     """
-    There was an exception working with a `Model`_ while processing a :py:class:`agar.json.JsonRequestHandler`.
+    There was an exception working with a `Model`_ while processing a :py:class:`agar.json_handlers.JsonRequestHandler`.
     """
     pass

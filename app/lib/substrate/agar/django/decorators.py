@@ -1,12 +1,13 @@
 """
 The ``agar.django.decorators`` module contains functions and decorators to help validate `django forms`_,
-to be used to wrap :py:class:`agar.json.JsonRequestHandler` methods that accept input.
+to be used to wrap :py:class:`agar.json_handlers.JsonRequestHandler` methods that accept input.
 """
 import logging
 from functools import wraps
 
 from agar.auth import config as agar_auth_config
 from agar.django import config
+
 
 def create_error_dict(error_list):
     from django.forms.util import ErrorList
@@ -17,6 +18,7 @@ def create_error_dict(error_list):
         else:
             text_errors[key] = value
     return text_errors
+
 
 def validate_service(form_class,
     pass_handler=False,
@@ -35,7 +37,7 @@ def validate_service(form_class,
     :param form_class: The `django form class`_ to use for input validation.
     :param pass_handler: If `True`, the decorated handler will be passed to the form `__init__` method in the `kwargs` under the key `handler`.
     :param log_errors: The logging level for form validation errors.  Defaults to `agar_django_LOG_SERVICE_VALIDATION_ERRORS` (off).
-    :param log_values: `True` if the raw request parameter values should be logged for fields with validation errors. Defaults to 
+    :param log_values: `True` if the raw request parameter values should be logged for fields with validation errors. Defaults to
         `agar_django_LOG_SERVICE_VALIDATION_VALUE`.
     """
 
@@ -47,9 +49,9 @@ def validate_service(form_class,
             error_template = 'field "%(field)s" has error "%(error)s"'
             if log_values:
                 error_template += ' for value "%(value)s"'
-            logging.log(log_errors, log_template % { 
-                'errors': ' and '.join([ 
-                    error_template % {'field': key, 'error': value, 'value': handler.request.params.get(key)} 
+            logging.log(log_errors, log_template % {
+                'errors': ' and '.join([
+                    error_template % {'field': key, 'error': value, 'value': handler.request.params.get(key)}
                     for key, value in error_dict.items()
                 ]),
                 'user': str(getattr(handler.request, agar_auth_config.AUTHENTICATION_PROPERTY, None))
