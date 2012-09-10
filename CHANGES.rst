@@ -1,5 +1,9 @@
 Changes
 -------
+* **0.7** -- 2012-09-10
+
+  * Updated to `agar-0.7.1`
+
 * **0.7** -- 2012-09-09
 
   * Changed project status from Alpha to Beta
