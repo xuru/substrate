@@ -60,6 +60,9 @@ if __name__ == "__main__":
 
     dev_appserver.SetupStubs(config.application, **appserver_args)
 
-    banner = "Interactive App Engine Shell for app-id '%s'" % config.application
-    from IPython import embed
-    embed(header=banner)
+    try:
+        banner = "Interactive App Engine Shell for app-id '%s'" % config.application
+        from IPython import embed
+        embed(header=banner)
+    except:
+        pass

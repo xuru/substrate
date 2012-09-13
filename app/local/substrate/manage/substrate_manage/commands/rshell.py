@@ -57,6 +57,9 @@ if __name__ == "__main__":
 
     os.environ['HTTP_HOST'] = "%s.appspot.com" % app_id()
 
-    banner = "Interactive REMOTE App Engine Shell for app-id '%s'" % app_id()
-    from IPython import embed
-    embed(header=banner)
+    try:
+        banner = "Interactive REMOTE App Engine Shell for app-id '%s'" % app_id()
+        from IPython import embed
+        embed(header=banner)
+    except:
+        pass
